@@ -1,63 +1,83 @@
-// minibot chassis — parametric, invertible motor-sandwich design
+// minibot chassis — parametric, invertible, fully enclosed
 //
-// Render in OpenSCAD (https://openscad.org). Generates two identical
-// plates (top + bottom) that sandwich the motors and electronics.
+// Two identical "tray" plates that join open-face-to-open-face to form a
+// closed box. Each plate has 3mm flat floor + 6mm half-walls on its
+// perimeter; when stacked they meet in the middle of the 12mm motor
+// cavity. Motors mount shaft-inward so the wheels sit ENTIRELY INSIDE
+// the chassis perimeter, poking out only through wheel cutouts in the
+// top and bottom plates — nothing protrudes from the sides.
 //
-//   openscad --export-format=stl -o top.stl    -D 'plate_kind="top"'    chassis.scad
-//   openscad --export-format=stl -o bottom.stl -D 'plate_kind="bottom"' chassis.scad
+// Render with OpenSCAD (https://openscad.org):
 //
-// Or just open in the GUI and hit F6 to render.
+//   openscad --export-format=stl -o plate.stl docs/cad/chassis.scad
+//
+// Or open in the GUI and hit F6. Both plates are identical (chassis is
+// invertible), so you print this one shape twice.
 
 // ─── parameters ──────────────────────────────────────────────────────
 
-// Which plate to render: "top" or "bottom". Both are geometrically
-// identical except for orientation; the chassis is invertible so it
-// makes no difference which side is up.
-plate_kind = "top";  // [top, bottom]
+plate_kind = "plate";   // [plate, assembly]
 
-// Overall plate footprint
-plate_length = 110;   // mm — length along travel direction
-plate_width  = 80;    // mm — width across wheels
-plate_thick  = 3;     // mm
+// Plate footprint
+plate_length = 120;     // mm — front-to-back
+plate_width  = 130;     // mm — side-to-side
+plate_thick  = 3;       // mm — flat floor thickness
 
-// N20 motor body (the metal can, NOT the gearbox)
+// Walls: each plate has 6mm-tall half-walls that meet the other plate's
+// 6mm walls at the cavity centreline, giving a 12mm closed cavity.
+wall_thick       = 3;   // mm — wall material thickness
+wall_half_height = 6;   // mm — wall height on one plate (×2 = 12mm cavity)
+
+// N20 motor body (the metal can, NOT the gearbox or shaft)
 motor_diameter   = 12.2;  // mm — slight clearance fit
-motor_length     = 25;    // mm — body length, NOT including gearbox/shaft
-motor_axle_pitch = 70;    // mm — front-to-rear motor spacing (centre to centre)
-motor_track      = 56;    // mm — left-to-right motor spacing (centre to centre)
+motor_length     = 25;    // mm — body length only
+motor_axle_pitch = 70;    // mm — front-rear motor spacing (centre to centre)
 
-// Motor pocket: half-cylinder cut into each plate
-pocket_depth     = motor_diameter / 2;   // = 6.1mm
-pocket_clearance = 0.3;                  // PETG extrudate widens; add slop
+// Motor body CENTRE Y-position. Motors mount near the side walls with
+// shafts pointing inward to the chassis centre. The outer face of the
+// motor body sits 4mm inside the wall:
+//   motor_center_y = (plate_width/2) - wall_thick - clearance - motor_length/2
+motor_center_y   = (plate_width / 2) - wall_thick - 4 - motor_length / 2;
+// → for plate_width=130 with 3mm wall, motors centre at y ≈ ±45.5
 
-// Wheel cutouts on the plate edges
+// Motor pocket geometry
+pocket_depth     = motor_diameter / 2;   // half-cylinder = 6.1mm
+pocket_clearance = 0.3;
+
+// Wheels (SLT20 33×20mm)
 wheel_diameter = 33;
 wheel_width    = 20;
 wheel_clearance = 1.0;
 
-// Electronics pockets
+// Wheel Y-position: wheels mounted on shafts pointing toward chassis
+// centre, so wheel sits INSIDE the chassis at:
+//   motor body inner face = motor_center_y - motor_length/2
+//   then gearbox (~10mm) + shaft engagement (~5mm) inward
+wheel_inset_from_motor = 15;     // mm — gearbox + partial shaft
+wheel_center_y = motor_center_y - motor_length / 2 - wheel_inset_from_motor;
+
+// Electronics pockets (recessed into the inner face of the plate)
 esp_length = 52;
 esp_width  = 25;
-esp_pocket_depth = 2;     // recess for the PCB body
+esp_pocket_depth = 2;
 
 driver_length = 26;
 driver_width  = 26;
 driver_pocket_depth = 2;
 
-// Battery pocket (1S LiPo pouch)
 battery_length = 45;
 battery_width  = 25;
 battery_pocket_depth = 2;
 
-// Mounting holes for M3 screws + heat-set inserts
-mount_hole_d = 3.2;
-mount_hole_inset = 6;     // distance from plate corner
+// Mounting holes for M3 screws + heat-set inserts in the corners
+mount_hole_d     = 3.2;
+mount_hole_inset = 7;
 
-// Side access slots
-usb_slot_width  = 12;     // micro-USB on LOLIN32 needs ~8mm + margin
+// Side access slot for micro-USB
+usb_slot_width  = 12;
 usb_slot_height = 6;
 
-// Resolution
+// Render resolution
 $fa = 4;
 $fs = 0.5;
 
@@ -65,84 +85,115 @@ $fs = 0.5;
 // ─── derived geometry ────────────────────────────────────────────────
 
 motor_pocket_d = motor_diameter + pocket_clearance;
-wheel_well_d   = wheel_diameter + wheel_clearance;
 
-// Motor centre positions (4 motors: front-left, front-right, rear-left, rear-right)
 motor_positions = [
-  [-motor_axle_pitch/2,  motor_track/2],   // front-left
-  [-motor_axle_pitch/2, -motor_track/2],   // front-right
-  [ motor_axle_pitch/2,  motor_track/2],   // rear-left
-  [ motor_axle_pitch/2, -motor_track/2],   // rear-right
+  [-motor_axle_pitch / 2,  motor_center_y],   // front-left
+  [-motor_axle_pitch / 2, -motor_center_y],   // front-right
+  [ motor_axle_pitch / 2,  motor_center_y],   // rear-left
+  [ motor_axle_pitch / 2, -motor_center_y],   // rear-right
+];
+
+// Wheel hub Y positions (4 wheels mirroring motor sides)
+wheel_positions = [
+  [-motor_axle_pitch / 2,  wheel_center_y],
+  [-motor_axle_pitch / 2, -wheel_center_y],
+  [ motor_axle_pitch / 2,  wheel_center_y],
+  [ motor_axle_pitch / 2, -wheel_center_y],
 ];
 
 
 // ─── modules ─────────────────────────────────────────────────────────
 
 module motor_pocket(pos) {
-  // Half-cylinder lying on its side, axis along the X axis (front-to-back wheel rotation)
-  // Pocket cuts UP into the plate from the inner face.
+  // Half-cylinder cut into the plate floor. Axis along Y (lateral),
+  // so the motor body lies sideways with its shaft pointing inward.
   translate([pos[0], pos[1], plate_thick - pocket_depth])
-    rotate([0, 90, 0])
+    rotate([90, 0, 0])
       cylinder(d=motor_pocket_d, h=motor_length, center=true);
 }
 
-module wheel_well(side) {
-  // Cutout in the plate's outer long edge so the wheel can spin freely.
-  // `side` = +1 (left) or -1 (right). One well per motor pair (front + rear gang).
-  for (x = [-motor_axle_pitch/2, motor_axle_pitch/2]) {
-    translate([x, side * (plate_width/2 - wheel_well_d/4), -1])
-      cylinder(d=wheel_well_d, h=plate_thick + 2);
+module wheel_cutout(pos) {
+  // Rounded-rectangle slot in the plate so the wheel can poke through.
+  // Wheel rotates around Y axis; its top-down footprint is roughly
+  //   (X-width) ≈ 2 * sqrt(R² - z_offset²)   (= ~30mm at mid-plate)
+  //   (Y-width) = wheel_width (20mm)
+  // Use a generous 35×22 rounded slot for tolerance.
+  hull() {
+    for (sx = [-1, 1])
+      translate([pos[0] + sx * (35/2 - 5), pos[1], -1])
+        cylinder(r=5, h=plate_thick + 2);
+    for (sx = [-1, 1])
+      translate([pos[0] + sx * (35/2 - 5), pos[1], -1])
+        translate([0, (wheel_width + 2 - 10)/2, 0])
+          cylinder(r=5, h=plate_thick + 2);
   }
+  // simpler: just rectangle
+  translate([pos[0], pos[1], -1])
+    linear_extrude(plate_thick + 2)
+      square([35, wheel_width + 2], center=true);
 }
 
-module rect_pocket(w, l, depth) {
-  // Top-down rectangular pocket cut into the plate's inner face.
-  translate([0, 0, plate_thick - depth])
+module rect_pocket(w, l, depth, x=0, y=0) {
+  translate([x, y, plate_thick - depth])
     linear_extrude(depth + 1)
       square([l, w], center=true);
 }
 
 module mount_holes() {
+  // Screws go through the floor + into the wall above
   for (sx = [-1, 1]) for (sy = [-1, 1])
     translate([
-      sx * (plate_length/2 - mount_hole_inset),
-      sy * (plate_width/2  - mount_hole_inset),
+      sx * (plate_length / 2 - mount_hole_inset),
+      sy * (plate_width  / 2 - mount_hole_inset),
       -1
     ])
-      cylinder(d=mount_hole_d, h=plate_thick + 2);
+      cylinder(d=mount_hole_d, h=plate_thick + wall_half_height + 2);
 }
 
 module usb_slot() {
-  // Cutout in the side wall — slot in the long edge near the ESP32 pocket.
-  translate([0, -plate_width/2, plate_thick/2])
-    rotate([90, 0, 0])
-      cylinder(d=usb_slot_height, h=usb_slot_width, center=true);
-  translate([0, -plate_width/2, plate_thick/2])
-    cube([usb_slot_width, plate_thick + 2, usb_slot_height], center=true);
+  // Slot through the front wall
+  translate([-plate_length / 2, -usb_slot_width / 2, plate_thick + (wall_half_height - usb_slot_height) / 2])
+    cube([wall_thick + 0.1, usb_slot_width, usb_slot_height]);
 }
 
 module plate() {
   difference() {
-    // Base plate
-    translate([-plate_length/2, -plate_width/2, 0])
-      cube([plate_length, plate_width, plate_thick]);
+    union() {
+      // Flat floor
+      translate([-plate_length / 2, -plate_width / 2, 0])
+        cube([plate_length, plate_width, plate_thick]);
+      // 6mm walls on the perimeter, hollow inside
+      difference() {
+        translate([-plate_length / 2, -plate_width / 2, 0])
+          cube([plate_length, plate_width, plate_thick + wall_half_height]);
+        translate([
+          -plate_length / 2 + wall_thick,
+          -plate_width  / 2 + wall_thick,
+          plate_thick
+        ])
+          cube([
+            plate_length - 2 * wall_thick,
+            plate_width  - 2 * wall_thick,
+            wall_half_height + 1
+          ]);
+      }
+    }
 
-    // Motor half-pockets
+    // Motor half-pockets in the floor
     for (p = motor_positions) motor_pocket(p);
 
-    // Wheel wells on both long edges
-    wheel_well(+1);
-    wheel_well(-1);
+    // Wheel cutouts through the floor (top + bottom plates both have these)
+    for (p = wheel_positions) wheel_cutout(p);
 
-    // Electronics pockets (centred)
-    translate([-15, 12, 0]) rect_pocket(esp_width, esp_length, esp_pocket_depth);
-    translate([15, 12, 0])  rect_pocket(driver_width, driver_length, driver_pocket_depth);
-    translate([0, -15, 0])  rect_pocket(battery_width, battery_length, battery_pocket_depth);
+    // Electronics recesses
+    rect_pocket(esp_width, esp_length, esp_pocket_depth, x=-30, y=0);
+    rect_pocket(driver_width, driver_length, driver_pocket_depth, x=20, y=-15);
+    rect_pocket(battery_width, battery_length, battery_pocket_depth, x=20, y=15);
 
-    // Side USB-access slot (only really needed on one plate but harmless on both)
-    translate([-15, 0, 0]) usb_slot();
+    // Side USB slot in the front wall
+    usb_slot();
 
-    // Mounting holes
+    // Corner mount holes
     mount_holes();
   }
 }
@@ -150,15 +201,11 @@ module plate() {
 
 // ─── render ──────────────────────────────────────────────────────────
 
-if (plate_kind == "top") {
+if (plate_kind == "plate") {
   plate();
-} else if (plate_kind == "bottom") {
-  // Bottom is geometrically identical (chassis is invertible).
-  // Mirror it for clarity when both are rendered side by side.
-  mirror([0, 0, 1]) translate([0, 0, -plate_thick]) plate();
-} else {
-  // Render both stacked with motor cavity between
+} else if (plate_kind == "assembly") {
+  // Both plates joined open-face-to-open-face for a preview render
   plate();
-  translate([0, 0, plate_thick + motor_diameter])
-    mirror([0, 0, 1]) translate([0, 0, -plate_thick]) plate();
+  translate([0, 0, plate_thick + 2 * wall_half_height])
+    mirror([0, 0, 1]) plate();
 }
