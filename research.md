@@ -205,23 +205,41 @@ Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) = 7 used. Huge head
 
 ## Chassis
 
-### Concept: motor-sandwich, invertible
+### Concept: fully enclosed, wheels inside the perimeter, invertible
 
-Two plates with the motors sandwiched between them. The plates carry **half-pockets** for each motor so the motor body sits recessed into the plate — the chassis ends up exactly as tall as the motor diameter, with no protrusion.
+Two identical "tray" plates that join open-face-to-open-face into a closed box. Each plate has a 3 mm flat floor and 6 mm half-walls around its perimeter; when stacked together they form an 18 mm tall enclosure with continuous 12 mm cavity inside. **Side panels (3 mm) on all four sides** — nothing is exposed laterally.
 
 ```
-                                ┌──────────────────┐
-              3mm TOP PLATE  ►  │══════════════════│
-                                │  ◯ motor    ◯    │
-                                │   ESP32  TB6612  │   ← motor diameter
-                                │      LiPo        │     cavity (~12 mm)
-                                │  ◯ motor    ◯    │
-              3mm BOT PLATE  ►  │══════════════════│
-                                └──────────────────┘
-                                  └─── wheels ────┘
+                                ┌─────────────────────┐
+              3mm TOP PLATE  ►  │═════════════════════│  ◀ top plate has wheel
+                  6mm wall   ►  │                     │    cutouts for protrusion
+                                │  ◯ motor      ◯     │
+                                │   wheel  ESP32      │   12mm motor cavity
+                                │           battery   │
+                                │  ◯ motor      ◯     │
+                  6mm wall   ►  │                     │  ◀ bottom plate also has
+              3mm BOT PLATE  ►  │═════════════════════│    cutouts (chassis is
+                                └─────────────────────┘    invertible)
 ```
 
-Total chassis height: **~18 mm** (3 + 12 + 3). Wheels (33 mm ⌀) protrude **7.5 mm above and below** the chassis equally → the bot is **invertible** and can drive on either face. Plates can be identical, no "top" or "bottom" distinction.
+The motors mount **shaft-inward** — bodies are tucked up against the side walls, shafts and wheels project into the interior of the chassis. The wheels (33 mm ⌀) poke out **only through cutouts in the top and bottom plates**, never through the sides. Wheels protrude **~7.5 mm above and below** the chassis floor/ceiling, so the bot drives the same right-side-up or upside-down (invertible).
+
+### Dimensions
+
+| | |
+|---|---|
+| Plate length | **120 mm** (front-to-back) |
+| Plate width | **130 mm** (side-to-side) |
+| Plate thickness | 3 mm |
+| Wall thickness | 3 mm |
+| Wall height per plate | 6 mm (×2 = 12 mm cavity) |
+| Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
+| Motor track (centres) | **91 mm** (≈ chassis width − walls − clearance − motor length) |
+| Motor axle pitch (front to rear) | 70 mm |
+| Wheel positions | inside the chassis, ~18 mm from centre on each side |
+| Wheel cutout per plate | ~35 × 22 mm rounded slot (×4) |
+| Mounting | M3 heat-set inserts in corner bosses |
+| Side access | micro-USB slot in the front wall |
 
 ### Material: PETG translucent
 
@@ -255,26 +273,22 @@ Driving everything from "no component sticks above the chassis":
 - **LiPo battery** (height < 12 mm, confirmed by inspection) → fits anywhere in the cavity
 - **Cable channels** — 1.5 mm grooves in plate inner faces for routing wires
 
-### Side-access requirements (because invertible)
+### Side-access requirements (because invertible + enclosed)
 
-The robot has no fixed top/bottom, so every external interface must be on the **side** of the chassis:
+The robot has no fixed top/bottom AND no exposed sides, so external interfaces all live in cutouts through the side walls:
 
-- [ ] Micro-USB cutout (for programming + battery charging)
+- [x] Micro-USB cutout in the front wall (for programming + battery charging)
 - [ ] Power switch slot (optional — alternatively, plug/unplug JST battery)
-- [ ] Status LED light pipe / window (or rely on translucency)
-- [ ] Wheel wells (open cutouts in plate edges so wheels don't catch on the plate)
+- [ ] Optional: vent slots if TB6612FNG runs hot under heavy stall
 
-### Design checklist
+### Design checklist (current chassis.scad reflects all of this)
 
-- [ ] Half-pocket cutouts (top + bottom plates) for each of 4 motors — CNC-precision required for shaft co-axiality
-- [ ] LOLIN32 Lite pocket with USB-side facing chassis edge
-- [ ] TB6612FNG pocket
-- [ ] Battery pocket with retention tabs (or snug-fit rectangle)
-- [ ] Cable channels on inner plate faces
-- [ ] M2 / M3 screw bosses at 4 corners + center
-- [ ] Wheel-well cutouts on the long edges
-- [ ] Side USB-C / JST access slots
-- [ ] Optional: vent slots above TB6612FNG (probably unnecessary for hobby duty cycle)
+- [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
+- [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft inward)
+- [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
+- [x] Electronics recesses: ESP32 (52 × 25 mm), TB6612 (26 × 26 mm), battery (45 × 25 mm)
+- [x] Mounting holes through the corner walls for M3 heat-set inserts
+- [x] Front-wall USB slot
 
 ### Translucency affordance 💡
 
