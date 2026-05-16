@@ -1,0 +1,169 @@
+# Research notes
+
+Running log of what we learned while building minibot. Updated as we go.
+
+## Hardware
+
+### ESP32 dev board
+
+- **Chip**: ESP32-D0WDQ6 rev v1.0 — original ESP32, dual-core Xtensa LX6 @ 240 MHz, WiFi + BT/BLE
+- **USB-to-serial**: CH340 (`1a86:7523`) → `/dev/cu.usbserial-110`
+- **Crystal**: 41.01 MHz reported (a bit off the 40 MHz spec — common quirk on CH340 clones)
+- **Base MAC**: `24:6F:28:B1:F8:B4` (WiFi STA)
+- **Bluetooth MAC**: `24:6F:28:B1:F8:B6` (= base + 2, per ESP32's MAC derivation rule)
+- **Form factor**: 38-pin DevKit-style clone (has VP/VN broken out on the header)
+- **Battery**: separate battery board provides battery+ to ESP32 `VIN`
+
+### PS3 controller
+
+- **VID/PID**: `054c:0268` (Sony DualShock 3 / SIXAXIS)
+- **Manufacturer string**: `SHANWAN` — it's a clone, not a genuine Sony. Most clones work with standard pairing flow.
+
+### Motors
+
+- **Type**: N20 micro metal gear motors (4× identical-looking units, open-frame gearbox)
+- **Visible gear stages identical across all 4** → likely same gear ratio → same output RPM at same voltage
+- **Current draw**: 200 mA no-load, 500 mA – 1 A at stall (per motor)
+- **Encoders**: none — open-loop control only (we command, we don't sense)
+
+### Motor driver: TB6612FNG
+
+Picked over the alternatives for our 4× N20 setup:
+
+| Driver | $ for 2× | Continuous | Peak | Notes |
+|---|---|---|---|---|
+| **TB6612FNG** ✅ | ~$4–6 | 1.2 A / ch | 3 A | MOSFET, clean API (separate PWM pin), most libs/tutorials |
+| DRV8833 | ~$2–4 | 1.5 A / ch | 3 A (parallel) | Cheaper, but weirder API (PWM on direction pins) |
+| L298N | ~$3 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
+| L9110S / MX1508 | ~$1–2 | 800 mA / ch | — | Marginal for stalled N20s |
+
+Plan: **2× TB6612FNG breakouts** (each handles 2 motors). Ordering 5 total = 1 spare + 2 for future mission creep.
+
+## Software stack
+
+### Why PlatformIO + Arduino framework
+
+Considered Moddable SDK (TypeScript on ESP) first — beautiful idea but installing the SDK + ESP32 toolchain + ESP-IDF was a multi-GB, multi-hour setup. Dropped TS-as-hard-requirement in favour of:
+
+- **PlatformIO IDE** (VSCode extension) — handles toolchain, library mgr, debugger, monitor, all from one extension
+- **Arduino framework** on `espressif32` platform — friendlier than raw ESP-IDF, huge library ecosystem
+
+One click in the PlatformIO status bar = build, upload, monitor. No env vars, no shell config.
+
+### Key library
+
+- `jvpernis/esp32-ps3` (pulled via `lib_deps` git URL) — handles PS3 BT Classic + HID + button/stick event callbacks
+
+## PS3 controller pairing
+
+PS3 pairing is **not** standard Bluetooth pairing. The controller stores **one** host MAC internally and will only connect to that address. There's no discovery, no PIN, no negotiation — the controller hunts for that exact MAC.
+
+To pair:
+
+1. Plug controller into a Mac/Linux host via USB.
+2. Write the desired host MAC into the controller's memory via HID feature report `0xF5`.
+3. Unplug USB → press PS button → controller auto-connects to that host over Bluetooth.
+
+We do step 2 with `scripts/pair-ps3.py` (uses `hidapi` cython package; runs via `uv` with PEP 723 inline deps).
+
+### Why not just `pip install hid`?
+
+We tried the ctypes-based `hid` package first. On macOS, brew installs `libhidapi.dylib` to `/opt/homebrew/lib` which isn't a default dyld search path, and SIP strips `DYLD_FALLBACK_LIBRARY_PATH` when env-invoking system binaries — so the ctypes loader can never find the library.
+
+The cython-based `hidapi` package builds a self-contained extension during install and bypasses the issue.
+
+## ESP32 GPIO constraints
+
+### Input-only pins (cannot drive outputs / LEDs / motor signals)
+
+- **GPIO 34, 35, 36, 39** — no internal output drivers, no pull-ups/downs. ADC/sensor only.
+
+### Strapping pins (avoid for outputs that need defined boot levels, or be careful)
+
+- **GPIO 0** — boot mode select. Avoid for outputs.
+- **GPIO 2** — boot mode. OK if not held HIGH at boot.
+- **GPIO 12** — flash voltage select. Must be LOW at boot or chip enters wrong mode → won't boot.
+- **GPIO 15** — debug print on boot. Must be HIGH or you lose early boot serial.
+- **GPIO 5** — boot mode select. Generally fine as output, just floats high briefly at boot.
+
+### Reserved
+
+- **GPIO 6–11** — wired to internal SPI flash. Touching them = brick.
+- **GPIO 1, 3** — UART0 used by USB-serial.
+
+### Currently used
+
+- `19` — status LED (solid when PS3 connected, blinks while waiting)
+- `17, 25, 32, 33` — face-button LEDs (will be reallocated when motors arrive)
+
+## Motor control
+
+### Why a driver is mandatory
+
+| | ESP32 GPIO | N20 motor |
+|---|---|---|
+| Voltage | 3.3 V | 3–6 V |
+| Current | 12 mA max | 200 mA – 1 A |
+| Direction | one-way | needs polarity swap to reverse |
+| Back-EMF | fries logic | spikes voltage on every PWM cycle |
+
+GPIO straight to motor = dead ESP32 in milliseconds.
+
+### H-bridge truth table (TB6612FNG)
+
+| IN1 | IN2 | Effect |
+|---|---|---|
+| HIGH | LOW | Forward |
+| LOW | HIGH | Reverse |
+| LOW | LOW | Coast (free spin) |
+| HIGH | HIGH | Brake (short across motor) |
+
+`PWMx` rides on top → speed magnitude.
+
+### Stick → driver mental model
+
+PS3 stick gives signed `-128..+127`. The driver only understands:
+
+- **Unsigned PWM 0–255** (magnitude / how hard)
+- **Two direction pins** (which way)
+
+Code splits the signed stick value into `abs()` → PWM and `sign()` → IN1/IN2 levels. The H-bridge handles the polarity flip across the motor terminals so we never need "negative PWM".
+
+### Open-loop vs closed-loop
+
+Our bare N20s have **no encoders**, so we run **open-loop** — we command a direction + speed and trust the motor obeys. For:
+
+- Precise distance ("drive 30 cm")
+- Speed regulation under load
+- Detecting stall against a wall
+
+…we'd need N20s with **magnetic hall encoders** (~$3–5 extra per motor, quadrature output). Not in scope for v1.
+
+## Power topology
+
+```
+Battery+ ─┬── ESP32 VIN  (logic via onboard LDO → 3.3V rail)
+          └── TB6612 VM  (motor supply, both drivers)
+
+Battery− ─── ESP32 GND ─── TB6612 GND (both drivers)  ← MUST be common
+```
+
+- **VM**: motor power, 3–13.5 V (battery directly)
+- **VCC**: logic power, 3.3 V (from ESP32)
+- **STBY**: tie to 3.3 V to keep the driver enabled (or wire to a GPIO for software sleep)
+- **Decoupling**: a 100–470 µF cap across VM/GND helps absorb stall-current dips. Most breakouts have a small cap on-board but it's marginal for stalled N20s.
+
+⚠️ Never pull motor current through ESP32's `VIN` or `3V3` pin — onboard LDO maxes out around 800 mA and the input diode is tiny. Motors get their power *directly* from the battery via the driver's `VM`.
+
+## Wiring plan (2× TB6612FNG, 4 motors, tank drive)
+
+| Motor | PWM | IN1 | IN2 | Driver / output |
+|---|---|---|---|---|
+| Left Front | GPIO 13 | 14 | 27 | Driver 1 / AO1+AO2 |
+| Left Rear | GPIO 26 | 16 | 17 | Driver 1 / BO1+BO2 |
+| Right Front | GPIO 18 | 21 | 22 | Driver 2 / AO1+AO2 |
+| Right Rear | GPIO 25 | 23 | 5 | Driver 2 / BO1+BO2 |
+
+`STBY` on both drivers → ESP32 `3V3`. All `GND` rails common.
+
+Final pin budget: 12 GPIO for motors + 1 status LED (GPIO 19). Leaves plenty of headroom for future sensors (ultrasonic, IMU, etc.).
