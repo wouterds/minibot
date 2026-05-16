@@ -16,7 +16,7 @@ A small wireless RC bot with:
 - **PETG translucent 3D-printed chassis** in a motor-sandwich layout that's **invertible** — drives the same flipped over
 - **1S LiPo 3.7 V 1200 mAh** for ~1 hour of cruising
 
-Everything fits in roughly **110 × 80 × 18 mm**.
+Everything fits in roughly **120 × 130 × 18 mm**, fully enclosed with 3 mm walls on all sides — no parts protrude laterally.
 
 ## System diagram
 
@@ -51,7 +51,7 @@ The two motors on each side are wired **in parallel** to the same driver channel
 
 ![Top-down chassis layout](docs/cad/layout.png)
 
-The chassis is two 3 mm PETG plates that sandwich the four motors. Each plate has a half-cylinder pocket per motor, so the motors sit fully recessed and the chassis ends up **18 mm tall** (3 + 12 + 3) — exactly the motor diameter. With 33 mm wheels there's **7.5 mm of wheel protruding above AND below** the chassis, making the bot **invertible** — it drives the same on either face.
+The chassis is **two identical tray-shaped PETG plates** that join open-face-to-open-face to form a closed box. Each plate is a 3 mm flat floor with 6 mm half-walls around its perimeter; stacked they form an **18 mm tall enclosed shell** (3 + 6 + 6 + 3) with 3 mm side walls all around. Motors mount **shaft-inward** so the wheels sit *entirely inside* the chassis perimeter — nothing exposed laterally. Wheels poke through cutouts in the top and bottom plates only, protruding **~7.5 mm above and below** for ground contact. Result: a fully enclosed, **invertible** bot that drives the same on either face.
 
 The parametric OpenSCAD source is at [`docs/cad/chassis.scad`](docs/cad/chassis.scad). Render to STL:
 
