@@ -36,8 +36,29 @@ pio run -t clean              # clean build artifacts
 ## Source layout
 
 ```
-platformio.ini     PlatformIO config (board, framework, monitor settings)
-src/main.cpp       entry point — Arduino setup() / loop()
+platformio.ini       PlatformIO config (board, framework, monitor settings)
+src/main.cpp         entry point — Arduino setup() / loop()
+scripts/pair-ps3.py  pair a DualShock 3 / SIXAXIS controller to the ESP via USB
+```
+
+## Pairing a PS3 controller
+
+The ESP32's Bluetooth MAC is **`24:6f:28:b1:f8:b6`** (eFuse base MAC + 2).
+
+PS3 controllers don't pair the normal way — you write the host MAC into the controller's memory via USB, then the controller auto-connects to that host over Bluetooth when powered on.
+
+1. Plug the PS3 controller into your Mac via USB.
+2. Write the ESP's BT MAC into the controller:
+   ```sh
+   ./scripts/pair-ps3.py 24:6f:28:b1:f8:b6
+   ```
+3. Unplug the controller, flash the ESP, then press the PS button.
+4. Watch the serial monitor — button events stream in, LED on GPIO19 goes solid when connected.
+
+To read the currently paired host MAC (no write):
+
+```sh
+./scripts/pair-ps3.py
 ```
 
 ## Commit conventions
