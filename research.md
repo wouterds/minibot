@@ -37,7 +37,7 @@ Picked over the alternatives for our 4× N20 setup:
 | L298N | ~$3 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
 | L9110S / MX1508 | ~$1–2 | 800 mA / ch | — | Marginal for stalled N20s |
 
-Plan: **2× TB6612FNG breakouts** (each handles 2 motors). Ordering 5 total = 1 spare + 2 for future mission creep.
+Plan: **1× TB6612FNG breakout** for the basic 4-motor tank drive — see the [paired-motors topology](#paired-motors-per-side) below: each pair of motors on one side is wired in parallel and treated as one logical motor, so we only need 2 driver channels total. Ordering 5 drivers = 1 active + 4 future / spares.
 
 ## Software stack
 
@@ -155,15 +155,34 @@ Battery− ─── ESP32 GND ─── TB6612 GND (both drivers)  ← MUST be 
 
 ⚠️ Never pull motor current through ESP32's `VIN` or `3V3` pin — onboard LDO maxes out around 800 mA and the input diode is tiny. Motors get their power *directly* from the battery via the driver's `VM`.
 
-## Wiring plan (2× TB6612FNG, 4 motors, tank drive)
+## Paired motors per side
 
-| Motor | PWM | IN1 | IN2 | Driver / output |
-|---|---|---|---|---|
-| Left Front | GPIO 13 | 14 | 27 | Driver 1 / AO1+AO2 |
-| Left Rear | GPIO 26 | 16 | 17 | Driver 1 / BO1+BO2 |
-| Right Front | GPIO 18 | 21 | 22 | Driver 2 / AO1+AO2 |
-| Right Rear | GPIO 25 | 23 | 5 | Driver 2 / BO1+BO2 |
+To save a driver and GPIO budget, **the two motors on each side are wired in parallel** and treated as a single logical motor:
 
-`STBY` on both drivers → ESP32 `3V3`. All `GND` rails common.
+```
+Left Front  motor + ─┐
+Left Rear   motor + ─┴───── Driver AO1
+Left Front  motor − ─┐
+Left Rear   motor − ─┴───── Driver AO2
+```
 
-Final pin budget: 12 GPIO for motors + 1 status LED (GPIO 19). Leaves plenty of headroom for future sensors (ultrasonic, IMU, etc.).
+(Same for the right side via BO1/BO2.)
+
+Implications:
+
+- **1 driver, not 2** — both sides fit on a single TB6612FNG (one channel per side)
+- **6 GPIOs instead of 12** for motor control
+- **Current doubles per channel** — 2× N20 in parallel pull ~400 mA cruise, ~1.5–2 A at simultaneous stall. Within the TB6612FNG's 1.2 A continuous / 3 A peak window, but tight enough to want decent decoupling and a battery that can deliver it.
+- **Both motors on a side must be matched** (same gear ratio + winding) so they spin at the same RPM under the same drive signal. Our 4× N20s look identical externally + share the same visible gear stages, so this should hold.
+- **Wire polarity matters** — if a paired motor spins the "wrong way" relative to its partner, just flip its leads at the driver output. Don't try to fix it in software.
+
+## Wiring plan (1× TB6612FNG, 4 motors paired, tank drive)
+
+| Side | PWM | IN1 | IN2 | Driver / output | Motors |
+|---|---|---|---|---|---|
+| Left  | GPIO 13 | 14 | 27 | A channel (AO1+AO2) | Left Front + Left Rear in parallel |
+| Right | GPIO 26 | 16 | 17 | B channel (BO1+BO2) | Right Front + Right Rear in parallel |
+
+`STBY` → ESP32 `3V3`. `VM` → battery+. `VCC` → ESP32 `3V3`. All `GND` rails common (battery −, ESP32 GND, driver GND).
+
+Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) = 7 used. Huge headroom for future sensors (ultrasonic, IMU, encoders, etc.).
