@@ -11,8 +11,21 @@ Running log of what we learned while building minibot. Updated as we go.
 - **Crystal**: 41.01 MHz reported (a bit off the 40 MHz spec — common quirk on CH340 clones)
 - **Base MAC**: `24:6F:28:B1:F8:B4` (WiFi STA)
 - **Bluetooth MAC**: `24:6F:28:B1:F8:B6` (= base + 2, per ESP32's MAC derivation rule)
-- **Form factor**: 38-pin DevKit-style clone (has VP/VN broken out on the header)
-- **Battery**: separate battery board provides battery+ to ESP32 `VIN`
+- **Board**: WeMos LOLIN32 Lite (or clone) — confirmed by visible silkscreen + features
+- **Footprint**: ~52 × 25 × 5 mm (no headers soldered, direct-wire build)
+- **Onboard**:
+  - JST PH2.0 connector for 1S LiPo (top edge)
+  - TP4054 LiPo charge IC — battery charges automatically when USB is plugged in
+  - 3.3V LDO regulator
+  - CH340C USB-serial
+  - Micro-USB connector
+  - RST button
+  - PCB antenna (no external connector)
+- **Power pins exposed**:
+  - `+` (next to JST) — raw battery voltage (3.0–4.2V), perfect for feeding TB6612FNG `VM`
+  - `3V` — regulated 3.3V, for TB6612FNG `VCC` and `STBY`
+  - `GND` — common ground
+- **Pin labels visible**: `UP` (= GPIO 36 / SENSOR_VP), `UN` (= GPIO 39 / SENSOR_VN), `EN`, plus GPIOs 0, 2, 4, 5, 12–19, 22, 23, 25–27, 32–35
 
 ### PS3 controller
 
