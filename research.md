@@ -21,10 +21,13 @@ Running log of what we learned while building minibot. Updated as we go.
 
 ### Motors
 
-- **Type**: N20 micro metal gear motors (4× identical-looking units, open-frame gearbox)
-- **Visible gear stages identical across all 4** → likely same gear ratio → same output RPM at same voltage
-- **Current draw**: 200 mA no-load, 500 mA – 1 A at stall (per motor)
-- **Encoders**: none — open-loop control only (we command, we don't sense)
+- **Type**: N20 micro metal gear motors, **6V 400 RPM, 20mm shaft** (4×)
+- **Voltage choice**: 6V over 3V because the 3.7V LiPo (4.2V full) overvolts a 3V motor by 23–40%, shortening lifespan and risking thermal failure under stall. Undervolting a 6V motor is harmless — it just runs slower, with more headroom on heat and stall current.
+- **Shaft length**: 20mm to match deep-hub SLT20-style wheels (33×20mm). Standard ~9mm shafts would slip in deep hubs.
+- **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with 33mm wheels: ~1.2 km/h cruise, ~1.4 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~2.4 km/h.
+- **Visible gear stages identical across all 4** → same gear ratio → same output RPM at same voltage.
+- **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within TB6612FNG's 1.2 A continuous / 3 A peak window.
+- **Encoders**: none — open-loop control only (we command, we don't sense).
 
 ### Motor driver: TB6612FNG
 
