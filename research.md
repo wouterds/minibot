@@ -202,3 +202,84 @@ Implications:
 `STBY` → ESP32 `3V3`. `VM` → battery+. `VCC` → ESP32 `3V3`. All `GND` rails common (battery −, ESP32 GND, driver GND).
 
 Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) = 7 used. Huge headroom for future sensors (ultrasonic, IMU, encoders, etc.).
+
+## Chassis
+
+### Concept: motor-sandwich, invertible
+
+Two plates with the motors sandwiched between them. The plates carry **half-pockets** for each motor so the motor body sits recessed into the plate — the chassis ends up exactly as tall as the motor diameter, with no protrusion.
+
+```
+                                ┌──────────────────┐
+              3mm TOP PLATE  ►  │══════════════════│
+                                │  ◯ motor    ◯    │
+                                │   ESP32  TB6612  │   ← motor diameter
+                                │      LiPo        │     cavity (~12 mm)
+                                │  ◯ motor    ◯    │
+              3mm BOT PLATE  ►  │══════════════════│
+                                └──────────────────┘
+                                  └─── wheels ────┘
+```
+
+Total chassis height: **~18 mm** (3 + 12 + 3). Wheels (33 mm ⌀) protrude **7.5 mm above and below** the chassis equally → the bot is **invertible** and can drive on either face. Plates can be identical, no "top" or "bottom" distinction.
+
+### Material: PETG translucent
+
+| Property | Why it matters here |
+|---|---|
+| Impact resistant | Survives drops, motor vibration, table yeets |
+| Layer adhesion | No delamination under chassis stress |
+| ~75 °C glass transition | Fine for indoor robot use (PLA would soften in a hot car / direct sun) |
+| Easy to print | No warp, no ABS-style fumes |
+| **Translucent** | Internal LEDs glow through the chassis → the whole bot becomes a status indicator 💡 |
+
+### Print parameters
+
+| Setting | Value |
+|---|---|
+| Plate thickness | **3 mm** (4 mm if you want extra stiffness) |
+| Layer height | 0.2 mm body, 0.1 mm for crisp pocket walls |
+| Infill | 25–30 % gyroid |
+| Perimeters | 3–4 walls |
+| Orientation | Plates printed **flat** on the bed (strongest along load axes) |
+| Tolerance for press fits | +0.2–0.3 mm on pocket diameters (PETG extrudate is slightly wider than nozzle) |
+| Mounting | M2 / M3 heat-set inserts in printed bosses, or self-tap into bosses |
+
+### Build constraints
+
+Driving everything from "no component sticks above the chassis":
+
+- **Boards have no headers** — wires soldered directly to ESP32 pads (loses easy disassembly, gains height)
+- **LOLIN32 Lite footprint** (52 × 25 × 5 mm) fits comfortably in the 12 mm cavity
+- **TB6612FNG** (~25 × 25 × 4 mm) also fits flat
+- **LiPo battery** (height < 12 mm, confirmed by inspection) → fits anywhere in the cavity
+- **Cable channels** — 1.5 mm grooves in plate inner faces for routing wires
+
+### Side-access requirements (because invertible)
+
+The robot has no fixed top/bottom, so every external interface must be on the **side** of the chassis:
+
+- [ ] Micro-USB cutout (for programming + battery charging)
+- [ ] Power switch slot (optional — alternatively, plug/unplug JST battery)
+- [ ] Status LED light pipe / window (or rely on translucency)
+- [ ] Wheel wells (open cutouts in plate edges so wheels don't catch on the plate)
+
+### Design checklist
+
+- [ ] Half-pocket cutouts (top + bottom plates) for each of 4 motors — CNC-precision required for shaft co-axiality
+- [ ] LOLIN32 Lite pocket with USB-side facing chassis edge
+- [ ] TB6612FNG pocket
+- [ ] Battery pocket with retention tabs (or snug-fit rectangle)
+- [ ] Cable channels on inner plate faces
+- [ ] M2 / M3 screw bosses at 4 corners + center
+- [ ] Wheel-well cutouts on the long edges
+- [ ] Side USB-C / JST access slots
+- [ ] Optional: vent slots above TB6612FNG (probably unnecessary for hobby duty cycle)
+
+### Translucency affordance 💡
+
+Because the chassis is translucent PETG, **any LED placed inside the chassis becomes a chassis-wide glow**:
+
+- The existing `STATUS_LED` (GPIO 19) becomes a full-bot status indicator
+- Optional: add a short WS2812B / NeoPixel strip (5 LEDs ≈ €1) along the centerline → ambient lighting, direction indicators, low-battery pulse, etc. ESP32 drives NeoPixels off any GPIO using the `Adafruit_NeoPixel` or `FastLED` library; one data pin + 5V + GND.
+- Wall thickness affects glow: 2 mm walls = bright/visible LED, 4 mm walls = diffused even glow. Mix for accent vs. ambient.
