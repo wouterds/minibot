@@ -1,0 +1,22 @@
+* text=auto eol=lf
+
+# Treat firmware and CAD binaries as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.stl binary
+*.elf binary
+*.bin binary
+*.hex binary
+
+# Diff-friendly text
+*.svg text
+*.scad text
+*.cpp text
+*.h text
+*.py text
+*.md text
+*.json text
+*.yml text
+*.yaml text
+*.ini text
