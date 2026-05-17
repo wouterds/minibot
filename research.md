@@ -201,7 +201,27 @@ Implications:
 
 `STBY` → ESP32 `3V3`. `VM` → battery+. `VCC` → ESP32 `3V3`. All `GND` rails common (battery −, ESP32 GND, driver GND).
 
-Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) = 7 used. Huge headroom for future sensors (ultrasonic, IMU, encoders, etc.).
+Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) + 2 GPIO for I²C (21/22) = 9 used. Plenty of headroom for future sensors (ultrasonic, encoders, NeoPixels, etc.).
+
+## IMU for orientation detection
+
+A **GY-521 (MPU6050)** module sits on the I²C bus (SDA → GPIO 21, SCL → GPIO 22) and reports the gravity vector via its accelerometer. Because the chassis is invertible, drive direction needs to flip automatically when the bot is on its other face:
+
+- Right-side-up → accelerometer Z axis points one way → forward = +X
+- Upside-down → Z flips sign → "forward" stick should drive the wheels the other way
+- Left/right also swap when flipped
+
+The integration plan when the motors arrive is:
+
+```cpp
+bool flipped = imu::isUpsideDown();         // sign of accel Z
+if (flipped) {
+  forward = !forward;
+  std::swap(leftSpeed, rightSpeed);
+}
+```
+
+with ~200 ms hysteresis so a quick yeet during driving doesn't trigger a direction flip mid-stride. The MPU6050 also leaves room for future features (tilt-aware drive, crash detection, optional self-balance mode).
 
 ## Chassis
 
