@@ -41,6 +41,11 @@ void begin()
 
 void activate(Preset p)
 {
+  if (s_active == (int8_t)p)
+  {
+    off();
+    return;
+  }
   s_active = (int8_t)p;
   write(s_presets[p]);
 }
