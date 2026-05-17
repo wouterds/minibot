@@ -14,13 +14,13 @@ OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
 plate_length = 136
-plate_width = 130
+plate_width = 110
 wall_thick = 3
 
 motor_diameter = 12.2
 motor_length = 25
 motor_axle_pitch = 70
-motor_track = 50
+motor_track = 35
 
 wheel_diameter = 33
 wheel_width = 20

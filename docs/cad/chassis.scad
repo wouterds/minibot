@@ -17,7 +17,7 @@
 
 // Outer footprint
 plate_length = 136;     // mm — front-to-back (extra length up front for the driver)
-plate_width  = 130;     // mm — side-to-side
+plate_width  = 110;     // mm — side-to-side
 plate_thick  = 3;       // mm — flat floor thickness
 
 // Walls — 6 mm tall on each plate, meeting in the cavity centreline
@@ -28,7 +28,7 @@ wall_half_height = 6;
 motor_diameter   = 12.2;
 motor_length     = 25;
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
-motor_track      = 50;  // mm — side-to-side motor spacing (centre to centre)
+motor_track      = 35;  // mm — side-to-side motor spacing (centre to centre)
 
 // Pocket geometry (half-cylinder cut into the plate)
 pocket_depth     = motor_diameter / 2;
