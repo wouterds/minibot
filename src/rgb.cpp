@@ -14,7 +14,7 @@ struct Color
 static Color s_presets[4] = {
     {0, 255, 0},     // GREEN — Triangle
     {255, 0, 0},     // RED — Circle
-    {255, 105, 180}, // PINK — Square
+    {255, 0, 100},   // PINK — Square (no green = saturated bubblegum pink)
     {0, 0, 255},     // BLUE — Cross
 };
 
