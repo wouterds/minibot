@@ -222,22 +222,22 @@ Two identical "tray" plates that join open-face-to-open-face into a closed box. 
                                 └─────────────────────┘    invertible)
 ```
 
-The motors mount **shaft-inward** — bodies are tucked up against the side walls, shafts and wheels project into the interior of the chassis. The wheels (33 mm ⌀) poke out **only through cutouts in the top and bottom plates**, never through the sides. Wheels protrude **~7.5 mm above and below** the chassis floor/ceiling, so the bot drives the same right-side-up or upside-down (invertible).
+The motors mount **shaft-outward** — bodies sit toward the chassis centre, shafts and wheels point outward to the side walls. Wheels are tucked **just inside the wall** (a few millimetres of clearance), and they poke out **only through cutouts in the top and bottom plates** — nothing protrudes laterally. Wheels protrude **~7.5 mm above and below** the chassis floor/ceiling, so the bot drives the same right-side-up or upside-down (invertible).
 
 ### Dimensions
 
 | | |
 |---|---|
-| Plate length | **120 mm** (front-to-back) |
+| Plate length | **130 mm** (front-to-back) |
 | Plate width | **130 mm** (side-to-side) |
 | Plate thickness | 3 mm |
 | Wall thickness | 3 mm |
 | Wall height per plate | 6 mm (×2 = 12 mm cavity) |
 | Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
-| Motor track (centres) | **91 mm** (≈ chassis width − walls − clearance − motor length) |
+| Motor track (centres) | **50 mm** |
 | Motor axle pitch (front to rear) | 70 mm |
-| Wheel positions | inside the chassis, ~18 mm from centre on each side |
-| Wheel cutout per plate | ~35 × 22 mm rounded slot (×4) |
+| Wheel positions | shaft-outward from motors; wheel centres at ±47.5 mm in Y |
+| Wheel cutout per plate | ~30 × 22 mm rounded slot (×4) |
 | Mounting | M3 heat-set inserts in corner bosses |
 | Side access | micro-USB slot in the front wall |
 
@@ -284,7 +284,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 ### Design checklist (current chassis.scad reflects all of this)
 
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
-- [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft inward)
+- [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
 - [x] Electronics recesses: ESP32 (52 × 25 mm), TB6612 (26 × 26 mm), battery (45 × 25 mm)
 - [x] Mounting holes through the corner walls for M3 heat-set inserts
