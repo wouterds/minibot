@@ -16,7 +16,7 @@
 // ─── parameters ──────────────────────────────────────────────────────
 
 // Outer footprint
-plate_length = 130;     // mm — front-to-back
+plate_length = 136;     // mm — front-to-back (extra length up front for the driver)
 plate_width  = 130;     // mm — side-to-side
 plate_thick  = 3;       // mm — flat floor thickness
 
@@ -46,8 +46,8 @@ esp_length = 52;
 esp_width  = 25;
 esp_pocket_depth = 2;
 
-driver_length = 26;
-driver_width  = 26;
+driver_length = 22;
+driver_width  = 22;
 driver_pocket_depth = 2;
 
 battery_length = 45;
@@ -136,12 +136,15 @@ module mount_holes()
 
 module usb_slot()
 {
+  // Slot through the left side wall (+Y), aligned with the ESP32's
+  // micro-USB connector at x = +15 (ESP32 is rotated 90° so its short
+  // sides point along Y).
   translate([
-    -plate_length / 2 - 0.1,
-    -usb_slot_width / 2,
+    15 - usb_slot_width / 2,
+    plate_width / 2 - wall_thick - 0.1,
     plate_thick + (wall_half_height - usb_slot_height) / 2
   ])
-    cube([wall_thick + 0.2, usb_slot_width, usb_slot_height]);
+    cube([usb_slot_width, wall_thick + 0.2, usb_slot_height]);
 }
 
 module plate()
@@ -174,10 +177,13 @@ module plate()
     // Wheel cutouts through the plate
     for (p = wheel_positions) wheel_cutout(p);
 
-    // Electronics recesses (all in the central column at x=0)
-    rect_pocket(esp_width,     esp_length,     esp_pocket_depth,     x=0, y=0);
-    rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=0, y=+25);
-    rect_pocket(battery_width, battery_length, battery_pocket_depth, x=0, y=-25);
+    // Electronics recesses (rotated for balanced weight distribution):
+    //   - TB6612FNG up front between the front wall and the front motor pair
+    //   - ESP32 + battery rotated 90° (long axis along Y), placed side-by-side
+    //     in the central X strip between the motor pairs
+    rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=0);
+    rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
+    rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
 
     // USB slot through the front wall
     usb_slot();

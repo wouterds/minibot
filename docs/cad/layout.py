@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
-plate_length = 130
+plate_length = 136
 plate_width = 130
 wall_thick = 3
 
@@ -29,7 +29,7 @@ motor_center_y = motor_track / 2
 wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
 
 esp_length, esp_width = 52, 25
-driver_length, driver_width = 26, 26
+driver_length, driver_width = 22, 22
 battery_length, battery_width = 45, 25
 
 motor_positions = [
@@ -90,33 +90,41 @@ def render() -> None:
             arrowprops=dict(arrowstyle="->", color="#777", lw=1.2),
         )
 
-    # ESP32 (centre)
+    # TB6612 (front, between the front wall and front motors)
+    drv_x = -53
     ax.add_patch(patches.Rectangle(
-        (-esp_length / 2, -esp_width / 2),
-        esp_length, esp_width,
-        linewidth=1, edgecolor="#055", facecolor="#7ec8c8", alpha=0.85,
-    ))
-    ax.text(0, 0, "ESP32 LOLIN32 Lite\n(52×25)", ha="center", va="center", fontsize=7, color="#022")
-
-    # TB6612 (above ESP32)
-    ax.add_patch(patches.Rectangle(
-        (-driver_length / 2, 25 - driver_width / 2),
+        (drv_x - driver_length / 2, -driver_width / 2),
         driver_length, driver_width,
         linewidth=1, edgecolor="#722", facecolor="#e08e8e", alpha=0.85,
     ))
-    ax.text(0, 25, "TB6612\n(26×26)", ha="center", va="center", fontsize=7, color="#311")
+    ax.text(drv_x, 0, f"TB6612\n({driver_length}×{driver_width})",
+            ha="center", va="center", fontsize=7, color="#311")
 
-    # Battery (below ESP32)
+    # ESP32 (rotated 90°, right of centre)
+    esp_x = 15
     ax.add_patch(patches.Rectangle(
-        (-battery_length / 2, -25 - battery_width / 2),
-        battery_length, battery_width,
+        (esp_x - esp_width / 2, -esp_length / 2),
+        esp_width, esp_length,
+        linewidth=1, edgecolor="#055", facecolor="#7ec8c8", alpha=0.85,
+    ))
+    ax.text(esp_x, 0, "ESP32\nLOLIN32 Lite\n(25×52)",
+            ha="center", va="center", fontsize=7, color="#022")
+
+    # Battery (rotated 90°, left of centre)
+    bat_x = -15
+    ax.add_patch(patches.Rectangle(
+        (bat_x - battery_width / 2, -battery_length / 2),
+        battery_width, battery_length,
         linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
     ))
-    ax.text(0, -25, "1S LiPo 1200mAh\n(45×25×7)", ha="center", va="center", fontsize=7, color="#311")
+    ax.text(bat_x, 0, "1S LiPo\n1200mAh\n(25×45)",
+            ha="center", va="center", fontsize=7, color="#311")
 
-    # USB slot in the front wall
-    ax.plot([-plate_length / 2 + 0.5, -plate_length / 2 + 0.5], [-6, 6], color="red", lw=3)
-    ax.text(-plate_length / 2 - 3, 0, "USB", ha="right", va="center", fontsize=7, color="red")
+    # USB slot in the left side wall (at ESP32's X position)
+    ax.plot([esp_x - 6, esp_x + 6],
+            [plate_width / 2 - 0.5, plate_width / 2 - 0.5],
+            color="red", lw=3)
+    ax.text(esp_x, plate_width / 2 + 4, "USB", ha="center", va="center", fontsize=7, color="red")
 
     # Corner mount holes
     for sx in (-1, 1):
@@ -126,14 +134,14 @@ def render() -> None:
                 1.6, color="#333", zorder=10,
             ))
 
-    # Direction arrow
+    # Driving direction arrow (front of robot = TB6612 side)
     ax.annotate(
-        "", xy=(-plate_length / 2 - 4, plate_width / 2 - 5),
-        xytext=(-plate_length / 2 - 4, plate_width / 2 - 15),
+        "", xy=(-plate_length / 2 - 12, 0),
+        xytext=(-plate_length / 2 - 2, 0),
         arrowprops=dict(arrowstyle="->", color="#888", lw=1.5),
     )
-    ax.text(-plate_length / 2 - 8, plate_width / 2 - 10,
-            "front", fontsize=8, color="#888", va="center", ha="right")
+    ax.text(-plate_length / 2 - 14, 0, "front",
+            fontsize=8, color="#888", va="center", ha="right")
 
     ax.set_xlim(-plate_length / 2 - 18, plate_length / 2 + 18)
     ax.set_ylim(-plate_width / 2 - 18, plate_width / 2 + 18)
