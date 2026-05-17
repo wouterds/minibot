@@ -120,11 +120,10 @@ def render() -> None:
     ax.text(bat_x, 0, "1S LiPo\n1200mAh\n(25×45)",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # USB slot in the left side wall (at ESP32's X position)
-    ax.plot([esp_x - 6, esp_x + 6],
-            [plate_width / 2 - 0.5, plate_width / 2 - 0.5],
-            color="red", lw=3)
-    ax.text(esp_x, plate_width / 2 + 4, "USB", ha="center", va="center", fontsize=7, color="red")
+    # USB slot in the back wall (+X), centred
+    ax.plot([plate_length / 2 - 0.5, plate_length / 2 - 0.5],
+            [-6, 6], color="red", lw=3)
+    ax.text(plate_length / 2 + 4, 0, "USB", ha="left", va="center", fontsize=7, color="red")
 
     # Corner mount holes
     for sx in (-1, 1):

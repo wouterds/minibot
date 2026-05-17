@@ -136,15 +136,14 @@ module mount_holes()
 
 module usb_slot()
 {
-  // Slot through the left side wall (+Y), aligned with the ESP32's
-  // micro-USB connector at x = +15 (ESP32 is rotated 90° so its short
-  // sides point along Y).
+  // Slot through the back wall (+X), centred. The ESP32's micro-USB
+  // connector reaches it through a short internal cable / extension.
   translate([
-    15 - usb_slot_width / 2,
-    plate_width / 2 - wall_thick - 0.1,
+    plate_length / 2 - wall_thick - 0.1,
+    -usb_slot_width / 2,
     plate_thick + (wall_half_height - usb_slot_height) / 2
   ])
-    cube([usb_slot_width, wall_thick + 0.2, usb_slot_height]);
+    cube([wall_thick + 0.2, usb_slot_width, usb_slot_height]);
 }
 
 module plate()
