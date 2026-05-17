@@ -107,7 +107,6 @@ Quick summary — see [`docs/bom.md`](docs/bom.md) for the full list with source
 
 - **macOS / Linux / Windows** with VSCode + [PlatformIO IDE](https://platformio.org/platformio-ide)
 - [`uv`](https://docs.astral.sh/uv/) (for the PS3 pairing script)
-- [`lefthook`](https://github.com/evilmartians/lefthook) (`brew install lefthook` — for commit hooks)
 - USB cable for first programming
 
 ### Build and flash
@@ -115,7 +114,6 @@ Quick summary — see [`docs/bom.md`](docs/bom.md) for the full list with source
 ```sh
 git clone https://github.com/wouterds/minibot
 cd minibot
-lefthook install      # optional, sets up commit-msg hook
 
 # in VSCode: PlatformIO sidebar → Project Tasks → esp32dev → Upload
 # or:
