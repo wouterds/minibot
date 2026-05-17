@@ -54,6 +54,11 @@ battery_length = 45;
 battery_width  = 25;
 battery_pocket_depth = 2;
 
+// GY-521 (MPU6050) IMU breakout
+imu_length = 21;
+imu_width  = 16;
+imu_pocket_depth = 2;
+
 // Corner mount holes (M3 heat-set inserts)
 mount_hole_d     = 3.2;
 mount_hole_inset = 7;
@@ -180,9 +185,11 @@ module plate()
     //   - TB6612FNG up front between the front wall and the front motor pair
     //   - ESP32 + battery rotated 90° (long axis along Y), placed side-by-side
     //     in the central X strip between the motor pairs
+    //   - GY-521 IMU behind the rear motors, near the back-wall USB slot
     rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=0);
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
+    rect_pocket(imu_width,     imu_length,     imu_pocket_depth,     x=+53, y=0);
 
     // USB slot through the front wall
     usb_slot();

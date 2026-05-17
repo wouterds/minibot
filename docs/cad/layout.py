@@ -31,6 +31,7 @@ wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
 esp_length, esp_width = 52, 25
 driver_length, driver_width = 22, 22
 battery_length, battery_width = 45, 25
+imu_length, imu_width = 21, 16
 
 motor_positions = [
     (-motor_axle_pitch / 2,  motor_center_y),
@@ -119,6 +120,16 @@ def render() -> None:
     ))
     ax.text(bat_x, 0, "1S LiPo\n1200mAh\n(25×45)",
             ha="center", va="center", fontsize=7, color="#311")
+
+    # GY-521 IMU behind the rear motors, before the back wall
+    imu_x = 53
+    ax.add_patch(patches.Rectangle(
+        (imu_x - imu_length / 2, -imu_width / 2),
+        imu_length, imu_width,
+        linewidth=1, edgecolor="#444", facecolor="#bcd", alpha=0.85,
+    ))
+    ax.text(imu_x, 0, f"GY-521\n({imu_length}×{imu_width})",
+            ha="center", va="center", fontsize=6.5, color="#113")
 
     # USB slot in the back wall (+X), centred
     ax.plot([plate_length / 2 - 0.5, plate_length / 2 - 0.5],
