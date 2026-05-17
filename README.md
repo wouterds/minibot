@@ -11,7 +11,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **PS3 DualShock 3 controller** as the wireless remote (BT Classic + HID)
 - **4× N20 6 V / 400 RPM** gear motors, paired left/right through a single **TB6612FNG** dual H-bridge
 - **1S LiPo 3.7 V / 1200 mAh**, ~1 hour of cruising
-- **3D-printed PETG translucent chassis** — fully enclosed (3 mm walls all around), invertible, ~136 × 130 × 18 mm
+- **3D-printed PETG translucent chassis** — fully enclosed (3 mm walls all around), invertible, ~136 × 110 × 18 mm
 
 ## System
 
