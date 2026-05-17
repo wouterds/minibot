@@ -7,16 +7,21 @@ namespace config
 
 constexpr uint8_t STATUS_LED = 19;
 
-constexpr uint8_t LED_TRIANGLE = 17;
-constexpr uint8_t LED_CIRCLE = 33;
-constexpr uint8_t LED_CROSS = 32;
-constexpr uint8_t LED_SQUARE = 25;
+constexpr uint8_t RGB_R = 25;
+constexpr uint8_t RGB_G = 26;
+constexpr uint8_t RGB_B = 27;
 
-constexpr uint8_t LED_PINS[4] = {LED_TRIANGLE, LED_CIRCLE, LED_CROSS, LED_SQUARE};
-constexpr uint8_t LED_CHANNELS[4] = {0, 1, 2, 3};
+constexpr uint8_t BUZZER = 32;
+
+constexpr uint8_t CH_R = 0;
+constexpr uint8_t CH_G = 1;
+constexpr uint8_t CH_B = 2;
+constexpr uint8_t CH_BUZZER = 3;
 
 constexpr uint32_t PWM_FREQ = 5000;
+constexpr uint32_t BUZZER_FREQ = 1000;
 constexpr uint8_t PWM_RES_BITS = 8;
+
 constexpr uint8_t STICK_DEAD_ZONE = 16;
 constexpr uint8_t RAMP_SCALE = 32;
 
