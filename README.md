@@ -16,7 +16,15 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 
 ## System
 
-![System block diagram](docs/schematics/system.png)
+```mermaid
+flowchart LR
+    PS3([PS3 Controller]) -->|HID / Bluetooth Classic| ESP[ESP32<br/>LOLIN32 Lite]
+    IMU[GY-521 IMU] -->|I²C<br/>orientation| ESP
+    ESP -->|PWM + direction<br/>3.3 V logic| DRV[TB6612FNG]
+    DRV -->|VM rail| MOT[4× N20 motors<br/>2 paired per side]
+    BAT[(1S LiPo<br/>3.7 V / 1200 mAh)] -->|VBAT| ESP
+    BAT -.->|VM raw battery| DRV
+```
 
 ## Wiring
 
@@ -39,11 +47,30 @@ The two motors on each side are wired in parallel to a single driver channel —
 
 ## Power
 
-![Power schematic](docs/schematics/power.png)
+```mermaid
+flowchart LR
+    USB([USB 5 V]) -->|Vbus| TP[TP4054<br/>charge IC]
+    USB -.->|powers ESP32<br/>when plugged in| LDO[LOLIN32<br/>3.3 V LDO]
+    TP -->|trickle charge| BAT[(1S LiPo<br/>3.0–4.2 V)]
+    BAT -->|VBAT| LDO
+    BAT -->|VBAT raw| VM[TB6612 VM]
+    LDO -->|3.3 V| LOGIC[ESP32 core<br/>+ TB6612 VCC/STBY]
+    VM -->|3–4 A peak| MOT[4× N20 motors]
+```
 
 When USB is plugged in, the LOLIN32's onboard **TP4054** charges the battery while the ESP32 runs from USB. Unplug USB and the battery seamlessly takes over via the 3.3 V LDO. The TB6612FNG's motor supply (`VM`) always comes from raw battery — motor current never touches the USB cable or the LDO.
 
-Schematics are generated from LaTeX sources in [`docs/schematics/`](docs/schematics/). Rebuild with `./docs/schematics/generate.sh` (requires [`tectonic`](https://tectonic-typesetting.github.io) and `pdftoppm`).
+## Electronic schematic
+
+![Circuit schematic](docs/schematics/circuit.png)
+
+Real KiCad schematic ([`docs/schematics/circuit.kicad_sch`](docs/schematics/circuit.kicad_sch)) generated from a Python builder ([`docs/schematics/build_kicad.py`](docs/schematics/build_kicad.py)) that places library symbols and labels at explicit coordinates. Rebuild with:
+
+```sh
+./docs/schematics/build_kicad.py
+```
+
+(Requires KiCad installed at `/Applications/KiCad.app` for `kicad-cli`, plus `pdftoppm` from `poppler`.) Open the `.kicad_sch` file in the KiCad GUI to edit interactively.
 
 ## Chassis
 
