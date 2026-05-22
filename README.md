@@ -62,17 +62,6 @@ flowchart LR
 
 USB-C plugs into the **TP4056** board: it charges the battery (constant-current → constant-voltage) and the paired **DW01A** protects against overcharge, overdischarge, overcurrent, and short-circuit. The **OUT+ / OUT-** terminals are the protected battery output that feeds both the LOLIN32's 3.3 V LDO and the TB6612's VM rail. The LOLIN32's onboard TP4054 + JST connector is left unused — battery only ever connects to the TP4056's `B+ / B-`.
 
-## Electronic schematic
-
-![Circuit schematic](docs/schematics/circuit.png)
-
-Real KiCad schematic ([`docs/schematics/circuit.kicad_sch`](docs/schematics/circuit.kicad_sch)) generated from a Python builder ([`docs/schematics/build_kicad.py`](docs/schematics/build_kicad.py)) that places library symbols and labels at explicit coordinates. Rebuild with:
-
-```sh
-./docs/schematics/build_kicad.py
-```
-
-(Requires KiCad installed at `/Applications/KiCad.app` for `kicad-cli`, plus `pdftoppm` from `poppler`.) Open the `.kicad_sch` file in the KiCad GUI to edit interactively.
 
 ## Chassis
 
