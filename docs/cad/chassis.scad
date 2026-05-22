@@ -197,7 +197,7 @@ module plate()
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
     rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=+58, y=0);
-    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=+50, y=+25);
+    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=+50, y=+20);
 
     // USB slot through the front wall
     usb_slot();

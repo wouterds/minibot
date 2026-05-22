@@ -133,7 +133,7 @@ def render() -> None:
             ha="center", va="center", fontsize=6.5, color="#013")
 
     # GY-521 IMU just inboard of TP4056 in the back strip
-    imu_x, imu_y = 50, 25
+    imu_x, imu_y = 50, 20
     ax.add_patch(patches.Rectangle(
         (imu_x - imu_length / 2, imu_y - imu_width / 2),
         imu_length, imu_width,
