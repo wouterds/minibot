@@ -9,3 +9,11 @@
 .vscode/launch.json
 .vscode/ipch/
 .vscode/.browse.c_cpp.db*
+
+# OpenSCAD / CAD outputs (regeneratable from sources)
+docs/cad/*.stl
+docs/cad/*.3mf
+
+# Python script caches
+__pycache__/
+*.pyc
