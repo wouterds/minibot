@@ -14,11 +14,11 @@ Running log of what we learned while building minibot. Updated as we go.
 - **Board**: WeMos LOLIN32 Lite (or clone) — confirmed by visible silkscreen + features
 - **Footprint**: ~52 × 25 × 5 mm (no headers soldered, direct-wire build)
 - **Onboard**:
-  - JST PH2.0 connector for 1S LiPo (top edge)
-  - TP4054 LiPo charge IC — battery charges automatically when USB is plugged in
+  - JST PH2.0 connector for 1S LiPo (top edge) — **unused** in current build (battery routes through TP4056 instead)
+  - TP4054 LiPo charge IC — **bypassed**; charging handled by external TP4056 + DW01A board
   - 3.3V LDO regulator
   - CH340C USB-serial
-  - Micro-USB connector
+  - Micro-USB connector — used for programming only
   - RST button
   - PCB antenna (no external connector)
 - **Power pins exposed**:
@@ -158,18 +158,39 @@ Our bare N20s have **no encoders**, so we run **open-loop** — we command a dir
 ## Power topology
 
 ```
-Battery+ ─┬── ESP32 VIN  (logic via onboard LDO → 3.3V rail)
-          └── TB6612 VM  (motor supply, both drivers)
+USB-C ── TP4056 ── B+/B- ── Battery
+              └── OUT+/OUT- ──┬── LOLIN32 + pin (VBAT → onboard 3.3V LDO)
+                              └── TB6612 VM (motor supply)
 
-Battery− ─── ESP32 GND ─── TB6612 GND (both drivers)  ← MUST be common
+GND ── common across battery −, TP4056 OUT−, LOLIN32 GND, TB6612 GND
 ```
 
-- **VM**: motor power, 3–13.5 V (battery directly)
-- **VCC**: logic power, 3.3 V (from ESP32)
+The **TP4056 USB-C board** (with onboard DW01A protection IC) replaces the LOLIN32's built-in charging path:
+
+- **B+ / B-**: battery terminals (TP4056 charges the cell here)
+- **OUT+ / OUT-**: protected battery output. Cuts off automatically on overcharge (>4.25 V), overdischarge (<2.4 V), overcurrent or short-circuit.
+- USB-C provides 5 V to charge — also passes through to the load while charging, so the bot can be driven from USB.
+
+Why add the TP4056 if the LOLIN32 already has a TP4054 charge IC?
+
+| Feature | LOLIN32 onboard | TP4056 board |
+|---|---|---|
+| Charge current control | ✅ | ✅ |
+| Overcharge protection | ❌ (TP4054 stops at 4.2 V but no protection cutoff) | ✅ DW01A cuts at 4.25 V |
+| Overdischarge protection | ❌ | ✅ DW01A cuts at 2.4 V |
+| Short-circuit protection | ❌ | ✅ |
+| USB connector | micro-USB | USB-C |
+
+For a bot that gets thrown around (and where you really don't want a LiPo to over-discharge), TP4056 is worth the €1.50.
+
+- **VM**: motor power, 3–13.5 V (from TP4056 OUT+, which is battery voltage)
+- **VCC**: logic power, 3.3 V (from LOLIN32's onboard LDO, fed from `+` pin)
 - **STBY**: tie to 3.3 V to keep the driver enabled (or wire to a GPIO for software sleep)
-- **Decoupling**: a 100–470 µF cap across VM/GND helps absorb stall-current dips. Most breakouts have a small cap on-board but it's marginal for stalled N20s.
+- **Decoupling**: a 100–470 µF cap across VM/GND helps absorb stall-current dips.
 
 ⚠️ Never pull motor current through ESP32's `VIN` or `3V3` pin — onboard LDO maxes out around 800 mA and the input diode is tiny. Motors get their power *directly* from the battery via the driver's `VM`.
+
+⚠️ Don't plug the battery into both the LOLIN32's JST AND the TP4056 B+ at the same time — pick one path. We use TP4056 only.
 
 ## Paired motors per side
 
