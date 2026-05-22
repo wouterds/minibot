@@ -7,12 +7,13 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 
 ## Overview
 
-- **ESP32 (WeMos LOLIN32 Lite)** — WiFi + Bluetooth Classic + onboard LiPo charging
+- **ESP32 (WeMos LOLIN32 Lite)** — WiFi + Bluetooth Classic
 - **PS3 DualShock 3 controller** as the wireless remote (BT Classic + HID)
 - **4× N20 6 V / 400 RPM** gear motors, paired left/right through a single **TB6612FNG** dual H-bridge
 - **GY-521 (MPU6050) IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
+- **TP4056 USB-C charge + DW01A protection board** — handles charging, overcharge, overdischarge and short-circuit protection
 - **1S LiPo 3.7 V / 1200 mAh**, ~1 hour of cruising
-- **3D-printed PETG translucent chassis** — fully enclosed (3 mm walls all around), invertible, ~136 × 110 × 18 mm
+- **3D-printed PETG translucent chassis** — fully enclosed (3 mm walls all around), invertible, ~150 × 110 × 18 mm
 
 ## System
 
@@ -22,8 +23,9 @@ flowchart LR
     IMU[GY-521 IMU] -->|I²C<br/>orientation| ESP
     ESP -->|PWM + direction<br/>3.3 V logic| DRV[TB6612FNG]
     DRV -->|VM rail| MOT[4× N20 motors<br/>2 paired per side]
-    BAT[(1S LiPo<br/>3.7 V / 1200 mAh)] -->|VBAT| ESP
-    BAT -.->|VM raw battery| DRV
+    BAT[(1S LiPo<br/>3.7 V / 1200 mAh)] -->|B+ / B-| TP[TP4056<br/>charge + protect]
+    TP -->|OUT+ protected VBAT| ESP
+    TP -.->|OUT+ to VM| DRV
 ```
 
 ## Wiring
@@ -32,7 +34,7 @@ flowchart LR
 |---|---|---|
 | `3V3` | TB6612 `VCC` + `STBY`, GY-521 `VCC` | Logic supply, chip enable |
 | `GND` | All `GND` | Common ground |
-| `VBAT (+)` | TB6612 `VM` | Motor supply (battery, 3–4.2 V) |
+| `+` (VBAT) | TB6612 `VM` (from TP4056 `OUT+`) | Motor supply, protected battery (3–4.2 V) |
 | `GPIO 19` | Status LED | Connection indicator |
 | `GPIO 21` | GY-521 `SDA` | I²C data (IMU) |
 | `GPIO 22` | GY-521 `SCL` | I²C clock (IMU) |
@@ -49,16 +51,16 @@ The two motors on each side are wired in parallel to a single driver channel —
 
 ```mermaid
 flowchart LR
-    USB([USB 5 V]) -->|Vbus| TP[TP4054<br/>charge IC]
-    USB -.->|powers ESP32<br/>when plugged in| LDO[LOLIN32<br/>3.3 V LDO]
-    TP -->|trickle charge| BAT[(1S LiPo<br/>3.0–4.2 V)]
-    BAT -->|VBAT| LDO
-    BAT -->|VBAT raw| VM[TB6612 VM]
+    USBC([USB-C 5 V]) -->|Vbus| TP[TP4056<br/>charge IC]
+    TP -->|charge| BAT[(1S LiPo<br/>3.0–4.2 V)]
+    BAT --> DW[DW01A<br/>protection IC]
+    DW -->|OUT+ protected| LDO[LOLIN32<br/>3.3 V LDO]
+    DW -->|OUT+ raw| VM[TB6612 VM]
     LDO -->|3.3 V| LOGIC[ESP32 core<br/>+ TB6612 VCC/STBY]
     VM -->|3–4 A peak| MOT[4× N20 motors]
 ```
 
-When USB is plugged in, the LOLIN32's onboard **TP4054** charges the battery while the ESP32 runs from USB. Unplug USB and the battery seamlessly takes over via the 3.3 V LDO. The TB6612FNG's motor supply (`VM`) always comes from raw battery — motor current never touches the USB cable or the LDO.
+USB-C plugs into the **TP4056** board: it charges the battery (constant-current → constant-voltage) and the paired **DW01A** protects against overcharge, overdischarge, overcurrent, and short-circuit. The **OUT+ / OUT-** terminals are the protected battery output that feeds both the LOLIN32's 3.3 V LDO and the TB6612's VM rail. The LOLIN32's onboard TP4054 + JST connector is left unused — battery only ever connects to the TP4056's `B+ / B-`.
 
 ## Electronic schematic
 
@@ -109,8 +111,9 @@ Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with ve
 | N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
 | SLT20 33×20 mm wheel | 4 | €7.20 |
 | GY-521 (MPU6050) IMU module | 1 | €1.50 |
+| TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
 | 1S LiPo 1200 mAh | 1 | €6 |
 | PETG translucent (chassis) | ~50 g | €1–2 |
 | M3 hardware, wire, heat-shrink | — | €5–8 |
 | PS3 controller (reuse) | 1 | €0–20 |
-| **Total (minimum viable build)** | | **~€32–42** |
+| **Total (minimum viable build)** | | **~€33–44** |
