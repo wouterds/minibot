@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
-plate_length = 136
+plate_length = 150
 plate_width = 110
 wall_thick = 3
 
@@ -32,6 +32,7 @@ esp_length, esp_width = 52, 25
 driver_length, driver_width = 22, 22
 battery_length, battery_width = 45, 25
 imu_length, imu_width = 21, 16
+tp4056_length, tp4056_width = 28, 17
 
 motor_positions = [
     (-motor_axle_pitch / 2,  motor_center_y),
@@ -121,20 +122,30 @@ def render() -> None:
     ax.text(bat_x, 0, "1S LiPo\n1200mAh\n(25×45)",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # GY-521 IMU behind the rear motors, before the back wall
-    imu_x = 53
+    # TP4056 USB-C charge board against the back wall
+    tp_x, tp_y = 58, 0
     ax.add_patch(patches.Rectangle(
-        (imu_x - imu_length / 2, -imu_width / 2),
+        (tp_x - tp4056_length / 2, tp_y - tp4056_width / 2),
+        tp4056_length, tp4056_width,
+        linewidth=1, edgecolor="#136", facecolor="#9bd", alpha=0.85,
+    ))
+    ax.text(tp_x, tp_y, f"TP4056\nUSB-C\n({tp4056_length}×{tp4056_width})",
+            ha="center", va="center", fontsize=6.5, color="#013")
+
+    # GY-521 IMU just inboard of TP4056 in the back strip
+    imu_x, imu_y = 50, 25
+    ax.add_patch(patches.Rectangle(
+        (imu_x - imu_length / 2, imu_y - imu_width / 2),
         imu_length, imu_width,
         linewidth=1, edgecolor="#444", facecolor="#bcd", alpha=0.85,
     ))
-    ax.text(imu_x, 0, f"GY-521\n({imu_length}×{imu_width})",
+    ax.text(imu_x, imu_y, f"GY-521\n({imu_length}×{imu_width})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
-    # USB slot in the back wall (+X), centred
+    # USB-C slot in back wall (TP4056 charging)
     ax.plot([plate_length / 2 - 0.5, plate_length / 2 - 0.5],
             [-6, 6], color="red", lw=3)
-    ax.text(plate_length / 2 + 4, 0, "USB", ha="left", va="center", fontsize=7, color="red")
+    ax.text(plate_length / 2 + 4, 0, "USB-C\n(charge)", ha="left", va="center", fontsize=7, color="red")
 
     # Corner mount holes
     for sx in (-1, 1):

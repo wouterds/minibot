@@ -16,7 +16,7 @@
 // ─── parameters ──────────────────────────────────────────────────────
 
 // Outer footprint
-plate_length = 136;     // mm — front-to-back (extra length up front for the driver)
+plate_length = 150;     // mm — front-to-back (extra length to fit TP4056 in the back)
 plate_width  = 110;     // mm — side-to-side
 plate_thick  = 3;       // mm — flat floor thickness
 
@@ -58,6 +58,11 @@ battery_pocket_depth = 2;
 imu_length = 21;
 imu_width  = 16;
 imu_pocket_depth = 2;
+
+// TP4056 USB-C charging + protection board
+tp4056_length = 28;
+tp4056_width  = 17;
+tp4056_pocket_depth = 2;
 
 // Corner mount holes (M3 heat-set inserts)
 mount_hole_d     = 3.2;
@@ -183,13 +188,16 @@ module plate()
 
     // Electronics recesses (rotated for balanced weight distribution):
     //   - TB6612FNG up front between the front wall and the front motor pair
-    //   - ESP32 + battery rotated 90° (long axis along Y), placed side-by-side
-    //     in the central X strip between the motor pairs
-    //   - GY-521 IMU behind the rear motors, near the back-wall USB slot
+    //   - ESP32 + battery rotated 90° (long axis along Y), side-by-side in
+    //     the central X strip between the motor pairs
+    //   - TP4056 USB-C charge board against the back wall (USB-C aligned
+    //     with the slot in the wall)
+    //   - GY-521 IMU just inboard of the TP4056 in the back strip
     rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=0);
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
-    rect_pocket(imu_width,     imu_length,     imu_pocket_depth,     x=+53, y=0);
+    rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=+58, y=0);
+    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=+50, y=+25);
 
     // USB slot through the front wall
     usb_slot();
