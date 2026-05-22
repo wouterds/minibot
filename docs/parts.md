@@ -11,9 +11,10 @@ Everything needed to build a minibot from scratch. Prices are rough Euro estimat
 | 4 | **N20 6V 400 RPM micro metal gearmotor**, 20 mm shaft, D-cut | Get them all from one listing so they're matched. Search "N20 6V 400rpm 20mm shaft". | €2.50 | €10 |
 | 4 | **SLT20 33×20 mm wheel**, D-shaft hub | Hub depth ~12–15 mm; matches the 20 mm shaft motor. | €1.80 | €7.20 |
 | 1 | **GY-521 (MPU6050) IMU module** | 6-axis accel + gyro on I²C. Used to detect upside-down and auto-flip drive direction. Spare buying recommended — 5 for ~€1.50 each. | €1.50 | €1.50 |
-| 1 | **1S LiPo 3.7 V 1200 mAh** pouch with JST PH2.0 connector | Wing or quadcopter style packs work well. <8 mm thick fits the cavity. | €6 | €6 |
+| 1 | **TP4056 USB-C charge + DW01A protection board** (the "18650 Type-C" board) | Charges the battery via USB-C and protects against overcharge / overdischarge / overcurrent / short-circuit. OUT+ / OUT- feed the load (replaces the LOLIN32's onboard charger path). | €1–2 | €1.50 |
+| 1 | **1S LiPo 3.7 V 1200 mAh** pouch | <8 mm thick fits the cavity. Wires solder directly to TP4056 B+ / B-. | €6 | €6 |
 | 1 | **PS3 controller** (DualShock 3, original or SHANWAN clone) | Reuse one you already have. SHANWAN clones are €15–25 new. | €0–20 | €0 |
-| | | | **electronics** | **€32–55** |
+| | | | **electronics** | **€33–57** |
 
 ## Mechanical / fasteners
 
@@ -37,7 +38,7 @@ Everything needed to build a minibot from scratch. Prices are rough Euro estimat
 
 | Tier | What you get | Estimated cost |
 |---|---|---:|
-| **Minimum viable** (reuse PS3 controller, 1 driver only) | A working invertible 4WD bot | **~€32–42** |
+| **Minimum viable** (reuse PS3 controller, 1 driver only) | A working invertible 4WD bot | **~€33–44** |
 | **Comfortable** (spare driver, new controller, extras) | Same bot + spares + buffer | **~€55–80** |
 | **Loaded** (all add-ons) | Bot with NeoPixels + ultrasonic + encoders | **~€80–110** |
 
