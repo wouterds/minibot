@@ -22,8 +22,8 @@ Running log of what we learned while building minibot. Updated as we go.
   - RST button
   - PCB antenna (no external connector)
 - **Power pins exposed**:
-  - `+` (next to JST) — raw battery voltage (3.0–4.2V), perfect for feeding TB6612FNG `VM`
-  - `3V` — regulated 3.3V, for TB6612FNG `VCC` and `STBY`
+  - `+` (next to JST) — raw battery voltage (3.0–4.2V), perfect for feeding DRV8833 `VM`
+  - `3V` — regulated 3.3V, for DRV8833 `SLP` (sleep/enable) and IMU `VCC`
   - `GND` — common ground
 - **Pin labels visible**: `UP` (= GPIO 36 / SENSOR_VP), `UN` (= GPIO 39 / SENSOR_VN), `EN`, plus GPIOs 0, 2, 4, 5, 12–19, 22, 23, 25–27, 32–35
 
@@ -39,21 +39,34 @@ Running log of what we learned while building minibot. Updated as we go.
 - **Shaft length**: 20mm to match deep-hub SLT20-style wheels (33×20mm). Standard ~9mm shafts would slip in deep hubs.
 - **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with 33mm wheels: ~1.2 km/h cruise, ~1.4 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~2.4 km/h.
 - **Visible gear stages identical across all 4** → same gear ratio → same output RPM at same voltage.
-- **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within TB6612FNG's 1.2 A continuous / 3 A peak window.
+- **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within DRV8833's 1.5 A continuous / 2 A peak window.
 - **Encoders**: none — open-loop control only (we command, we don't sense).
 
-### Motor driver: TB6612FNG
+### Motor driver: DRV8833
 
 Picked over the alternatives for our 4× N20 setup:
 
-| Driver | $ for 2× | Continuous | Peak | Notes |
+| Driver | Price / unit | Continuous | Peak | Notes |
 |---|---|---|---|---|
-| **TB6612FNG** ✅ | ~$4–6 | 1.2 A / ch | 3 A | MOSFET, clean API (separate PWM pin), most libs/tutorials |
-| DRV8833 | ~$2–4 | 1.5 A / ch | 3 A (parallel) | Cheaper, but weirder API (PWM on direction pins) |
-| L298N | ~$3 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
-| L9110S / MX1508 | ~$1–2 | 800 mA / ch | — | Marginal for stalled N20s |
+| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A (3 A paralleled) | MOSFET, compact (18.5 × 11 mm), no separate VCC needed, fewer GPIOs |
+| TB6612FNG | ~€1.50 | 1.2 A / ch | 3 A | MOSFET, clean API (separate PWM pin), but 22 × 22 mm and needs 6 GPIOs instead of 4 |
+| L298N | ~€2 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
+| L9110S / MX1508 | ~€1 | 800 mA / ch | — | Marginal for stalled N20s |
 
-Plan: **1× TB6612FNG breakout** for the basic 4-motor tank drive — see the [paired-motors topology](#paired-motors-per-side) below: each pair of motors on one side is wired in parallel and treated as one logical motor, so we only need 2 driver channels total. Ordering 5 drivers = 1 active + 4 future / spares.
+Plan: **1× DRV8833 breakout** for the basic 4-motor tank drive — see the [paired-motors topology](#paired-motors-per-side) below: each pair of motors on one side is wired in parallel and treated as one logical motor, so we only need 2 driver channels total.
+
+### DRV8833 control logic
+
+Each motor is driven by **two PWM-capable GPIOs** (no separate PWM-vs-direction pins). Drive one HIGH/PWM and hold the other LOW to spin one direction; swap to reverse:
+
+| `xIN1` | `xIN2` | Result |
+|---|---|---|
+| `LOW` | `LOW` | Coast (high-impedance, motor freewheels) |
+| `PWM` | `LOW` | Forward at PWM duty |
+| `LOW` | `PWM` | Reverse at PWM duty |
+| `HIGH` | `HIGH` | Brake (short across motor) |
+
+This costs 4 GPIOs total (vs 6 for the TB6612FNG alternative) but requires both pins on each motor channel to be PWM-capable. ESP32 LEDC has 16 channels so that's no constraint.
 
 ## Software stack
 
@@ -125,7 +138,7 @@ The cython-based `hidapi` package builds a self-contained extension during insta
 
 GPIO straight to motor = dead ESP32 in milliseconds.
 
-### H-bridge truth table (TB6612FNG)
+### H-bridge truth table (DRV8833)
 
 | IN1 | IN2 | Effect |
 |---|---|---|
@@ -160,9 +173,9 @@ Our bare N20s have **no encoders**, so we run **open-loop** — we command a dir
 ```
 USB-C ── TP4056 ── B+/B- ── Battery
               └── OUT+/OUT- ──┬── LOLIN32 + pin (VBAT → onboard 3.3V LDO)
-                              └── TB6612 VM (motor supply)
+                              └── DRV8833 VM (motor supply)
 
-GND ── common across battery −, TP4056 OUT−, LOLIN32 GND, TB6612 GND
+GND ── common across battery −, TP4056 OUT−, LOLIN32 GND, DRV8833 GND
 ```
 
 The **TP4056 USB-C board** (with onboard DW01A protection IC) replaces the LOLIN32's built-in charging path:
@@ -185,7 +198,7 @@ For a bot that gets thrown around (and where you really don't want a LiPo to ove
 
 - **VM**: motor power, 3–13.5 V (from TP4056 OUT+, which is battery voltage)
 - **VCC**: logic power, 3.3 V (from LOLIN32's onboard LDO, fed from `+` pin)
-- **STBY**: tie to 3.3 V to keep the driver enabled (or wire to a GPIO for software sleep)
+- **SLP** (sleep/enable on DRV8833): tie to 3.3 V to keep the driver awake (or wire to a GPIO for software sleep)
 - **Decoupling**: a 100–470 µF cap across VM/GND helps absorb stall-current dips.
 
 ⚠️ Never pull motor current through ESP32's `VIN` or `3V3` pin — onboard LDO maxes out around 800 mA and the input diode is tiny. Motors get their power *directly* from the battery via the driver's `VM`.
@@ -207,22 +220,22 @@ Left Rear   motor − ─┴───── Driver AO2
 
 Implications:
 
-- **1 driver, not 2** — both sides fit on a single TB6612FNG (one channel per side)
+- **1 driver, not 2** — both sides fit on a single DRV8833 (one channel per side)
 - **6 GPIOs instead of 12** for motor control
-- **Current doubles per channel** — 2× N20 in parallel pull ~400 mA cruise, ~1.5–2 A at simultaneous stall. Within the TB6612FNG's 1.2 A continuous / 3 A peak window, but tight enough to want decent decoupling and a battery that can deliver it.
+- **Current doubles per channel** — 2× N20 in parallel pull ~400 mA cruise, ~1.5–2 A at simultaneous stall. Within the DRV8833's 1.5 A continuous / 2 A peak window, but tight enough to want decent decoupling and a battery that can deliver it.
 - **Both motors on a side must be matched** (same gear ratio + winding) so they spin at the same RPM under the same drive signal. Our 4× N20s look identical externally + share the same visible gear stages, so this should hold.
 - **Wire polarity matters** — if a paired motor spins the "wrong way" relative to its partner, just flip its leads at the driver output. Don't try to fix it in software.
 
-## Wiring plan (1× TB6612FNG, 4 motors paired, tank drive)
+## Wiring plan (1× DRV8833, 4 motors paired, tank drive)
 
-| Side | PWM | IN1 | IN2 | Driver / output | Motors |
-|---|---|---|---|---|---|
-| Left  | GPIO 13 | 14 | 27 | A channel (AO1+AO2) | Left Front + Left Rear in parallel |
-| Right | GPIO 26 | 16 | 17 | B channel (BO1+BO2) | Right Front + Right Rear in parallel |
+| Side | IN1 (PWM) | IN2 (PWM) | Driver / output | Motors |
+|---|---|---|---|---|
+| Left  | GPIO 13 | GPIO 14 | A channel (AOUT1 + AOUT2) | Left Front + Left Rear in parallel |
+| Right | GPIO 26 | GPIO 27 | B channel (BOUT1 + BOUT2) | Right Front + Right Rear in parallel |
 
-`STBY` → ESP32 `3V3`. `VM` → battery+. `VCC` → ESP32 `3V3`. All `GND` rails common (battery −, ESP32 GND, driver GND).
+`SLP` → ESP32 `3V3`. `VM` → TP4056 `OUT+` (battery, 3–4.2 V). All `GND` rails common (battery −, ESP32 GND, driver GND). No separate VCC pin needed — DRV8833 self-powers its logic from VM.
 
-Final pin budget: 6 GPIO for motors + 1 status LED (GPIO 19) + 2 GPIO for I²C (21/22) = 9 used. Plenty of headroom for future sensors (ultrasonic, encoders, NeoPixels, etc.).
+Final pin budget: 4 GPIO for motors + 1 status LED (GPIO 19) + 2 GPIO for I²C (21/22) = 7 used. Plenty of headroom for future sensors (ultrasonic, encoders, NeoPixels, etc.).
 
 ## IMU for orientation detection
 
@@ -310,7 +323,7 @@ Driving everything from "no component sticks above the chassis":
 
 - **Boards have no headers** — wires soldered directly to ESP32 pads (loses easy disassembly, gains height)
 - **LOLIN32 Lite footprint** (52 × 25 × 5 mm) fits comfortably in the 12 mm cavity
-- **TB6612FNG** (~25 × 25 × 4 mm) also fits flat
+- **DRV8833** (~18.5 × 11 × 4 mm) fits flat with room to spare
 - **LiPo battery** (height < 12 mm, confirmed by inspection) → fits anywhere in the cavity
 - **Cable channels** — 1.5 mm grooves in plate inner faces for routing wires
 
@@ -320,14 +333,14 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 
 - [x] Micro-USB cutout in the front wall (for programming + battery charging)
 - [ ] Power switch slot (optional — alternatively, plug/unplug JST battery)
-- [ ] Optional: vent slots if TB6612FNG runs hot under heavy stall
+- [ ] Optional: vent slots if DRV8833 runs hot under heavy stall
 
 ### Design checklist (current chassis.scad reflects all of this)
 
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (52 × 25 mm), TB6612 (26 × 26 mm), battery (45 × 25 mm)
+- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 11 mm), battery (45 × 25 mm), GY-521 (20 × 15.5 mm), TP4056 (29 × 16 mm)
 - [x] Mounting holes through the corner walls for M3 heat-set inserts
 - [x] Front-wall USB slot
 

@@ -59,9 +59,9 @@ imu_length = 20;
 imu_width  = 15.5;
 imu_pocket_depth = 2;
 
-// TP4056 USB-C charging + protection board
-tp4056_length = 28;
-tp4056_width  = 17;
+// TP4056 USB-C charging + protection board (PCB 26.5mm, +2.5mm for the USB-C connector overhang)
+tp4056_length = 29;
+tp4056_width  = 16;
 tp4056_pocket_depth = 2;
 
 // Corner mount holes (M3 heat-set inserts)

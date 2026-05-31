@@ -32,7 +32,7 @@ esp_length, esp_width = 49, 26
 driver_length, driver_width = 18.5, 11
 battery_length, battery_width = 45, 25
 imu_length, imu_width = 20, 15.5
-tp4056_length, tp4056_width = 28, 17
+tp4056_length, tp4056_width = 29, 16
 
 motor_positions = [
     (-motor_axle_pitch / 2,  motor_center_y),
@@ -129,7 +129,7 @@ def render() -> None:
         tp4056_length, tp4056_width,
         linewidth=1, edgecolor="#136", facecolor="#9bd", alpha=0.85,
     ))
-    ax.text(tp_x, tp_y, f"TP4056\nUSB-C\n({tp4056_length}×{tp4056_width})",
+    ax.text(tp_x, tp_y, f"TP4056\nUSB-C\n({tp4056_width}×{tp4056_length})",
             ha="center", va="center", fontsize=6.5, color="#013")
 
     # GY-521 IMU just inboard of TP4056 in the back strip
