@@ -56,7 +56,7 @@ battery_length = 45;
 battery_width  = 25;
 battery_pocket_depth = 2;
 
-// GY-521 (MPU6050) IMU breakout
+// MPU-6050 (MPU6050) IMU breakout
 imu_length = 20;
 imu_width  = 15.5;
 imu_pocket_depth = 2;
@@ -189,12 +189,12 @@ module plate()
     for (p = wheel_positions) wheel_cutout(p);
 
     // Electronics recesses (rotated for balanced weight distribution):
-    //   - TB6612FNG up front between the front wall and the front motor pair
+    //   - DRV8833 up front between the front wall and the front motor pair
     //   - ESP32 + battery rotated 90° (long axis along Y), side-by-side in
     //     the central X strip between the motor pairs
     //   - TP4056 USB-C charge board against the back wall (USB-C aligned
     //     with the slot in the wall)
-    //   - GY-521 IMU just inboard of the TP4056 in the back strip
+    //   - MPU-6050 IMU just inboard of the TP4056 in the back strip
     rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=0);
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);

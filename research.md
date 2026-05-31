@@ -239,7 +239,7 @@ Final pin budget: 4 GPIO for motors + 1 status LED (GPIO 19) + 2 GPIO for I²C (
 
 ## IMU for orientation detection
 
-A **GY-521 (MPU6050)** module sits on the I²C bus (SDA → GPIO 21, SCL → GPIO 22) and reports the gravity vector via its accelerometer. Because the chassis is invertible, drive direction needs to flip automatically when the bot is on its other face:
+A **MPU-6050 (MPU6050)** module sits on the I²C bus (SDA → GPIO 21, SCL → GPIO 22) and reports the gravity vector via its accelerometer. Because the chassis is invertible, drive direction needs to flip automatically when the bot is on its other face:
 
 - Right-side-up → accelerometer Z axis points one way → forward = +X
 - Upside-down → Z flips sign → "forward" stick should drive the wheels the other way
@@ -340,7 +340,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 11 mm), battery (45 × 25 mm), GY-521 (20 × 15.5 mm), TP4056 (29 × 16 mm)
+- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 11 mm), battery (45 × 25 mm), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
 - [x] Mounting holes through the corner walls for M2.5 heat-set inserts
 - [x] Front-wall USB slot
 

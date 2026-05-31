@@ -10,7 +10,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **ESP32 (WeMos LOLIN32 Lite)** — WiFi + Bluetooth Classic
 - **PS3 DualShock 3 controller** as the wireless remote (BT Classic + HID)
 - **4× N20 6 V / 400 RPM** gear motors, paired left/right through a single **DRV8833** dual H-bridge
-- **GY-521 (MPU6050) IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
+- **MPU-6050 IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
 - **TP4056 USB-C charge + DW01A protection board** — handles charging, overcharge, overdischarge and short-circuit protection
 - **1S LiPo 3.7 V / 1200 mAh**, ~1 hour of cruising
 - **3D-printed PETG translucent chassis** — fully enclosed (3 mm walls all around), invertible, ~150 × 110 × 18 mm
@@ -20,7 +20,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 ```mermaid
 flowchart LR
     PS3([PS3 Controller]) -->|HID / Bluetooth Classic| ESP[ESP32<br/>LOLIN32 Lite]
-    IMU[GY-521 IMU] -->|I²C<br/>orientation| ESP
+    IMU[MPU-6050 IMU] -->|I²C<br/>orientation| ESP
     ESP -->|2 PWM pins / side<br/>3.3 V logic| DRV[DRV8833]
     DRV -->|VM rail| MOT[4× N20 motors<br/>2 paired per side]
     BAT[(1S LiPo<br/>3.7 V / 1200 mAh)] -->|B+ / B-| TP[TP4056<br/>charge + protect]
@@ -32,12 +32,12 @@ flowchart LR
 
 | ESP32 pin | Destination | Purpose |
 |---|---|---|
-| `3V3` | DRV8833 `SLP`, GY-521 `VCC` | Wake the driver, power the IMU |
+| `3V3` | DRV8833 `SLP`, MPU-6050 `VCC` | Wake the driver, power the IMU |
 | `GND` | All `GND` | Common ground |
 | `+` (VBAT) | DRV8833 `VM` (from TP4056 `OUT+`) | Motor supply, protected battery (3–4.2 V) |
 | `GPIO 19` | Status LED | Connection indicator |
-| `GPIO 21` | GY-521 `SDA` | I²C data (IMU) |
-| `GPIO 22` | GY-521 `SCL` | I²C clock (IMU) |
+| `GPIO 21` | MPU-6050 `SDA` | I²C data (IMU) |
+| `GPIO 22` | MPU-6050 `SCL` | I²C clock (IMU) |
 | `GPIO 13` | DRV8833 `AIN1` | Left side PWM bit 1 |
 | `GPIO 14` | DRV8833 `AIN2` | Left side PWM bit 2 |
 | `GPIO 26` | DRV8833 `BIN1` | Right side PWM bit 1 |
@@ -97,7 +97,7 @@ Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with ve
 | DRV8833 breakout | 1 | €1.50 |
 | N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
 | SLT20 33×20 mm wheel | 4 | €7.20 |
-| GY-521 (MPU6050) IMU module | 1 | €1.50 |
+| MPU-6050 IMU module | 1 | €1.50 |
 | TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
 | 1S LiPo 1200 mAh | 1 | €6 |
 | PETG translucent (chassis) | ~50 g | €1–2 |

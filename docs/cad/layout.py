@@ -134,14 +134,14 @@ def render() -> None:
     ax.text(tp_x, tp_y, f"TP4056\nUSB-C\n({tp4056_width}×{tp4056_length})",
             ha="center", va="center", fontsize=6.5, color="#013")
 
-    # GY-521 IMU just inboard of TP4056 in the back strip
+    # MPU-6050 IMU just inboard of TP4056 in the back strip
     imu_x, imu_y = 53, 19
     ax.add_patch(patches.Rectangle(
         (imu_x - imu_length / 2, imu_y - imu_width / 2),
         imu_length, imu_width,
         linewidth=1, edgecolor="#444", facecolor="#bcd", alpha=0.85,
     ))
-    ax.text(imu_x, imu_y, f"GY-521\n({imu_length}×{imu_width})",
+    ax.text(imu_x, imu_y, f"MPU-6050\n({imu_length}×{imu_width})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
     # USB-C slot in back wall (TP4056 charging)
