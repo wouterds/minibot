@@ -62,9 +62,11 @@ wheel_positions = [
     ( motor_axle_pitch / 2, -wheel_center_y),
 ]
 
-# Component centre positions in the top-down view
-drv_x = -53
-imu_pos_x, imu_pos_y = -53, 18        # next to DRV8833 in the front strip
+# Component centre positions in the top-down view.
+# DRV8833 + MPU-6050 share x = -53 and are stacked symmetrically around
+# y = 0 so the pair sits centred in front of the motors.
+drv_x, drv_y = -53, -9
+imu_pos_x, imu_pos_y = -53, +9
 esp_x = 15
 bat_x = -15
 tp_x, tp_y = 58, 0
@@ -111,11 +113,11 @@ def draw_top(ax) -> None:
 
     # DRV8833
     ax.add_patch(patches.Rectangle(
-        (drv_x - driver_length / 2, -driver_width / 2),
+        (drv_x - driver_length / 2, drv_y - driver_width / 2),
         driver_length, driver_width,
         linewidth=1, edgecolor="#722", facecolor="#e08e8e", alpha=0.85,
     ))
-    ax.text(drv_x, 0, f"DRV8833\n({driver_length}×{driver_width})",
+    ax.text(drv_x, drv_y, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
     # MPU-6050 next to DRV8833 (above it in Y)

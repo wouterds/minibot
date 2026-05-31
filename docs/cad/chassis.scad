@@ -201,11 +201,11 @@ module plate()
     //   - TP4056 USB-C charge board against the back wall (USB-C aligned
     //     with the slot in the wall)
     //   - MPU-6050 IMU just inboard of the TP4056 in the back strip
-    rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=0);
+    rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=-53, y=-9);
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
     rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=+58, y=0);
-    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=-53, y=+18);
+    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=-53, y=+9);
 
     // USB slot through the front wall
     usb_slot();
