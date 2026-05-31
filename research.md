@@ -48,7 +48,7 @@ Picked over the alternatives for our 4× N20 setup:
 
 | Driver | Price / unit | Continuous | Peak | Notes |
 |---|---|---|---|---|
-| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A (3 A paralleled) | MOSFET, compact (18.5 × 11 mm), no separate VCC needed, fewer GPIOs |
+| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A (3 A paralleled) | MOSFET, compact (18.5 × 16 mm), no separate VCC needed, fewer GPIOs |
 | TB6612FNG | ~€1.50 | 1.2 A / ch | 3 A | MOSFET, clean API (separate PWM pin), but 22 × 22 mm and needs 6 GPIOs instead of 4 |
 | L298N | ~€2 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
 | L9110S / MX1508 | ~€1 | 800 mA / ch | — | Marginal for stalled N20s |
@@ -323,7 +323,7 @@ Driving everything from "no component sticks above the chassis":
 
 - **Boards have no headers** — wires soldered directly to ESP32 pads (loses easy disassembly, gains height)
 - **LOLIN32 Lite footprint** (52 × 25 × 5 mm) fits comfortably in the 12 mm cavity
-- **DRV8833** (~18.5 × 11 × 4 mm) fits flat with room to spare
+- **DRV8833** (~18.5 × 16 × 4 mm) fits flat with room to spare
 - **LiPo battery** (height < 12 mm, confirmed by inspection) → fits anywhere in the cavity
 - **Cable channels** — 1.5 mm grooves in plate inner faces for routing wires
 
@@ -340,7 +340,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 11 mm), battery (45 × 25 mm), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
+- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (45 × 25 mm), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
 - [x] Mounting holes through the corner walls for M2.5 heat-set inserts
 - [x] Front-wall USB slot
 
