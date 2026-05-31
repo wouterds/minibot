@@ -295,17 +295,13 @@ def draw_side(ax) -> None:
 
 
 def render() -> None:
-    fig, (ax_top, ax_side) = plt.subplots(
-        2, 1, figsize=(11, 13), dpi=140,
-        gridspec_kw={"height_ratios": [3, 1]},
-    )
+    fig, ax_top = plt.subplots(figsize=(11, 9), dpi=140)
     fig.suptitle(
         f"minibot chassis  •  {plate_length}×{plate_width}×{chassis_height:g} mm  •  "
         f"{wall_thick:g} mm walls  •  invertible",
         fontsize=11, y=0.995,
     )
     draw_top(ax_top)
-    draw_side(ax_side)
     fig.tight_layout()
     fig.savefig(OUT / "layout.png", bbox_inches="tight")
     print(f"wrote: {OUT / 'layout.png'}")
