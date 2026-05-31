@@ -17,11 +17,11 @@
 
 // Outer footprint
 plate_length = 150;     // mm — front-to-back (extra length to fit TP4056 in the back)
-plate_width  = 110;     // mm — side-to-side
+plate_width  = 120;     // mm — side-to-side (wider to leave wheel clearance to the walls)
 plate_thick  = 3;       // mm — flat floor thickness
 
 // Walls — 6 mm tall on each plate, meeting in the cavity centreline
-wall_thick       = 3;
+wall_thick       = 2.5;
 wall_half_height = 6;
 
 // N20 motor body (measured: 12 mm wide × 10 mm tall when laid on its side)
@@ -205,7 +205,7 @@ module plate()
     rect_pocket(esp_length,    esp_width,      esp_pocket_depth,     x=+15, y=0);
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=-15, y=0);
     rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=+58, y=0);
-    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=+53, y=+19);
+    rect_pocket(imu_length,    imu_width,      imu_pocket_depth,     x=-53, y=+18);
 
     // USB slot through the front wall
     usb_slot();
