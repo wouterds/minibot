@@ -42,12 +42,12 @@ wheel_width     = 20;
 wheel_clearance = 1.0;
 
 // Electronics
-esp_length = 52;
-esp_width  = 25;
+esp_length = 49;
+esp_width  = 26;
 esp_pocket_depth = 2;
 
-driver_length = 22;
-driver_width  = 22;
+driver_length = 18.5;   // DRV8833 carrier (Pololu)
+driver_width  = 11;
 driver_pocket_depth = 2;
 
 battery_length = 45;
@@ -55,8 +55,8 @@ battery_width  = 25;
 battery_pocket_depth = 2;
 
 // GY-521 (MPU6050) IMU breakout
-imu_length = 21;
-imu_width  = 16;
+imu_length = 20;
+imu_width  = 15.5;
 imu_pocket_depth = 2;
 
 // TP4056 USB-C charging + protection board

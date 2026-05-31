@@ -28,10 +28,10 @@ wheel_width = 20
 motor_center_y = motor_track / 2
 wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
 
-esp_length, esp_width = 52, 25
-driver_length, driver_width = 22, 22
+esp_length, esp_width = 49, 26
+driver_length, driver_width = 18.5, 11
 battery_length, battery_width = 45, 25
-imu_length, imu_width = 21, 16
+imu_length, imu_width = 20, 15.5
 tp4056_length, tp4056_width = 28, 17
 
 motor_positions = [
@@ -92,14 +92,14 @@ def render() -> None:
             arrowprops=dict(arrowstyle="->", color="#777", lw=1.2),
         )
 
-    # TB6612 (front, between the front wall and front motors)
+    # DRV8833 (front, between the front wall and front motors)
     drv_x = -53
     ax.add_patch(patches.Rectangle(
         (drv_x - driver_length / 2, -driver_width / 2),
         driver_length, driver_width,
         linewidth=1, edgecolor="#722", facecolor="#e08e8e", alpha=0.85,
     ))
-    ax.text(drv_x, 0, f"TB6612\n({driver_length}×{driver_width})",
+    ax.text(drv_x, 0, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
     # ESP32 (rotated 90°, right of centre)
@@ -109,7 +109,7 @@ def render() -> None:
         esp_width, esp_length,
         linewidth=1, edgecolor="#055", facecolor="#7ec8c8", alpha=0.85,
     ))
-    ax.text(esp_x, 0, "ESP32\nLOLIN32 Lite\n(25×52)",
+    ax.text(esp_x, 0, f"ESP32\nLOLIN32 Lite\n({esp_width}×{esp_length})",
             ha="center", va="center", fontsize=7, color="#022")
 
     # Battery (rotated 90°, left of centre)
@@ -119,7 +119,7 @@ def render() -> None:
         battery_width, battery_length,
         linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
     ))
-    ax.text(bat_x, 0, "1S LiPo\n1200mAh\n(25×45)",
+    ax.text(bat_x, 0, f"1S LiPo\n1200mAh\n({battery_width}×{battery_length})",
             ha="center", va="center", fontsize=7, color="#311")
 
     # TP4056 USB-C charge board against the back wall
@@ -155,7 +155,7 @@ def render() -> None:
                 1.6, color="#333", zorder=10,
             ))
 
-    # Driving direction arrow (front of robot = TB6612 side)
+    # Driving direction arrow (front of robot = DRV8833 side)
     ax.annotate(
         "", xy=(-plate_length / 2 - 12, 0),
         xytext=(-plate_length / 2 - 2, 0),
