@@ -48,8 +48,8 @@ esp_length = 49;
 esp_width  = 26;
 esp_pocket_depth = 2;
 
-driver_length = 18.5;   // DRV8833 carrier (Pololu)
-driver_width  = 11;
+driver_length = 18.5;   // DRV8833 carrier (measured)
+driver_width  = 16;
 driver_pocket_depth = 2;
 
 battery_length = 45;
