@@ -7,7 +7,7 @@ Everything needed to build a minibot from scratch. Prices are rough Euro estimat
 | Qty | Component | Notes | Unit price | Subtotal |
 |---|---|---|---:|---:|
 | 1 | **WeMos LOLIN32 Lite** (ESP32 + CH340 + JST + TP4054) | The brain. Search "LOLIN32 Lite" on AliExpress. | €5–8 | €5–8 |
-| 1 | **TB6612FNG dual motor driver breakout** | Need 1 active. Recommend buying spares — buy 5 for €1.50 each. | €1.50 | €1.50 |
+| 1 | **DRV8833 dual motor driver breakout** | Pololu-style carrier, ~22 × 17 mm. Drives 2 motors at 1.5 A continuous / 2 A peak per channel. Recommend buying spares. | €1.50 | €1.50 |
 | 4 | **N20 6V 400 RPM micro metal gearmotor**, 20 mm shaft, D-cut | Get them all from one listing so they're matched. Search "N20 6V 400rpm 20mm shaft". | €2.50 | €10 |
 | 4 | **SLT20 33×20 mm wheel**, D-shaft hub | Hub depth ~12–15 mm; matches the 20 mm shaft motor. | €1.80 | €7.20 |
 | 1 | **GY-521 (MPU6050) IMU module** | 6-axis accel + gyro on I²C. Used to detect upside-down and auto-flip drive direction. Spare buying recommended — 5 for ~€1.50 each. | €1.50 | €1.50 |
