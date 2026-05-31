@@ -282,10 +282,10 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 
 | | |
 |---|---|
-| Plate length | **136 mm** (front-to-back) |
-| Plate width | **110 mm** (side-to-side) |
+| Plate length | **150 mm** (front-to-back) |
+| Plate width | **120 mm** (side-to-side) |
 | Plate thickness | 3 mm |
-| Wall thickness | 3 mm |
+| Wall thickness | 2.5 mm |
 | Wall height per plate | 6 mm (×2 = 12 mm cavity) |
 | Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
 | Motor track (centres) | **35 mm** |
