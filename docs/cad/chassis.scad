@@ -30,18 +30,19 @@ motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
-motor_track      = 35;  // mm — side-to-side motor spacing (centre to centre)
+motor_track      = 30;  // mm — side-to-side motor spacing (centre to centre)
 
 // Pocket geometry (half-cylinder cut into the plate)
 pocket_depth     = motor_diameter / 2;
 pocket_clearance = 0.3;
 
-// Wheels (SLT20 33×20mm). Wheels mount on the shafts pointing OUTWARD
-// from the motor body, hub flush with the motor's gearbox face, so
-// the wheel's Y centre is one half-width past the motor's outer face.
-wheel_diameter  = 33;
-wheel_width     = 20;
-wheel_clearance = 1.0;
+// Wheels (JS2622 — 26 mm hub × 22 mm width, plus a rubber tire band
+// around the OD). The rubber adds ~1 mm to the radius and a touch of
+// width, so we treat the effective wheel as 28 mm dia × 22 mm and give
+// the cutouts extra margin so the rubber band can flex without rubbing.
+wheel_diameter  = 28;
+wheel_width     = 22;
+wheel_clearance = 2.0;
 
 // Electronics
 esp_length = 49;
@@ -105,8 +106,13 @@ wheel_positions = [
   [ motor_axle_pitch / 2, -wheel_center_y],
 ];
 
-wheel_cutout_x = 30;   // wheel cross-section at plate level (~28mm) + margin
-wheel_cutout_y = wheel_width + 2;
+// Wheel cross-section through the plate is widest at the plate's inner
+// surface (closest to the wheel centre at z = cavity centre). For a
+// 28 mm effective wheel (hub + rubber) centred at z = 9 mm in an 18 mm
+// chassis, the chord at z = 3 mm (plate top) is 2·sqrt(14² − 6²) ≈ 25 mm;
+// add ~3 mm clearance for the rubber to flex.
+wheel_cutout_x = 28;
+wheel_cutout_y = wheel_width + 4;
 
 
 // ─── modules ─────────────────────────────────────────────────────────

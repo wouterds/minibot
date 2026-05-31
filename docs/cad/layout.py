@@ -22,10 +22,10 @@ motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width  # alias for the X footprint in the top-down view
 motor_length = 26      # measured body length, excluding shaft
 motor_axle_pitch = 70
-motor_track = 35
+motor_track = 30
 
-wheel_diameter = 33
-wheel_width = 20
+wheel_diameter = 28      # 26 mm hub + ~1 mm rubber band on each side of OD
+wheel_width = 22
 
 motor_center_y = motor_track / 2
 wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
@@ -68,10 +68,12 @@ def render() -> None:
     ))
 
     # Wheel cutouts (poking out of top + bottom plates)
+    cutout_x = 28
+    cutout_y = wheel_width + 4
     for x, y in wheel_positions:
         ax.add_patch(patches.FancyBboxPatch(
-            (x - 30 / 2, y - wheel_width / 2),
-            30, wheel_width,
+            (x - cutout_x / 2, y - cutout_y / 2),
+            cutout_x, cutout_y,
             boxstyle="round,pad=0.5,rounding_size=2",
             linewidth=1.2, edgecolor="#222", facecolor="#3a3a3a", alpha=0.85,
         ))
