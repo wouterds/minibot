@@ -24,8 +24,10 @@ plate_thick  = 3;       // mm — flat floor thickness
 wall_thick       = 3;
 wall_half_height = 6;
 
-// N20 motor body (steel can only)
-motor_diameter   = 12.2;
+// N20 motor body (measured: 12 mm wide × 10 mm tall when laid on its side)
+motor_width      = 12;          // X dimension (lateral when laid flat)
+motor_height     = 10;          // Z dimension (perpendicular to plate)
+motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 25;
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
 motor_track      = 35;  // mm — side-to-side motor spacing (centre to centre)

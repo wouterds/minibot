@@ -17,7 +17,9 @@ plate_length = 150
 plate_width = 110
 wall_thick = 3
 
-motor_diameter = 12.2
+motor_width = 12       # X dimension when laid flat (measured)
+motor_height = 10      # Z dimension (perpendicular to plate)
+motor_diameter = motor_width  # alias for the X footprint in the top-down view
 motor_length = 25
 motor_axle_pitch = 70
 motor_track = 35
