@@ -34,7 +34,7 @@ flowchart LR
 |---|---|---|
 | `3V3` | DRV8833 `SLP`, MPU-6050 `VCC` | Wake the driver, power the IMU |
 | `GND` | All `GND` | Common ground |
-| `+` (VBAT) | DRV8833 `VM` (from TP4056 `OUT+`) | Motor supply, protected battery (3–4.2 V) |
+| `+` pad next to JST | DRV8833 `VM` (from TP4056 `OUT+`) | Motor supply, protected battery (3–4.2 V). Solder to the **pad next to the white JST connector**, not a side-header pin. |
 | `GPIO 19` | Status LED | Connection indicator |
 | `GPIO 21` | MPU-6050 `SDA` | I²C data (IMU) |
 | `GPIO 22` | MPU-6050 `SCL` | I²C clock (IMU) |
