@@ -64,9 +64,10 @@ wheel_positions = [
 
 # Component centre positions in the top-down view.
 # DRV8833 + MPU-6050 share x = -53 and are stacked symmetrically around
-# y = 0 so the pair sits centred in front of the motors.
-drv_x, drv_y = -53, -9
-imu_pos_x, imu_pos_y = -53, +9
+# y = 0 so the pair sits centred in front of the motors. MPU is mounted
+# rotated 90° (long axis along Y).
+drv_x, drv_y = -53, -10
+imu_pos_x, imu_pos_y = -53, +10
 esp_x = 15
 bat_x = -15
 tp_x, tp_y = 58, 0
@@ -120,13 +121,13 @@ def draw_top(ax) -> None:
     ax.text(drv_x, drv_y, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # MPU-6050 next to DRV8833 (above it in Y)
+    # MPU-6050 next to DRV8833 (above it in Y), rotated 90° (long axis Y)
     ax.add_patch(patches.Rectangle(
-        (imu_pos_x - imu_length / 2, imu_pos_y - imu_width / 2),
-        imu_length, imu_width,
+        (imu_pos_x - imu_width / 2, imu_pos_y - imu_length / 2),
+        imu_width, imu_length,
         linewidth=1, edgecolor="#444", facecolor="#bcd", alpha=0.85,
     ))
-    ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_length}×{imu_width})",
+    ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_width}×{imu_length})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
     # ESP32
