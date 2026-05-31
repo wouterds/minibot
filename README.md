@@ -85,7 +85,7 @@ Print the same shape twice — the chassis is invertible.
 | Infill | 25–30 % gyroid |
 | Perimeters | 3–4 walls |
 | Orientation | Plates flat on the bed |
-| Mounting | M3 heat-set inserts in the corner bosses |
+| Mounting | M2.5 heat-set inserts in the corner bosses |
 
 ## Parts
 
@@ -101,6 +101,6 @@ Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with ve
 | TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
 | 1S LiPo 1200 mAh | 1 | €6 |
 | PETG translucent (chassis) | ~50 g | €1–2 |
-| M3 hardware, wire, heat-shrink | — | €5–8 |
+| M2.5 hardware, wire, heat-shrink | — | €5–8 |
 | PS3 controller (reuse) | 1 | €0–20 |
 | **Total (minimum viable build)** | | **~€33–44** |

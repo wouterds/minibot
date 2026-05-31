@@ -28,7 +28,7 @@ wall_half_height = 6;
 motor_width      = 12;          // X dimension (lateral when laid flat)
 motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
-motor_length     = 25;
+motor_length     = 26;          // body only, excluding shaft (measured)
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
 motor_track      = 35;  // mm — side-to-side motor spacing (centre to centre)
 
@@ -66,8 +66,8 @@ tp4056_length = 29;
 tp4056_width  = 16;
 tp4056_pocket_depth = 2;
 
-// Corner mount holes (M3 heat-set inserts)
-mount_hole_d     = 3.2;
+// Corner mount holes (M2.5 heat-set inserts)
+mount_hole_d     = 2.7;
 mount_hole_inset = 7;
 
 // Micro-USB slot in the front wall

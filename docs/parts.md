@@ -21,8 +21,8 @@ Everything needed to build a minibot from scratch. Prices are rough Euro estimat
 | Qty | Component | Notes | Unit price | Subtotal |
 |---|---|---|---:|---:|
 | 1 set | **PETG translucent filament**, ~50 g for both plates | Any reputable brand (Polymaker / eSun / Prusament). 1 kg spool ≈ €20; chassis uses €1–2 worth. | — | €1–2 |
-| 4 | **M3×10 mm machine screws** (chassis assembly) | | €0.10 | €0.40 |
-| 4 | **M3 heat-set inserts** (M3 × 5 mm OD, brass) | Pressed into the printed bosses with a soldering iron. | €0.20 | €0.80 |
+| 4 | **M2.5 × 10 mm machine screws** (chassis assembly) | | €0.10 | €0.40 |
+| 4 | **M2.5 heat-set inserts** (M2.5 × 4 mm OD, brass) | Pressed into the printed bosses with a soldering iron. | €0.20 | €0.80 |
 | 1 | **Misc**: silicone wire 24–28 AWG (~2 m), heat shrink, solder | | — | €3–5 |
 | | | | **mechanical** | **€5–8** |
 

@@ -292,7 +292,7 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 | Motor axle pitch (front to rear) | 70 mm |
 | Wheel positions | shaft-outward from motors; wheel centres at ±47.5 mm in Y |
 | Wheel cutout per plate | ~30 × 22 mm rounded slot (×4) |
-| Mounting | M3 heat-set inserts in corner bosses |
+| Mounting | M2.5 heat-set inserts in corner bosses |
 | Side access | micro-USB slot in the front wall |
 
 ### Material: PETG translucent
@@ -315,7 +315,7 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 | Perimeters | 3–4 walls |
 | Orientation | Plates printed **flat** on the bed (strongest along load axes) |
 | Tolerance for press fits | +0.2–0.3 mm on pocket diameters (PETG extrudate is slightly wider than nozzle) |
-| Mounting | M2 / M3 heat-set inserts in printed bosses, or self-tap into bosses |
+| Mounting | M2.5 heat-set inserts in printed bosses |
 
 ### Build constraints
 
@@ -341,7 +341,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
 - [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 11 mm), battery (45 × 25 mm), GY-521 (20 × 15.5 mm), TP4056 (29 × 16 mm)
-- [x] Mounting holes through the corner walls for M3 heat-set inserts
+- [x] Mounting holes through the corner walls for M2.5 heat-set inserts
 - [x] Front-wall USB slot
 
 ### Translucency affordance 💡
