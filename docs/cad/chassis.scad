@@ -85,9 +85,12 @@ motor_pocket_d = motor_diameter + pocket_clearance;
 // Motor body Y-position (motor centre). Body extends ±motor_length/2 in Y.
 motor_center_y = motor_track / 2;
 
-// Wheel Y-position: shaft points outward from motor, wheel hub flush
-// with motor's outer face, so wheel centre is at:
-//   motor_center_y + motor_length/2 + wheel_width/2
+// Wheel Y-position: the wheel is pushed onto the long shaft until the
+// shaft tip is flush with the wheel's OUTER face. The shaft engagement
+// equals the wheel width (25 mm), which places the wheel's INNER face
+// right at the motor's gearbox face. So:
+//   wheel_centre = gearbox_face + wheel_width/2
+//                = (motor_center_y + motor_length/2) + wheel_width/2
 wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2;
 
 motor_positions = [
