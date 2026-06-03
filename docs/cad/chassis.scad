@@ -30,7 +30,7 @@ motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
-motor_track      = 35;  // mm — modest widening to keep tyres clear of the ESP
+motor_track      = 32;  // mm — modest widening to keep tyres clear of the ESP
 
 // Pocket geometry (half-cylinder cut into the plate)
 pocket_depth     = motor_diameter / 2;

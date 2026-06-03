@@ -24,7 +24,7 @@ motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
 motor_axle_pitch = 70
-motor_track = 35
+motor_track = 32
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
 wheel_width = 23
