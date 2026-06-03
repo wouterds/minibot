@@ -14,7 +14,7 @@ OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
 plate_length = 150
-plate_width = 120
+plate_width = 116
 plate_thick = 3       # floor thickness (Z)
 wall_thick = 2.5      # perimeter wall thickness (X/Y)
 wall_half_height = 6  # half of the cavity height (so cavity = 12 mm)
@@ -24,7 +24,7 @@ motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
 motor_axle_pitch = 70
-motor_track = 30
+motor_track = 35
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
 wheel_width = 23
@@ -89,7 +89,7 @@ def draw_top(ax) -> None:
     ))
 
     cutout_x = 24
-    cutout_y = wheel_width + 4
+    cutout_y = wheel_width + 2
     for x, y in wheel_positions:
         ax.add_patch(patches.FancyBboxPatch(
             (x - cutout_x / 2, y - cutout_y / 2),

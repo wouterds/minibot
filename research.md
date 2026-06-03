@@ -283,7 +283,7 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 | | |
 |---|---|
 | Plate length | **150 mm** (front-to-back) |
-| Plate width | **120 mm** (side-to-side) |
+| Plate width | **116 mm** (side-to-side, 2 mm tyre-to-wall gap) |
 | Plate thickness | 3 mm |
 | Wall thickness | 2.5 mm |
 | Wall height per plate | 6 mm (×2 = 12 mm cavity) |

@@ -17,7 +17,7 @@
 
 // Outer footprint
 plate_length = 150;     // mm — front-to-back (extra length to fit TP4056 in the back)
-plate_width  = 120;     // mm — side-to-side (wider to leave wheel clearance to the walls)
+plate_width  = 116;     // mm — side-to-side (2 mm tyre-to-wall gap)
 plate_thick  = 3;       // mm — flat floor thickness
 
 // Walls — 6 mm tall on each plate, meeting in the cavity centreline
@@ -30,7 +30,7 @@ motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
 motor_axle_pitch = 70;  // mm — front-rear motor spacing
-motor_track      = 30;  // mm — side-to-side motor spacing (centre to centre)
+motor_track      = 35;  // mm — modest widening to keep tyres clear of the ESP
 
 // Pocket geometry (half-cylinder cut into the plate)
 pocket_depth     = motor_diameter / 2;
@@ -113,7 +113,7 @@ wheel_positions = [
 // z = 3 mm (plate top) is 2·sqrt(12.5² − 6²) ≈ 22 mm; round up with
 // clearance for the rubber to flex.
 wheel_cutout_x = 24;
-wheel_cutout_y = wheel_width + 4;
+wheel_cutout_y = wheel_width + 2;  // 1 mm slot margin each side — keeps slot clear of the wall
 
 
 // ─── modules ─────────────────────────────────────────────────────────
