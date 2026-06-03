@@ -62,14 +62,16 @@ wheel_positions = [
     ( motor_axle_pitch / 2, -wheel_center_y),
 ]
 
-# Component centre positions in the top-down view.
-# DRV8833 + MPU-6050 share x = -53 and are stacked symmetrically around
-# y = 0 so the pair sits centred in front of the motors. MPU is mounted
-# rotated 90° (long axis along Y).
-drv_x, drv_y = -53, -10
-imu_pos_x, imu_pos_y = -53, +10
-esp_x = 15
-bat_x = -15
+# Component centre positions (optimal layout).
+#  - Battery (heaviest) dead-centre → balanced fore/aft + low yaw inertia.
+#  - DRV8833 + MPU-6050 flank the battery in Y at centre-X → DRV gets short,
+#    near-equal wire runs to all four motors; the pair balances in Y.
+#  - ESP32 rotated in the front strip; TP4056 in the back strip with its
+#    USB-C facing the back-wall slot.
+bat_x, bat_y = 0, 0
+drv_x, drv_y = 0, +33
+imu_pos_x, imu_pos_y = 0, -33
+esp_x, esp_y = -56.5, 0
 tp_x, tp_y = 58, 0
 
 
@@ -112,7 +114,16 @@ def draw_top(ax) -> None:
             arrowprops=dict(arrowstyle="->", color="#777", lw=1.2),
         )
 
-    # DRV8833
+    # Battery — long axis along X, dead centre
+    ax.add_patch(patches.Rectangle(
+        (bat_x - battery_length / 2, bat_y - battery_width / 2),
+        battery_length, battery_width,
+        linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
+    ))
+    ax.text(bat_x, bat_y, f"1S LiPo 1000mAh\n({battery_length}×{battery_width})",
+            ha="center", va="center", fontsize=7, color="#311")
+
+    # DRV8833 — centred just above the battery (short runs to all 4 motors)
     ax.add_patch(patches.Rectangle(
         (drv_x - driver_length / 2, drv_y - driver_width / 2),
         driver_length, driver_width,
@@ -121,32 +132,23 @@ def draw_top(ax) -> None:
     ax.text(drv_x, drv_y, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # MPU-6050 next to DRV8833 (above it in Y), rotated 90° (long axis Y)
+    # MPU-6050 — centred just below the battery (balances DRV in Y)
     ax.add_patch(patches.Rectangle(
-        (imu_pos_x - imu_width / 2, imu_pos_y - imu_length / 2),
-        imu_width, imu_length,
+        (imu_pos_x - imu_length / 2, imu_pos_y - imu_width / 2),
+        imu_length, imu_width,
         linewidth=1, edgecolor="#444", facecolor="#bcd", alpha=0.85,
     ))
-    ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_width}×{imu_length})",
+    ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_length}×{imu_width})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
-    # ESP32
+    # ESP32 — rotated (long axis Y) in the front strip
     ax.add_patch(patches.Rectangle(
-        (esp_x - esp_width / 2, -esp_length / 2),
+        (esp_x - esp_width / 2, esp_y - esp_length / 2),
         esp_width, esp_length,
         linewidth=1, edgecolor="#055", facecolor="#7ec8c8", alpha=0.85,
     ))
-    ax.text(esp_x, 0, f"ESP32\nLOLIN32 Lite\n({esp_width}×{esp_length})",
+    ax.text(esp_x, esp_y, f"ESP32\nLOLIN32 Lite\n({esp_width}×{esp_length})",
             ha="center", va="center", fontsize=7, color="#022")
-
-    # Battery
-    ax.add_patch(patches.Rectangle(
-        (bat_x - battery_width / 2, -battery_length / 2),
-        battery_width, battery_length,
-        linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
-    ))
-    ax.text(bat_x, 0, f"1S LiPo\n1000mAh\n({battery_width}×{battery_length})",
-            ha="center", va="center", fontsize=7, color="#311")
 
     # TP4056
     ax.add_patch(patches.Rectangle(
