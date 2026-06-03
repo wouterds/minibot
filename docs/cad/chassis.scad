@@ -36,10 +36,10 @@ motor_track      = 30;  // mm — side-to-side motor spacing (centre to centre)
 pocket_depth     = motor_diameter / 2;
 pocket_clearance = 0.3;
 
-// Wheels (measured: 23 mm outer diameter incl. rubber tire × 25 mm wide).
+// Wheels (measured: 25 mm outer diameter incl. rubber tire × 23 mm wide).
 // Mounted on the motor's long shaft, which runs into the wheel hub.
-wheel_diameter  = 23;
-wheel_width     = 25;
+wheel_diameter  = 25;
+wheel_width     = 23;
 wheel_clearance = 2.0;
 
 // Electronics
@@ -109,10 +109,10 @@ wheel_positions = [
 
 // Wheel cross-section through the plate is widest at the plate's inner
 // surface (closest to the wheel centre at z = cavity centre). For a
-// 23 mm wheel centred at z = 9 mm in an 18 mm chassis, the chord at
-// z = 3 mm (plate top) is 2·sqrt(11.5² − 6²) ≈ 20 mm; round up with
+// 25 mm wheel centred at z = 9 mm in an 18 mm chassis, the chord at
+// z = 3 mm (plate top) is 2·sqrt(12.5² − 6²) ≈ 22 mm; round up with
 // clearance for the rubber to flex.
-wheel_cutout_x = 22;
+wheel_cutout_x = 24;
 wheel_cutout_y = wheel_width + 4;
 
 

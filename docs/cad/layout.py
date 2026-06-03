@@ -26,8 +26,8 @@ motor_length = 26      # body only, excluding shaft
 motor_axle_pitch = 70
 motor_track = 30
 
-wheel_diameter = 23      # measured outer diameter incl. rubber tire
-wheel_width = 25
+wheel_diameter = 25      # measured outer diameter incl. rubber tire
+wheel_width = 23
 wheel_clearance = 2.0
 
 motor_center_y = motor_track / 2
@@ -88,7 +88,7 @@ def draw_top(ax) -> None:
         linewidth=1, edgecolor="#aaa", facecolor="#fffaf0", linestyle="--",
     ))
 
-    cutout_x = 22
+    cutout_x = 24
     cutout_y = wheel_width + 4
     for x, y in wheel_positions:
         ax.add_patch(patches.FancyBboxPatch(

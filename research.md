@@ -36,8 +36,8 @@ Running log of what we learned while building minibot. Updated as we go.
 
 - **Type**: N20 micro metal gear motors, **6V 400 RPM, 20mm shaft** (4×)
 - **Voltage choice**: 6V over 3V because the 3.7V LiPo (4.2V full) overvolts a 3V motor by 23–40%, shortening lifespan and risking thermal failure under stall. Undervolting a 6V motor is harmless — it just runs slower, with more headroom on heat and stall current.
-- **Shaft length**: 20mm to match deep-hub wheels (JS2622, measured ⌀23 × 25 mm). Standard ~9mm shafts would slip in deep hubs.
-- **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with the 23mm JS2622 wheels: ~0.9 km/h cruise, ~1.0 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~1.7 km/h.
+- **Shaft length**: 20mm to match deep-hub wheels (JS2622, measured ⌀25 × 23 mm). Standard ~9mm shafts would slip in deep hubs.
+- **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with the 25mm JS2622 wheels: ~1.0 km/h cruise, ~1.1 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~1.8 km/h.
 - **Visible gear stages identical across all 4** → same gear ratio → same output RPM at same voltage.
 - **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within DRV8833's 1.5 A continuous / 2 A peak window.
 - **Encoders**: none — open-loop control only (we command, we don't sense).
