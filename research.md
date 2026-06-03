@@ -340,7 +340,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (48 × 30 × 6 mm, 603048), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
+- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (~50 × 30 × 6 mm, 603048), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
 - [x] Mounting holes through the corner walls for M2.5 heat-set inserts
 - [x] Front-wall USB slot
 

@@ -35,7 +35,7 @@ wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
 
 esp_length, esp_width = 49, 26
 driver_length, driver_width = 18.5, 16
-battery_length, battery_width = 48, 30
+battery_length, battery_width = 50, 30
 imu_length, imu_width = 20, 15.5
 tp4056_length, tp4056_width = 29, 16
 
