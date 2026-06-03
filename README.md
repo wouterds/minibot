@@ -12,7 +12,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **4× N20 6 V / 400 RPM** gear motors, paired left/right through a single **DRV8833** dual H-bridge
 - **MPU-6050 IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
 - **TP4056 USB-C charge + DW01A protection board** — handles charging, overcharge, overdischarge and short-circuit protection
-- **1S LiPo 3.7 V / 1200 mAh**, ~1 hour of cruising
+- **1S LiPo 3.7 V / 1000 mAh (603048)**, ~1 hour of cruising
 - **3D-printed PETG translucent chassis** — fully enclosed (2.5 mm walls all around), invertible, ~150 × 120 × 18 mm
 
 ## System
@@ -23,7 +23,7 @@ flowchart LR
     IMU[MPU-6050 IMU] -->|I²C<br/>orientation| ESP
     ESP -->|2 PWM pins / side<br/>3.3 V logic| DRV[DRV8833]
     DRV -->|VM rail| MOT[4× N20 motors<br/>2 paired per side]
-    BAT[(1S LiPo<br/>3.7 V / 1200 mAh)] -->|B+ / B-| TP[TP4056<br/>charge + protect]
+    BAT[(1S LiPo<br/>3.7 V / 1000 mAh)] -->|B+ / B-| TP[TP4056<br/>charge + protect]
     TP -->|OUT+ protected VBAT| ESP
     TP -.->|OUT+ to VM| DRV
 ```
@@ -96,10 +96,10 @@ Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with ve
 | ESP32 LOLIN32 Lite | 1 | €5–8 |
 | DRV8833 breakout | 1 | €1.50 |
 | N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
-| SLT20 33×20 mm wheel | 4 | €7.20 |
+| JS2622 26×22 mm wheel | 4 | €7.20 |
 | MPU-6050 IMU module | 1 | €1.50 |
 | TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
-| 1S LiPo 1200 mAh | 1 | €6 |
+| 1S LiPo 1000 mAh (603048) | 1 | €6 |
 | PETG translucent (chassis) | ~50 g | €1–2 |
 | M2.5 hardware, wire, heat-shrink | — | €5–8 |
 | PS3 controller (reuse) | 1 | €0–20 |

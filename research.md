@@ -36,7 +36,7 @@ Running log of what we learned while building minibot. Updated as we go.
 
 - **Type**: N20 micro metal gear motors, **6V 400 RPM, 20mm shaft** (4×)
 - **Voltage choice**: 6V over 3V because the 3.7V LiPo (4.2V full) overvolts a 3V motor by 23–40%, shortening lifespan and risking thermal failure under stall. Undervolting a 6V motor is harmless — it just runs slower, with more headroom on heat and stall current.
-- **Shaft length**: 20mm to match deep-hub SLT20-style wheels (33×20mm). Standard ~9mm shafts would slip in deep hubs.
+- **Shaft length**: 20mm to match deep-hub wheels (JS2622, 26×22mm). Standard ~9mm shafts would slip in deep hubs.
 - **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with 33mm wheels: ~1.2 km/h cruise, ~1.4 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~2.4 km/h.
 - **Visible gear stages identical across all 4** → same gear ratio → same output RPM at same voltage.
 - **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within DRV8833's 1.5 A continuous / 2 A peak window.
@@ -340,7 +340,7 @@ The robot has no fixed top/bottom AND no exposed sides, so external interfaces a
 - [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
 - [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
 - [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (45 × 25 mm), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
+- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (48 × 30 × 6 mm, 603048), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
 - [x] Mounting holes through the corner walls for M2.5 heat-set inserts
 - [x] Front-wall USB slot
 

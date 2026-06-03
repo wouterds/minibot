@@ -53,8 +53,8 @@ driver_length = 18.5;   // DRV8833 carrier (measured)
 driver_width  = 16;
 driver_pocket_depth = 2;
 
-battery_length = 45;
-battery_width  = 25;
+battery_length = 48;   // 603048 LiPo: 48 mm long × 30 mm wide × 6 mm thick
+battery_width  = 30;
 battery_pocket_depth = 2;
 
 // MPU-6050 (MPU6050) IMU breakout

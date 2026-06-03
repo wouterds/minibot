@@ -35,13 +35,13 @@ wheel_center_y = motor_center_y + motor_length / 2 + wheel_width / 2
 
 esp_length, esp_width = 49, 26
 driver_length, driver_width = 18.5, 16
-battery_length, battery_width = 45, 25
+battery_length, battery_width = 48, 30
 imu_length, imu_width = 20, 15.5
 tp4056_length, tp4056_width = 29, 16
 
 esp_thick = 4         # PCB + components (Z direction)
 driver_thick = 4
-battery_thick = 7
+battery_thick = 6
 imu_thick = 3
 tp4056_thick = 3
 
@@ -145,7 +145,7 @@ def draw_top(ax) -> None:
         battery_width, battery_length,
         linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
     ))
-    ax.text(bat_x, 0, f"1S LiPo\n1200mAh\n({battery_width}×{battery_length})",
+    ax.text(bat_x, 0, f"1S LiPo\n1000mAh\n({battery_width}×{battery_length})",
             ha="center", va="center", fontsize=7, color="#311")
 
     # TP4056
