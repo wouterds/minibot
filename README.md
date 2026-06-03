@@ -96,7 +96,7 @@ Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with ve
 | ESP32 LOLIN32 Lite | 1 | €5–8 |
 | DRV8833 breakout | 1 | €1.50 |
 | N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
-| JS2622 26×22 mm wheel | 4 | €7.20 |
+| JS2622 wheel (⌀23 × 25 mm) | 4 | €7.20 |
 | MPU-6050 IMU module | 1 | €1.50 |
 | TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
 | 1S LiPo 1000 mAh (603048) | 1 | €6 |
