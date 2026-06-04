@@ -289,7 +289,7 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 | Wall height per plate | 6 mm (×2 = 12 mm cavity) |
 | Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
 | Motor track (centres) | **48 mm** |
-| Motor axle pitch (wheelbase) | 84 mm (wheels near the corners) |
+| Motor axle pitch (wheelbase) | 80 mm |
 | Wheel positions | shaft-outward from motors; wheel centres at ±47.5 mm in Y |
 | Wheel cutout per plate | ~30 × 22 mm rounded slot (×4) |
 | Mounting | M2.5 heat-set inserts in corner bosses |

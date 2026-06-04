@@ -29,7 +29,7 @@ motor_width      = 12;          // X dimension (lateral when laid flat)
 motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
-motor_axle_pitch = 84;  // mm — wheels near the corners; motors closer to the central boards
+motor_axle_pitch = 80;  // mm — wheels pulled in a little, clear of the corner screws
 motor_track      = 48;  // mm — tyres sit 1 mm from the side walls (also clears TP4056)
 
 // Pocket geometry (half-cylinder cut into the plate)
