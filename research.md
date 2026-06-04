@@ -282,13 +282,13 @@ The motors mount **shaft-outward** — bodies sit toward the chassis centre, sha
 
 | | |
 |---|---|
-| Plate length | **134 mm** (front-to-back) |
-| Plate width | **125 mm** (side-to-side, 2 mm tyre-to-wall gap) |
+| Plate length | **130 mm** (front-to-back) |
+| Plate width | **127 mm** (side-to-side, 1 mm tyre-to-wall gap) |
 | Plate thickness | 3 mm |
 | Wall thickness | 2.5 mm |
 | Wall height per plate | 6 mm (×2 = 12 mm cavity) |
 | Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
-| Motor track (centres) | **44 mm** |
+| Motor track (centres) | **48 mm** |
 | Motor axle pitch (wheelbase) | 84 mm (wheels near the corners) |
 | Wheel positions | shaft-outward from motors; wheel centres at ±47.5 mm in Y |
 | Wheel cutout per plate | ~30 × 22 mm rounded slot (×4) |

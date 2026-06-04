@@ -16,8 +16,8 @@
 // ─── parameters ──────────────────────────────────────────────────────
 
 // Outer footprint
-plate_length = 134;     // mm — front-to-back (corner screws clear of the wheels)
-plate_width  = 125;     // mm — side-to-side (corner wheels, 2 mm tyre-to-wall gap)
+plate_length = 130;     // mm — front-to-back (corner screws clear of the wheels)
+plate_width  = 127;     // mm — side-to-side (1 mm tyre-to-wall gap)
 plate_thick  = 3;       // mm — flat floor thickness
 
 // Walls — 6 mm tall on each plate, meeting in the cavity centreline
@@ -30,7 +30,7 @@ motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
 motor_axle_pitch = 84;  // mm — wheels near the corners; motors closer to the central boards
-motor_track      = 44;  // mm — track wide enough that TP4056 fits between the rear motors
+motor_track      = 48;  // mm — tyres sit 1 mm from the side walls (also clears TP4056)
 
 // Pocket geometry (half-cylinder cut into the plate)
 pocket_depth     = motor_diameter / 2;
@@ -113,7 +113,7 @@ wheel_positions = [
 // z = 3 mm (plate top) is 2·sqrt(12.5² − 6²) ≈ 22 mm; round up with
 // clearance for the rubber to flex.
 wheel_cutout_x = 24;
-wheel_cutout_y = wheel_width + 2;  // 1 mm slot margin each side — keeps slot clear of the wall
+wheel_cutout_y = wheel_width + 1;  // keeps the slot just clear of the side wall
 
 
 // ─── modules ─────────────────────────────────────────────────────────
@@ -203,7 +203,7 @@ module plate()
     rect_pocket(esp_width,     esp_length,     esp_pocket_depth,     x=0,  y=-17);  // 49×26
     rect_pocket(driver_width,  driver_length,  driver_pocket_depth,  x=0,  y=+46);  // 18.5×16
     rect_pocket(imu_width,     imu_length,     imu_pocket_depth,     x=0,  y=-46);  // 20×15.5
-    rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=50, y=0);    // 29×16
+    rect_pocket(tp4056_width,  tp4056_length,  tp4056_pocket_depth,  x=48, y=0);    // 29×16
 
     // USB slot through the front wall
     usb_slot();

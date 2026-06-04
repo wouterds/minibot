@@ -13,8 +13,8 @@ import matplotlib.pyplot as plt
 OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
-plate_length = 134
-plate_width = 125
+plate_length = 130
+plate_width = 127
 plate_thick = 3       # floor thickness (Z)
 wall_thick = 2.5      # perimeter wall thickness (X/Y)
 wall_half_height = 6  # half of the cavity height (so cavity = 12 mm)
@@ -24,7 +24,7 @@ motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
 motor_axle_pitch = 84
-motor_track = 44
+motor_track = 48
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
 wheel_width = 23
@@ -70,7 +70,7 @@ bat_x, bat_y = 0, +13
 esp_x, esp_y = 0, -17
 drv_x, drv_y = 0, +46
 imu_pos_x, imu_pos_y = 0, -46
-tp_x, tp_y = 50, 0
+tp_x, tp_y = 48, 0
 
 
 def draw_top(ax) -> None:
@@ -87,7 +87,7 @@ def draw_top(ax) -> None:
     ))
 
     cutout_x = 24
-    cutout_y = wheel_width + 2
+    cutout_y = wheel_width + 1
     for x, y in wheel_positions:
         ax.add_patch(patches.FancyBboxPatch(
             (x - cutout_x / 2, y - cutout_y / 2),
