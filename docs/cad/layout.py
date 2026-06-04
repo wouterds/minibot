@@ -14,7 +14,7 @@ OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
 plate_length = 130
-plate_width = 127
+plate_width = 130
 plate_thick = 3       # floor thickness (Z)
 wall_thick = 2.5      # perimeter wall thickness (X/Y)
 wall_half_height = 6  # half of the cavity height (so cavity = 12 mm)

@@ -17,7 +17,7 @@
 
 // Outer footprint
 plate_length = 130;     // mm — front-to-back (corner screws clear of the wheels)
-plate_width  = 127;     // mm — side-to-side (1 mm tyre-to-wall gap)
+plate_width  = 130;     // mm — side-to-side (square footprint)
 plate_thick  = 3;       // mm — flat floor thickness
 
 // Walls — 6 mm tall on each plate, meeting in the cavity centreline
