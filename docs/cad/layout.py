@@ -23,7 +23,7 @@ motor_width = 12       # X dimension when laid flat
 motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
-motor_axle_pitch = 110
+motor_axle_pitch = 95
 motor_track = 44
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
@@ -62,17 +62,17 @@ wheel_positions = [
     ( motor_axle_pitch / 2, -wheel_center_y),
 ]
 
-# Component centre positions (wheels-in-corners layout). The wide
-# wheelbase puts the wheels in the corners, so boards cluster centrally:
+# Component centre positions (wheels near the corners; corners reserved
+# for the screw bosses):
 #  - Battery rotated (long axis Y), dead-centre → balanced CoM.
 #  - ESP32 rotated alongside it to the left.
-#  - DRV8833 + MPU-6050 stacked to the right.
+#  - DRV8833 + MPU-6050 out on the two sides (±Y edges), centred in X.
 #  - TP4056 at back-centre, USB-C reaching the back wall through the gap
 #    between the rear motors (track is wide enough to clear it).
 bat_x, bat_y = 0, 0
 esp_x, esp_y = -31, 0
-drv_x, drv_y = 28, +13
-imu_pos_x, imu_pos_y = 28, -13
+drv_x, drv_y = 0, +48
+imu_pos_x, imu_pos_y = 0, -48
 tp_x, tp_y = 58, 0
 
 
@@ -124,7 +124,7 @@ def draw_top(ax) -> None:
     ax.text(bat_x, bat_y, f"1S LiPo\n1000mAh\n({battery_width}×{battery_length})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # DRV8833 — right of the battery (upper)
+    # DRV8833 — on the +Y side, centred in X
     ax.add_patch(patches.Rectangle(
         (drv_x - driver_length / 2, drv_y - driver_width / 2),
         driver_length, driver_width,
@@ -133,7 +133,7 @@ def draw_top(ax) -> None:
     ax.text(drv_x, drv_y, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # MPU-6050 — right of the battery (lower)
+    # MPU-6050 — on the -Y side, centred in X
     ax.add_patch(patches.Rectangle(
         (imu_pos_x - imu_length / 2, imu_pos_y - imu_width / 2),
         imu_length, imu_width,
@@ -166,11 +166,11 @@ def draw_top(ax) -> None:
     ax.text(plate_length / 2 + 4, 0, "USB-C\n(charge)",
             ha="left", va="center", fontsize=7, color="red")
 
-    # Mount holes — on the long edges, clear of the corner wheels
+    # Corner mount holes
     for sx in (-1, 1):
         for sy in (-1, 1):
             ax.add_patch(patches.Circle(
-                (sx * 35, sy * (plate_width / 2 - 7)),
+                (sx * (plate_length / 2 - 7), sy * (plate_width / 2 - 7)),
                 1.6, color="#333", zorder=10,
             ))
 

@@ -29,7 +29,7 @@ motor_width      = 12;          // X dimension (lateral when laid flat)
 motor_height     = 10;          // Z dimension (perpendicular to plate)
 motor_diameter   = motor_width; // legacy alias used by half-cylinder pocket math below
 motor_length     = 26;          // body only, excluding shaft (measured)
-motor_axle_pitch = 110; // mm — long wheelbase pushes wheels into the corners
+motor_axle_pitch = 95;  // mm — wheels near the corners, leaving the corners free for screws
 motor_track      = 44;  // mm — track wide enough that TP4056 fits between the rear motors
 
 // Pocket geometry (half-cylinder cut into the plate)
@@ -65,12 +65,9 @@ tp4056_length = 29;
 tp4056_width  = 16;
 tp4056_pocket_depth = 2;
 
-// Mount holes (M2.5 heat-set inserts). With wheels in the corners, the
-// four bolts sit on the long edges in the clear span between the left/
-// right wheel pairs.
+// Corner mount holes (M2.5 heat-set inserts).
 mount_hole_d     = 2.7;
-mount_hole_inset = 7;    // from the long edge
-mount_hole_x     = 35;   // ± offset along length (inboard of the corner wheels)
+mount_hole_inset = 7;
 
 // Micro-USB slot in the front wall
 usb_slot_width  = 12;
@@ -149,8 +146,8 @@ module mount_holes()
 {
   for (sx = [-1, 1]) for (sy = [-1, 1])
     translate([
-      sx * mount_hole_x,
-      sy * (plate_width / 2 - mount_hole_inset),
+      sx * (plate_length / 2 - mount_hole_inset),
+      sy * (plate_width  / 2 - mount_hole_inset),
       -1
     ])
       cylinder(d=mount_hole_d, h=plate_thick + wall_half_height + 2);
@@ -198,17 +195,17 @@ module plate()
     // Wheel cutouts through the plate
     for (p = wheel_positions) wheel_cutout(p);
 
-    // Electronics recesses (wheels-in-corners layout). The wide wheelbase
-    // pushes the four wheels to the corners, so the boards cluster centrally:
+    // Electronics recesses (wheels near the corners; corners reserved for
+    // the screw bosses):
     //   - Battery rotated (long axis Y) dead-centre → balanced CoM.
     //   - ESP32 rotated alongside it to the left.
-    //   - DRV8833 + MPU-6050 stacked to the right.
+    //   - DRV8833 + MPU-6050 out on the two sides (±Y edges), centred in X.
     //   - TP4056 at back-centre; the 44 mm track opens an 18 mm gap between
     //     the rear motors so its USB-C still reaches the back-wall slot.
     rect_pocket(battery_length, battery_width, battery_pocket_depth, x=0,   y=0);    // 30×50
     rect_pocket(esp_length,     esp_width,     esp_pocket_depth,     x=-31, y=0);    // 26×49
-    rect_pocket(driver_width,   driver_length, driver_pocket_depth,  x=+28, y=+13);  // 18.5×16
-    rect_pocket(imu_width,      imu_length,    imu_pocket_depth,     x=+28, y=-13);  // 20×15.5
+    rect_pocket(driver_width,   driver_length, driver_pocket_depth,  x=0,   y=+48);  // 18.5×16
+    rect_pocket(imu_width,      imu_length,    imu_pocket_depth,     x=0,   y=-48);  // 20×15.5
     rect_pocket(tp4056_width,   tp4056_length, tp4056_pocket_depth,  x=+58, y=0);    // 29×16
 
     // USB slot through the front wall
