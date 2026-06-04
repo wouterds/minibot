@@ -14,7 +14,7 @@ OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
 plate_length = 150
-plate_width = 116
+plate_width = 125
 plate_thick = 3       # floor thickness (Z)
 wall_thick = 2.5      # perimeter wall thickness (X/Y)
 wall_half_height = 6  # half of the cavity height (so cavity = 12 mm)
@@ -23,8 +23,8 @@ motor_width = 12       # X dimension when laid flat
 motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
-motor_axle_pitch = 70
-motor_track = 32
+motor_axle_pitch = 110
+motor_track = 44
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
 wheel_width = 23
@@ -62,16 +62,17 @@ wheel_positions = [
     ( motor_axle_pitch / 2, -wheel_center_y),
 ]
 
-# Component centre positions (optimal layout).
-#  - Battery (heaviest) dead-centre → balanced fore/aft + low yaw inertia.
-#  - DRV8833 + MPU-6050 flank the battery in Y at centre-X → DRV gets short,
-#    near-equal wire runs to all four motors; the pair balances in Y.
-#  - ESP32 rotated in the front strip; TP4056 in the back strip with its
-#    USB-C facing the back-wall slot.
+# Component centre positions (wheels-in-corners layout). The wide
+# wheelbase puts the wheels in the corners, so boards cluster centrally:
+#  - Battery rotated (long axis Y), dead-centre → balanced CoM.
+#  - ESP32 rotated alongside it to the left.
+#  - DRV8833 + MPU-6050 stacked to the right.
+#  - TP4056 at back-centre, USB-C reaching the back wall through the gap
+#    between the rear motors (track is wide enough to clear it).
 bat_x, bat_y = 0, 0
-drv_x, drv_y = 0, +33
-imu_pos_x, imu_pos_y = 0, -33
-esp_x, esp_y = -56.5, 0
+esp_x, esp_y = -31, 0
+drv_x, drv_y = 28, +13
+imu_pos_x, imu_pos_y = 28, -13
 tp_x, tp_y = 58, 0
 
 
@@ -114,16 +115,16 @@ def draw_top(ax) -> None:
             arrowprops=dict(arrowstyle="->", color="#777", lw=1.2),
         )
 
-    # Battery — long axis along X, dead centre
+    # Battery — rotated (long axis Y), dead centre
     ax.add_patch(patches.Rectangle(
-        (bat_x - battery_length / 2, bat_y - battery_width / 2),
-        battery_length, battery_width,
+        (bat_x - battery_width / 2, bat_y - battery_length / 2),
+        battery_width, battery_length,
         linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
     ))
-    ax.text(bat_x, bat_y, f"1S LiPo 1000mAh\n({battery_length}×{battery_width})",
+    ax.text(bat_x, bat_y, f"1S LiPo\n1000mAh\n({battery_width}×{battery_length})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # DRV8833 — centred just above the battery (short runs to all 4 motors)
+    # DRV8833 — right of the battery (upper)
     ax.add_patch(patches.Rectangle(
         (drv_x - driver_length / 2, drv_y - driver_width / 2),
         driver_length, driver_width,
@@ -132,7 +133,7 @@ def draw_top(ax) -> None:
     ax.text(drv_x, drv_y, f"DRV8833\n({driver_length}×{driver_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
-    # MPU-6050 — centred just below the battery (balances DRV in Y)
+    # MPU-6050 — right of the battery (lower)
     ax.add_patch(patches.Rectangle(
         (imu_pos_x - imu_length / 2, imu_pos_y - imu_width / 2),
         imu_length, imu_width,
@@ -141,7 +142,7 @@ def draw_top(ax) -> None:
     ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_length}×{imu_width})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
-    # ESP32 — rotated (long axis Y) in the front strip
+    # ESP32 — rotated (long axis Y), left of the battery
     ax.add_patch(patches.Rectangle(
         (esp_x - esp_width / 2, esp_y - esp_length / 2),
         esp_width, esp_length,
@@ -165,11 +166,11 @@ def draw_top(ax) -> None:
     ax.text(plate_length / 2 + 4, 0, "USB-C\n(charge)",
             ha="left", va="center", fontsize=7, color="red")
 
-    # Corner mount holes
+    # Mount holes — on the long edges, clear of the corner wheels
     for sx in (-1, 1):
         for sy in (-1, 1):
             ax.add_patch(patches.Circle(
-                (sx * (plate_length / 2 - 7), sy * (plate_width / 2 - 7)),
+                (sx * 35, sy * (plate_width / 2 - 7)),
                 1.6, color="#333", zorder=10,
             ))
 
