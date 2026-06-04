@@ -13,7 +13,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **MPU-6050 IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
 - **TP4056 USB-C charge + DW01A protection board** — handles charging, overcharge, overdischarge and short-circuit protection
 - **1S LiPo 3.7 V / 1000 mAh (603048)**, ~1 hour of cruising
-- **3D-printed PETG translucent chassis** — fully enclosed (2.5 mm walls all around), invertible, ~145 × 113 × 18 mm
+- **3D-printed PETG translucent chassis** — fully enclosed (2.5 mm walls all around), invertible, ~144 × 125 × 18 mm
 
 ## System
 
