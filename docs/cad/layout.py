@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 OUT = Path(__file__).resolve().parent
 
 # ─── parameters (kept in sync with chassis.scad) ────────────────────
-plate_length = 150
+plate_length = 144
 plate_width = 125
 plate_thick = 3       # floor thickness (Z)
 wall_thick = 2.5      # perimeter wall thickness (X/Y)
@@ -23,7 +23,7 @@ motor_width = 12       # X dimension when laid flat
 motor_height = 10      # Z dimension (perpendicular to plate)
 motor_diameter = motor_width
 motor_length = 26      # body only, excluding shaft
-motor_axle_pitch = 95
+motor_axle_pitch = 96
 motor_track = 44
 
 wheel_diameter = 25      # measured outer diameter incl. rubber tire
@@ -62,18 +62,15 @@ wheel_positions = [
     ( motor_axle_pitch / 2, -wheel_center_y),
 ]
 
-# Component centre positions (wheels near the corners; corners reserved
-# for the screw bosses):
-#  - Battery rotated (long axis Y), dead-centre → balanced CoM.
-#  - ESP32 rotated alongside it to the left.
-#  - DRV8833 + MPU-6050 out on the two sides (±Y edges), centred in X.
-#  - TP4056 at back-centre, USB-C reaching the back wall through the gap
-#    between the rear motors (track is wide enough to clear it).
-bat_x, bat_y = 0, 0
-esp_x, esp_y = -31, 0
-drv_x, drv_y = 0, +48
-imu_pos_x, imu_pos_y = 0, -48
-tp_x, tp_y = 58, 0
+# Component centre positions. Battery + ESP32 stack flat in the centre
+# (each ~50 mm long in X, only ±25 mm wide so they clear the corner
+# motors). DRV8833 + MPU-6050 on the two sides; TP4056 fills the back
+# centre with its USB-C reaching the back-wall slot.
+bat_x, bat_y = 0, +13
+esp_x, esp_y = 0, -17
+drv_x, drv_y = 0, +46
+imu_pos_x, imu_pos_y = 0, -46
+tp_x, tp_y = 55, 0
 
 
 def draw_top(ax) -> None:
@@ -115,13 +112,13 @@ def draw_top(ax) -> None:
             arrowprops=dict(arrowstyle="->", color="#777", lw=1.2),
         )
 
-    # Battery — rotated (long axis Y), dead centre
+    # Battery — flat (long axis X), centre
     ax.add_patch(patches.Rectangle(
-        (bat_x - battery_width / 2, bat_y - battery_length / 2),
-        battery_width, battery_length,
+        (bat_x - battery_length / 2, bat_y - battery_width / 2),
+        battery_length, battery_width,
         linewidth=1, edgecolor="#640", facecolor="#e8c878", alpha=0.85,
     ))
-    ax.text(bat_x, bat_y, f"1S LiPo\n1000mAh\n({battery_width}×{battery_length})",
+    ax.text(bat_x, bat_y, f"1S LiPo 1000mAh ({battery_length}×{battery_width})",
             ha="center", va="center", fontsize=7, color="#311")
 
     # DRV8833 — on the +Y side, centred in X
@@ -142,13 +139,13 @@ def draw_top(ax) -> None:
     ax.text(imu_pos_x, imu_pos_y, f"MPU-6050\n({imu_length}×{imu_width})",
             ha="center", va="center", fontsize=6.5, color="#113")
 
-    # ESP32 — rotated (long axis Y), left of the battery
+    # ESP32 — flat (long axis X), below the battery
     ax.add_patch(patches.Rectangle(
-        (esp_x - esp_width / 2, esp_y - esp_length / 2),
-        esp_width, esp_length,
+        (esp_x - esp_length / 2, esp_y - esp_width / 2),
+        esp_length, esp_width,
         linewidth=1, edgecolor="#055", facecolor="#7ec8c8", alpha=0.85,
     ))
-    ax.text(esp_x, esp_y, f"ESP32\nLOLIN32 Lite\n({esp_width}×{esp_length})",
+    ax.text(esp_x, esp_y, f"ESP32 LOLIN32 Lite ({esp_length}×{esp_width})",
             ha="center", va="center", fontsize=7, color="#022")
 
     # TP4056
