@@ -85,7 +85,7 @@ Print the same shape twice — the chassis is invertible.
 | Infill | 25–30 % gyroid |
 | Perimeters | 3–4 walls |
 | Orientation | Plates flat on the bed |
-| Mounting | M2.5 heat-set inserts in the corner bosses |
+| Mounting | M2.5 heat-set inserts in the long-edge bosses |
 
 ## Parts
 
