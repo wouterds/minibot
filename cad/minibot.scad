@@ -556,14 +556,15 @@ c_brass = "#c9a54a";
 c_dark = "#1b1c1f";
 c_tyre = "#26272b";
 
-// The section views cut every part open before it gets its colour, so cut faces keep that colour.
-cut_x = part == "section" ? 0 : part == "axle" ? axle_x : undef;
+// The section views draw every part as the slice of it that lies in the plane x = slice_x, seen
+// from the front, each in its own colour.
+slice_x = part == "section" ? 0 : part == "axle" ? axle_x : undef;
 
 module col(c) {
-  color(c) difference() {
-    children();
-    if (!is_undef(cut_x)) translate([cut_x, -200, -50]) cube([200, 400, 100]);
-  }
+  color(c)
+    if (is_undef(slice_x)) children();
+    else linear_extrude(0.1) projection(cut = true)
+      multmatrix([[0, 1, 0, 0], [0, 0, 1, 0], [1, 0, 0, -slice_x]]) children();
 }
 
 // front left motor

@@ -11,8 +11,8 @@ view assembly assembly 60 215 p
 view layout   layout   0  0   o
 view open     open     50 215 p
 view exploded exploded 72 215 p
-view section  section  90 90  o
-view axle     axle     90 90  o
+view section  section  0  0   o
+view axle     axle     0  0   o
 view print    print    50 205 p
 for p in base lid coupon-base coupon-lid; do
   openscad -o "stl/$p.stl" -D "part=\"$p\"" --backend=manifold --export-format binstl minibot.scad 2>&1 |
