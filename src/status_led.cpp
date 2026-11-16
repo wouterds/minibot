@@ -4,25 +4,34 @@
 namespace status_led
 {
 
-static bool s_connected = false;
+static Mode s_mode = WAITING;
+
+static void write(bool on)
+{
+  digitalWrite(config::STATUS_LED, on ? LOW : HIGH);
+}
 
 void begin()
 {
   pinMode(config::STATUS_LED, OUTPUT);
-  digitalWrite(config::STATUS_LED, LOW);
+  write(false);
 }
 
-void setConnected(bool connected)
+void set(Mode mode)
 {
-  s_connected = connected;
-  digitalWrite(config::STATUS_LED, connected ? HIGH : LOW);
+  s_mode = mode;
 }
 
-void blinkWhileWaiting()
+void update()
 {
-  if (!s_connected)
+  switch (s_mode)
   {
-    digitalWrite(config::STATUS_LED, (millis() / 250) % 2);
+    case WAITING:
+      write((millis() / 250) % 2);
+      break;
+    case CONNECTED:
+      write(true);
+      break;
   }
 }
 

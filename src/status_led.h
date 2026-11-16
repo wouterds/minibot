@@ -1,12 +1,16 @@
 #pragma once
 
-#include <Arduino.h>
-
 namespace status_led
 {
 
+enum Mode
+{
+  WAITING,
+  CONNECTED,
+};
+
 void begin();
-void setConnected(bool connected);
-void blinkWhileWaiting();
+void set(Mode mode);
+void update();
 
 } // namespace status_led
