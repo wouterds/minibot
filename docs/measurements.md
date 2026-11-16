@@ -11,14 +11,11 @@ Aluminium hub with two flanges and a red silicone tyre between them. One end of 
 | What | Reading | Notes |
 |---|---:|---|
 | Outer diameter, tyre on the hub | 25.99 | The model has 25 |
-| Hub width, flange to flange | 22.16 | The model has 23 for the whole wheel |
+| Hub width, flange to flange | 22.16 | This is the width of the whole wheel: the tyre sits between the flanges. The model has 23 |
 | Cup inner diameter | | The motor slides in; how much play? |
 | Cup depth, rim to plate | | |
 | Plate thickness | | |
-| Width between the flanges | | |
-| Flange diameter | | |
 | Set screw, distance from the plate's outer face | | It sits near one flange; which end? |
-| Tyre width | | |
 
 ## Motor
 
