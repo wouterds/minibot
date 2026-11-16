@@ -19,6 +19,8 @@ constexpr uint32_t MOTOR_PWM_FREQ = 20000; // above hearing range
 constexpr uint8_t MOTOR_PWM_RES_BITS = 8;
 
 constexpr uint8_t STICK_DEAD_ZONE = 16;
+constexpr uint8_t STEER_PERCENT = 70;     // steering authority relative to throttle
+constexpr uint32_t LINK_TIMEOUT_MS = 500; // stop when the controller goes quiet for this long
 
 constexpr const char *HOST_MAC = "24:6f:28:b1:f8:b6";
 
