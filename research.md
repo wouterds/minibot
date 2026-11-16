@@ -6,124 +6,128 @@ Running log of what we learned while building minibot. Updated as we go.
 
 ### ESP32 dev board
 
-- **Chip**: ESP32-D0WDQ6 rev v1.0 — original ESP32, dual-core Xtensa LX6 @ 240 MHz, WiFi + BT/BLE
-- **USB-to-serial**: CH340 (`1a86:7523`) → `/dev/cu.usbserial-110`
-- **Crystal**: 41.01 MHz reported (a bit off the 40 MHz spec — common quirk on CH340 clones)
+- **Chip**: ESP32-D0WDQ6 rev v1.0, the original ESP32: dual-core Xtensa LX6 at 240 MHz, WiFi and Bluetooth
+- **USB-to-serial**: CH340 (`1a86:7523`), shows up as `/dev/cu.usbserial-*`
 - **Base MAC**: `24:6F:28:B1:F8:B4` (WiFi STA)
-- **Bluetooth MAC**: `24:6F:28:B1:F8:B6` (= base + 2, per ESP32's MAC derivation rule)
-- **Board**: WeMos LOLIN32 Lite (or clone) — confirmed by visible silkscreen + features
-- **Footprint**: ~52 × 25 × 5 mm (no headers soldered, direct-wire build)
+- **Bluetooth MAC**: `24:6F:28:B1:F8:B6` (base + 2, per ESP32's MAC derivation rule)
+- **Board**: WeMos LOLIN32 Lite (or a clone), 49 × 26 mm measured, no headers soldered
 - **Onboard**:
-  - JST PH2.0 connector for 1S LiPo (top edge) — **unused** in current build (battery routes through TP4056 instead)
-  - TP4054 LiPo charge IC — **bypassed**; charging handled by external TP4056 + DW01A board
-  - 3.3V LDO regulator
-  - CH340C USB-serial
-  - Micro-USB connector — used for programming only
-  - RST button
-  - PCB antenna (no external connector)
-- **Power pins exposed**:
-  - `+` (next to JST) — raw battery voltage (3.0–4.2V), perfect for feeding DRV8833 `VM`
-  - `3V` — regulated 3.3V, for DRV8833 `SLP` (sleep/enable) and IMU `VCC`
-  - `GND` — common ground
-- **Pin labels visible**: `UP` (= GPIO 36 / SENSOR_VP), `UN` (= GPIO 39 / SENSOR_VN), `EN`, plus GPIOs 0, 2, 4, 5, 12–19, 22, 23, 25–27, 32–35
+  - JST PH2.0 socket for a 1S LiPo, next to the micro-USB. Not used as a socket; its `+` leg is where the switched battery wire is soldered
+  - TP4054 charge IC, about 500 mA. Not used: charging goes through the external TP4056 board
+  - ME6211 3.3 V regulator
+  - Micro-USB, for flashing only
+  - LED on GPIO 22, lights when the pin is LOW
+  - PCB antenna across the end opposite the USB
+- **Power pins**: `3V3` and `GND` on the headers. There is no battery or 5 V pin on the headers
+- **Header pins**, antenna end to USB end:
+  - JST side: `VP` (36), `VN` (39), `EN`, 34, 35, 32, 33, 25, 26, 27, 14, 12, `GND`
+  - USB side: `3V3`, 22, 19, 23, 18, 5, 17, 16, 4, 0, 2, 15, 13
+- **Not broken out**: GPIO 21 (the usual I²C SDA), and GPIO 1 and 3 (serial, wired to the CH340 only)
 
 ### PS3 controller
 
 - **VID/PID**: `054c:0268` (Sony DualShock 3 / SIXAXIS)
-- **Manufacturer string**: `SHANWAN` — it's a clone, not a genuine Sony. Most clones work with standard pairing flow.
+- **Manufacturer string**: `SHANWAN`, so a clone. It pairs and connects like a genuine one.
 
 ### Motors
 
-- **Type**: N20 micro metal gear motors, **6V 400 RPM, 20mm shaft** (4×)
-- **Voltage choice**: 6V over 3V because the 3.7V LiPo (4.2V full) overvolts a 3V motor by 23–40%, shortening lifespan and risking thermal failure under stall. Undervolting a 6V motor is harmless — it just runs slower, with more headroom on heat and stall current.
-- **Shaft length**: 20mm to match deep-hub wheels (JS2622, measured ⌀25 × 23 mm). Standard ~9mm shafts would slip in deep hubs.
-- **RPM choice**: 400 RPM was the practical pick from what's actually in stock — ideal would have been 600 RPM for a snappier "speedy" feel, but 400 RPM is still a usable balance of speed and torque. At 3.7V loaded with the 25mm JS2622 wheels: ~1.0 km/h cruise, ~1.1 km/h peak. Future upgrade path: 2S LiPo (7.4V) would push it to ~1.8 km/h.
-- **Visible gear stages identical across all 4** → same gear ratio → same output RPM at same voltage.
-- **Current draw**: ~200 mA cruise, 500–700 mA stall per motor. Paired (2× per side) → 1–1.4 A stall per side — within DRV8833's 1.5 A continuous / 2 A peak window.
-- **Encoders**: none — open-loop control only (we command, we don't sense).
+- **Type**: N20 micro metal gear motors, **6 V 400 RPM, 20 mm shaft**, four of them
+- **Measured**: 12 × 10 mm across, 26 mm long including the solder tabs. That matches the usual drawing: 9 mm gearbox, 15 mm can, 1.8 mm tabs
+- **Voltage choice**: 6 V rather than 3 V, because a full LiPo (4.2 V) overvolts a 3 V motor by 40 %. Undervolting a 6 V motor is harmless, it just runs slower
+- **Shaft length**: 20 mm. The motor sits inside the hull, so the shaft first has to cross the wall of the wheel well and the gap to the wheel. With 20 mm, 16.5 mm ends up inside the hub
+- **RPM choice**: 400 RPM was what was in stock; 600 would feel snappier. At 3.7 V under load with ⌀25 mm wheels: about 1 km/h. A 2S battery would nearly double that
+- **Current**: about 200 mA cruising and 500–700 mA stalled per motor at 6 V, less at 3.7 V
+- **Encoders**: none, so control is open loop
+
+### Wheels
+
+- JS2622 or a clone: metal hub with a 3 mm bore and a set screw, silicone tyre
+- **Measured**: ⌀25 × 23 mm. The original is listed as ⌀26 × 22 mm
 
 ### Motor driver: DRV8833
 
-Picked over the alternatives for our 4× N20 setup:
-
-| Driver | Price / unit | Continuous | Peak | Notes |
+| Driver | Price | Continuous | Peak | Notes |
 |---|---|---|---|---|
-| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A (3 A paralleled) | MOSFET, compact (18.5 × 16 mm), no separate VCC needed, fewer GPIOs |
-| TB6612FNG | ~€1.50 | 1.2 A / ch | 3 A | MOSFET, clean API (separate PWM pin), but 22 × 22 mm and needs 6 GPIOs instead of 4 |
-| L298N | ~€2 | 2 A / ch | — | BJT, ~2 V drop → wastes battery as heat |
+| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A | MOSFET, 18.5 × 16 mm, runs from 2.7 V, 4 GPIOs |
+| TB6612FNG | ~€1.50 | 1.2 A / ch | 3 A | MOSFET, 22 × 22 mm, 6 GPIOs |
+| L298N | ~€2 | 2 A / ch | — | BJT, loses about 2 V, hopeless on one cell |
 | L9110S / MX1508 | ~€1 | 800 mA / ch | — | Marginal for stalled N20s |
 
-Plan: **1× DRV8833 breakout** for the basic 4-motor tank drive — see the [paired-motors topology](#paired-motors-per-side) below: each pair of motors on one side is wired in parallel and treated as one logical motor, so we only need 2 driver channels total.
+One DRV8833 drives all four motors: the two motors on a side are wired in parallel and treated as one.
 
-### DRV8833 control logic
+The breakout's pads: `IN1`–`IN4`, `VCC`, `GND` on one edge; `EEP` (sleep), `OUT1`–`OUT4`, `ULT` (fault) on the other. On the chip itself the sleep pin is pulled low, so the driver sleeps unless `EEP` is driven high. Some clones add their own pull-up behind a solder jumper. Wiring `EEP` to the ESP32's 3.3 V rail works either way: with the ESP32 off, the dead rail holds the pin low.
 
-Each motor is driven by **two PWM-capable GPIOs** (no separate PWM-vs-direction pins). Drive one HIGH/PWM and hold the other LOW to spin one direction; swap to reverse:
+### Charging and protection: TP4056 board
 
-| `xIN1` | `xIN2` | Result |
-|---|---|---|
-| `LOW` | `LOW` | Coast (high-impedance, motor freewheels) |
-| `PWM` | `LOW` | Forward at PWM duty |
-| `LOW` | `PWM` | Reverse at PWM duty |
-| `HIGH` | `HIGH` | Brake (short across motor) |
-
-This costs 4 GPIOs total (vs 6 for the TB6612FNG alternative) but requires both pins on each motor channel to be PWM-capable. ESP32 LEDC has 16 channels so that's no constraint.
+- USB-C in, `B+` / `B−` to the cell, `OUT+` / `OUT−` to the load
+- TP4056 charges at 1 A as shipped (1.2 kΩ programming resistor). That is 1C for a 1000 mAh cell; 2.4 kΩ halves it
+- DW01A cuts the output on overcharge (4.3 V), overdischarge (2.4 V), overcurrent (about 3 A) and short circuit
+- The load has to hang on `OUT±`, not on `B±`, or the protection does nothing
+- Some of these boards lack the two 5.1 kΩ resistors a USB-C to USB-C cable needs to see before it supplies power. Those only charge from a USB-A to USB-C cable
 
 ## Software stack
 
-### Why PlatformIO + Arduino framework
+### PlatformIO and the Arduino framework
 
-Considered Moddable SDK (TypeScript on ESP) first — beautiful idea but installing the SDK + ESP32 toolchain + ESP-IDF was a multi-GB, multi-hour setup. Dropped TS-as-hard-requirement in favour of:
+Considered the Moddable SDK (TypeScript on the ESP) first, but the SDK plus toolchain plus ESP-IDF was a multi-GB, multi-hour setup. PlatformIO handles toolchain, libraries and serial monitor from one command or one VS Code extension.
 
-- **PlatformIO IDE** (VSCode extension) — handles toolchain, library mgr, debugger, monitor, all from one extension
-- **Arduino framework** on `espressif32` platform — friendlier than raw ESP-IDF, huge library ecosystem
+### Library
 
-One click in the PlatformIO status bar = build, upload, monitor. No env vars, no shell config.
-
-### Key library
-
-- `jvpernis/esp32-ps3` (pulled via `lib_deps` git URL) — handles PS3 BT Classic + HID + button/stick event callbacks
+- `jvpernis/esp32-ps3`, pulled by git URL. It handles Bluetooth Classic, HID and the controller's reports.
+- It is unmaintained and reaches into Bluedroid internals, so it only compiles against Arduino core 2.0.x. `platformio.ini` pins the platform (6.12.0, core 2.0.17) and the library commit for that reason. An unpinned platform once resolved to core 3.x and the build broke.
+- Bluepad32 is the maintained alternative if this library ever stops working. It supports the DualShock 3 and lists some ShanWan clones.
 
 ## PS3 controller pairing
 
-PS3 pairing is **not** standard Bluetooth pairing. The controller stores **one** host MAC internally and will only connect to that address. There's no discovery, no PIN, no negotiation — the controller hunts for that exact MAC.
+PS3 pairing is not standard Bluetooth pairing. The controller stores one host address and only ever connects to that address. No discovery, no PIN.
 
-To pair:
+1. Plug the controller into a Mac or Linux machine over USB.
+2. Write the host address into the controller with HID feature report `0xF5`.
+3. Unplug, press the PS button: it connects to that address.
 
-1. Plug controller into a Mac/Linux host via USB.
-2. Write the desired host MAC into the controller's memory via HID feature report `0xF5`.
-3. Unplug USB → press PS button → controller auto-connects to that host over Bluetooth.
+`scripts/pair-ps3.py` does step 2. The firmware sets the ESP32's Bluetooth address to `HOST_MAC`, so any address works as long as both sides have the same one.
 
-We do step 2 with `scripts/pair-ps3.py` (uses `hidapi` cython package; runs via `uv` with PEP 723 inline deps).
+### Why the `hidapi` package and not `hid`
 
-### Why not just `pip install hid`?
-
-We tried the ctypes-based `hid` package first. On macOS, brew installs `libhidapi.dylib` to `/opt/homebrew/lib` which isn't a default dyld search path, and SIP strips `DYLD_FALLBACK_LIBRARY_PATH` when env-invoking system binaries — so the ctypes loader can never find the library.
-
-The cython-based `hidapi` package builds a self-contained extension during install and bypasses the issue.
+The ctypes-based `hid` package needs `libhidapi.dylib` on the dyld search path. Homebrew installs it in `/opt/homebrew/lib`, which is not on that path, and SIP strips `DYLD_FALLBACK_LIBRARY_PATH`. The Cython-based `hidapi` package builds its own copy and avoids the problem.
 
 ## ESP32 GPIO constraints
 
-### Input-only pins (cannot drive outputs / LEDs / motor signals)
+### Input only
 
-- **GPIO 34, 35, 36, 39** — no internal output drivers, no pull-ups/downs. ADC/sensor only.
+- **GPIO 34, 35, 36, 39**: no output drivers and no pull-ups. Fine for the battery divider.
 
-### Strapping pins (avoid for outputs that need defined boot levels, or be careful)
+### Driven or sampled at boot
 
-- **GPIO 0** — boot mode select. Avoid for outputs.
-- **GPIO 2** — boot mode. OK if not held HIGH at boot.
-- **GPIO 12** — flash voltage select. Must be LOW at boot or chip enters wrong mode → won't boot.
-- **GPIO 15** — debug print on boot. Must be HIGH or you lose early boot serial.
-- **GPIO 5** — boot mode select. Generally fine as output, just floats high briefly at boot.
+- **GPIO 0**: boot mode select, pulses at reset
+- **GPIO 2**: has to be low or floating at boot
+- **GPIO 5**: high at boot
+- **GPIO 12**: flash voltage select, the board will not boot with it high
+- **GPIO 14**: pulses at reset
+- **GPIO 15**: high at boot
+
+A motor driver input on one of these twitches the motors every time the board resets. The first wiring plan had GPIO 14 on the driver.
 
 ### Reserved
 
-- **GPIO 6–11** — wired to internal SPI flash. Touching them = brick.
-- **GPIO 1, 3** — UART0 used by USB-serial.
+- **GPIO 6–11**: the SPI flash
+- **GPIO 1, 3**: serial to the CH340
 
-### Currently used
+### ADC
 
-- `19` — status LED (solid when PS3 connected, blinks while waiting)
-- `17, 25, 32, 33` — face-button LEDs (will be reallocated when motors arrive)
+- **ADC1** (GPIO 32–39) always works. **ADC2** shares hardware with the radio, so the battery sense sits on ADC1.
+
+### In use
+
+| Pin | Use |
+|---|---|
+| 22 | Status LED (onboard, active low) |
+| 32, 33 | DRV8833 `IN1`, `IN2`: left motors |
+| 25, 26 | DRV8833 `IN3`, `IN4`: right motors |
+| 19, 23 | I²C `SDA`, `SCL` to the MPU-6050 |
+| 35 | Battery voltage through a divider (optional) |
+
+32, 33, 25 and 26 sit next to each other on the header, are quiet at boot and are outputs. 19 and 23 sit next to `3V3`, which the IMU needs anyway.
 
 ## Motor control
 
@@ -132,222 +136,119 @@ The cython-based `hidapi` package builds a self-contained extension during insta
 | | ESP32 GPIO | N20 motor |
 |---|---|---|
 | Voltage | 3.3 V | 3–6 V |
-| Current | 12 mA max | 200 mA – 1 A |
-| Direction | one-way | needs polarity swap to reverse |
-| Back-EMF | fries logic | spikes voltage on every PWM cycle |
+| Current | 12 mA | 200 mA – 1 A |
+| Direction | one way | needs its polarity swapped to reverse |
+| Back-EMF | kills logic | a spike on every PWM cycle |
 
-GPIO straight to motor = dead ESP32 in milliseconds.
+### DRV8833 inputs
 
-### H-bridge truth table (DRV8833)
-
-| IN1 | IN2 | Effect |
+| `IN1` | `IN2` | Result |
 |---|---|---|
-| HIGH | LOW | Forward |
-| LOW | HIGH | Reverse |
-| LOW | LOW | Coast (free spin) |
-| HIGH | HIGH | Brake (short across motor) |
+| LOW | LOW | Coast |
+| PWM | LOW | Forward, fast decay: the motor freewheels between pulses |
+| HIGH | PWM | Forward, slow decay: the motor is shorted between pulses |
+| LOW | PWM | Reverse, fast decay |
+| PWM | HIGH | Reverse, slow decay |
+| HIGH | HIGH | Brake |
 
-`PWMx` rides on top → speed magnitude.
+The firmware uses slow decay at 20 kHz: one input stays HIGH, the other is pulsed LOW. Torque stays usable at low speed, the PWM is above hearing range, and a speed of zero is a brake.
 
-### Stick → driver mental model
+### Stick to motors
 
-PS3 stick gives signed `-128..+127`. The driver only understands:
-
-- **Unsigned PWM 0–255** (magnitude / how hard)
-- **Two direction pins** (which way)
-
-Code splits the signed stick value into `abs()` → PWM and `sign()` → IN1/IN2 levels. The H-bridge handles the polarity flip across the motor terminals so we never need "negative PWM".
-
-### Open-loop vs closed-loop
-
-Our bare N20s have **no encoders**, so we run **open-loop** — we command a direction + speed and trust the motor obeys. For:
-
-- Precise distance ("drive 30 cm")
-- Speed regulation under load
-- Detecting stall against a wall
-
-…we'd need N20s with **magnetic hall encoders** (~$3–5 extra per motor, quadrature output). Not in scope for v1.
-
-## Power topology
+The sticks give signed values from −128 to 127. Each goes through a dead zone and a squared curve to a signed speed. Left stick up and down is throttle, right stick left and right is steering:
 
 ```
-USB-C ── TP4056 ── B+/B- ── Battery
-              └── OUT+/OUT- ──┬── LOLIN32 + pin (VBAT → onboard 3.3V LDO)
-                              └── DRV8833 VM (motor supply)
-
-GND ── common across battery −, TP4056 OUT−, LOLIN32 GND, DRV8833 GND
+left  = throttle + steer
+right = throttle − steer
 ```
 
-The **TP4056 USB-C board** (with onboard DW01A protection IC) replaces the LOLIN32's built-in charging path:
+If one side would exceed full speed, both are scaled down together, so the turn keeps its shape.
 
-- **B+ / B-**: battery terminals (TP4056 charges the cell here)
-- **OUT+ / OUT-**: protected battery output. Cuts off automatically on overcharge (>4.25 V), overdischarge (<2.4 V), overcurrent or short-circuit.
-- USB-C provides 5 V to charge — also passes through to the load while charging, so the bot can be driven from USB.
+### Losing the link
 
-Why add the TP4056 if the LOLIN32 already has a TP4054 charge IC?
+The controller streams reports all the time. When they stop for half a second the firmware brakes, without waiting for the Bluetooth stack to declare the connection dead. Otherwise the bot would keep driving on the last stick position for seconds.
 
-| Feature | LOLIN32 onboard | TP4056 board |
-|---|---|---|
-| Charge current control | ✅ | ✅ |
-| Overcharge protection | ❌ (TP4054 stops at 4.2 V but no protection cutoff) | ✅ DW01A cuts at 4.25 V |
-| Overdischarge protection | ❌ | ✅ DW01A cuts at 2.4 V |
-| Short-circuit protection | ❌ | ✅ |
-| USB connector | micro-USB | USB-C |
+### Open loop
 
-For a bot that gets thrown around (and where you really don't want a LiPo to over-discharge), TP4056 is worth the €1.50.
+No encoders, so the firmware commands a speed and trusts the motors. Precise distances, speed held under load and stall detection would need N20s with hall encoders.
 
-- **VM**: motor power, 3–13.5 V (from TP4056 OUT+, which is battery voltage)
-- **VCC**: logic power, 3.3 V (from LOLIN32's onboard LDO, fed from `+` pin)
-- **SLP** (sleep/enable on DRV8833): tie to 3.3 V to keep the driver awake (or wire to a GPIO for software sleep)
-- **Decoupling**: a 100–470 µF cap across VM/GND helps absorb stall-current dips.
+## Power
 
-⚠️ Never pull motor current through ESP32's `VIN` or `3V3` pin — onboard LDO maxes out around 800 mA and the input diode is tiny. Motors get their power *directly* from the battery via the driver's `VM`.
+```
+USB-C ── TP4056 ── B+/B− ── battery
+              └── OUT+ ──┬── switch ── LOLIN32 battery + ── 3.3 V regulator ── ESP32, IMU, driver EEP
+                         └── DRV8833 VCC ── motors
+              └── OUT− ── common ground
+```
 
-⚠️ Don't plug the battery into both the LOLIN32's JST AND the TP4056 B+ at the same time — pick one path. We use TP4056 only.
+- **The switch sits in the ESP32's supply only.** A slide switch this size is rated for 0.3 A. The motors bypass it, and the driver sleeps when the ESP32's 3.3 V rail is gone.
+- **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A 100 kΩ / 100 kΩ divider on GPIO 35 lets the firmware stop the motors at 3.3 V. The dip has to last three seconds, because motor starts pull the voltage down briefly. Without the divider the pin reads near zero at boot and the check switches itself off.
+- **Decoupling.** 220–470 µF across the driver's supply. The regulator needs about 3.4 V in to hold 3.3 V out, and a stalled motor can pull a tired cell below that.
+- **Two chargers.** The LOLIN32's own TP4054 charges whatever hangs on its battery input, so with both USB ports plugged in two chargers feed one cell. Plug in one at a time.
+- **Never route motor current through the ESP32 board.** Its regulator and traces are sized for a few hundred mA.
 
 ## Paired motors per side
 
-To save a driver and GPIO budget, **the two motors on each side are wired in parallel** and treated as a single logical motor:
-
 ```
-Left Front  motor + ─┐
-Left Rear   motor + ─┴───── Driver AO1
-Left Front  motor − ─┐
-Left Rear   motor − ─┴───── Driver AO2
+left front  + ─┐
+left rear   + ─┴── OUT1
+left front  − ─┐
+left rear   − ─┴── OUT2
 ```
 
-(Same for the right side via BO1/BO2.)
+Same for the right side on `OUT3` / `OUT4`.
 
-Implications:
+- One driver instead of two, four GPIOs instead of eight
+- Current per channel doubles: about 400 mA cruising, up to about 0.9 A with both motors stalled at 3.7 V. Inside the driver's 1.5 A
+- Both motors on a side have to match, so buy all four from one listing
+- If one motor of a pair runs the wrong way, swap its leads. Not fixable in software
 
-- **1 driver, not 2** — both sides fit on a single DRV8833 (one channel per side)
-- **6 GPIOs instead of 12** for motor control
-- **Current doubles per channel** — 2× N20 in parallel pull ~400 mA cruise, ~1.5–2 A at simultaneous stall. Within the DRV8833's 1.5 A continuous / 2 A peak window, but tight enough to want decent decoupling and a battery that can deliver it.
-- **Both motors on a side must be matched** (same gear ratio + winding) so they spin at the same RPM under the same drive signal. Our 4× N20s look identical externally + share the same visible gear stages, so this should hold.
-- **Wire polarity matters** — if a paired motor spins the "wrong way" relative to its partner, just flip its leads at the driver output. Don't try to fix it in software.
+## Which way is up
 
-## Wiring plan (1× DRV8833, 4 motors paired, tank drive)
+The MPU-6050's accelerometer reads gravity. The sign of its Z axis says whether the bot is on its wheels or on its back.
 
-| Side | IN1 (PWM) | IN2 (PWM) | Driver / output | Motors |
-|---|---|---|---|---|
-| Left  | GPIO 13 | GPIO 14 | A channel (AOUT1 + AOUT2) | Left Front + Left Rear in parallel |
-| Right | GPIO 26 | GPIO 27 | B channel (BOUT1 + BOUT2) | Right Front + Right Rear in parallel |
+- Above +0.5 g: upright. Below −0.5 g: on its back. In between (on its side, in the air) the last answer stands.
+- A new answer has to hold for 300 ms before it counts, so a bump does not flip the controls.
+- The chip's 5 Hz low-pass filter is on, which keeps motor vibration out.
 
-`SLP` → ESP32 `3V3`. `VM` → TP4056 `OUT+` (battery, 3–4.2 V). All `GND` rails common (battery −, ESP32 GND, driver GND). No separate VCC pin needed — DRV8833 self-powers its logic from VM.
+On its back the wheels touch the floor with their other side, so the same motor direction now drives the bot the other way: the throttle is negated. Steering needs no change, because the sides swap and reverse at the same time.
 
-Final pin budget: 4 GPIO for motors + 1 status LED (GPIO 19) + 2 GPIO for I²C (21/22) = 7 used. Plenty of headroom for future sensors (ultrasonic, encoders, NeoPixels, etc.).
+The firmware talks to the chip directly over I²C: wake it, set the filter, read two bytes. No library.
 
-## IMU for orientation detection
+## Hull
 
-A **MPU-6050 (MPU6050)** module sits on the I²C bus (SDA → GPIO 21, SCL → GPIO 22) and reports the gravity vector via its accelerometer. Because the chassis is invertible, drive direction needs to flip automatically when the bot is on its other face:
+The full description is in [`cad/README.md`](cad/README.md). The reasoning:
 
-- Right-side-up → accelerometer Z axis points one way → forward = +X
-- Upside-down → Z flips sign → "forward" stick should drive the wheels the other way
-- Left/right also swap when flipped
+### Wheels inside
 
-The integration plan when the motors arrive is:
+The hull is a closed square, 120 × 120 × 16 mm, and the wheels run in wells inside it. Each well is a cylinder around the axle, 1.5 mm larger than the tyre all round, open to both faces. The tyres stand 4.5 mm proud of each face. Nothing sticks out in any other direction, so the bot hits walls with its hull, not with a wheel.
 
-```cpp
-bool flipped = imu::isUpsideDown();         // sign of accel Z
-if (flipped) {
-  forward = !forward;
-  std::swap(leftSpeed, rightSpeed);
-}
-```
+The price is ground clearance: 4.5 mm, flat floors only.
 
-with ~200 ms hysteresis so a quick yeet during driving doesn't trigger a direction flip mid-stride. The MPU6050 also leaves room for future features (tilt-aware drive, crash detection, optional self-balance mode).
+### Motor mount
 
-## Chassis
+The motor sits in the sealed middle with its gearbox against the wall of the well, and its shaft goes through that wall into the wheel. That wall is the mount, which is why the shaft has to be long. Each motor lies on two saddles in the base and under two in the lid.
 
-### Concept: fully enclosed, wheels inside the perimeter, invertible
+A wheel that hits the floor levers its motor against those saddles: the wheel hangs 17 mm outside the nearer saddle, so the saddles see about twice the force on the wheel, one pushing on the lid and one on the base. The saddles are as far apart as the motor allows, and the lid's snap fingers stand right beside each motor.
 
-Two identical "tray" plates that join open-face-to-open-face into a closed box. Each plate has a 3 mm flat floor and 6 mm half-walls around its perimeter; when stacked together they form an 18 mm tall enclosure with continuous 12 mm cavity inside. **Side panels (3 mm) on all four sides** — nothing is exposed laterally.
+### Split on the axle line
 
-```
-                                ┌─────────────────────┐
-              3mm TOP PLATE  ►  │═════════════════════│  ◀ top plate has wheel
-                  6mm wall   ►  │                     │    cutouts for protrusion
-                                │  ◯ motor      ◯     │
-                                │   wheel  ESP32      │   12mm motor cavity
-                                │           battery   │
-                                │  ◯ motor      ◯     │
-                  6mm wall   ►  │                     │  ◀ bottom plate also has
-              3mm BOT PLATE  ►  │═════════════════════│    cutouts (chassis is
-                                └─────────────────────┘    invertible)
-```
+Both shells end at the axle, so the motors with their wheels drop in from above and the shafts lie in half-round notches. Everything else that goes through a wall is also centred on the seam, which makes the hull look the same either way up.
 
-The motors mount **shaft-outward** — bodies sit toward the chassis centre, shafts and wheels point outward to the side walls. Wheels are tucked **just inside the wall** (a few millimetres of clearance), and they poke out **only through cutouts in the top and bottom plates** — nothing protrudes laterally. Wheels protrude **~7.5 mm above and below** the chassis floor/ceiling, so the bot drives the same right-side-up or upside-down (invertible).
+### Click fit
 
-### Dimensions
+- Snap fingers hang from the lid and hook into grooves in the base: two on the walls of every motor bay, three on the side walls.
+- The grooves sit a little lower than the hooks, so a closed finger stays bent by 0.15 mm and pulls the lid down. Without that preload a snapped lid rattles.
+- A lip on the base stands 2 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the fingers only have to hold the lid down.
+- The fingers print standing up, bending across the layers, which is the weak direction. They are sized to bend about 1.2 %.
 
-| | |
-|---|---|
-| Plate length | **130 mm** (front-to-back) |
-| Plate width | **130 mm** (side-to-side, square footprint) |
-| Plate thickness | 3 mm |
-| Wall thickness | 2.5 mm |
-| Wall height per plate | 6 mm (×2 = 12 mm cavity) |
-| Total chassis height | **18 mm** (3 + 6 + 6 + 3) |
-| Motor track (centres) | **48 mm** |
-| Motor axle pitch (wheelbase) | 80 mm |
-| Wheel positions | shaft-outward from motors; wheel centres at ±47.5 mm in Y |
-| Wheel cutout per plate | ~30 × 22 mm rounded slot (×4) |
-| Mounting | M2.5 heat-set inserts in corner bosses |
-| Side access | micro-USB slot in the front wall |
+### Layout
 
-### Material: PETG translucent
+- USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side, switch in the middle of the tail. Each board lies with its socket against the wall.
+- The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
+- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 4.6 mm. A foil pouch that close can cost range.
+- Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.
 
-| Property | Why it matters here |
-|---|---|
-| Impact resistant | Survives drops, motor vibration, table yeets |
-| Layer adhesion | No delamination under chassis stress |
-| ~75 °C glass transition | Fine for indoor robot use (PLA would soften in a hot car / direct sun) |
-| Easy to print | No warp, no ABS-style fumes |
-| **Translucent** | Internal LEDs glow through the chassis → the whole bot becomes a status indicator 💡 |
+### Material
 
-### Print parameters
-
-| Setting | Value |
-|---|---|
-| Plate thickness | **3 mm** (4 mm if you want extra stiffness) |
-| Layer height | 0.2 mm body, 0.1 mm for crisp pocket walls |
-| Infill | 25–30 % gyroid |
-| Perimeters | 3–4 walls |
-| Orientation | Plates printed **flat** on the bed (strongest along load axes) |
-| Tolerance for press fits | +0.2–0.3 mm on pocket diameters (PETG extrudate is slightly wider than nozzle) |
-| Mounting | M2.5 heat-set inserts in printed bosses |
-
-### Build constraints
-
-Driving everything from "no component sticks above the chassis":
-
-- **Boards have no headers** — wires soldered directly to ESP32 pads (loses easy disassembly, gains height)
-- **LOLIN32 Lite footprint** (52 × 25 × 5 mm) fits comfortably in the 12 mm cavity
-- **DRV8833** (~18.5 × 16 × 4 mm) fits flat with room to spare
-- **LiPo battery** (height < 12 mm, confirmed by inspection) → fits anywhere in the cavity
-- **Cable channels** — 1.5 mm grooves in plate inner faces for routing wires
-
-### Side-access requirements (because invertible + enclosed)
-
-The robot has no fixed top/bottom AND no exposed sides, so external interfaces all live in cutouts through the side walls:
-
-- [x] Micro-USB cutout in the front wall (for programming + battery charging)
-- [ ] Power switch slot (optional — alternatively, plug/unplug JST battery)
-- [ ] Optional: vent slots if DRV8833 runs hot under heavy stall
-
-### Design checklist (current chassis.scad reflects all of this)
-
-- [x] Two identical "tray" plates with 3 mm floor + 6 mm half-walls = invertible
-- [x] 4× half-cylinder motor pockets in each plate (motors lie on their side, shaft outward)
-- [x] 4× wheel cutouts through each plate (top + bottom) so the wheel can protrude
-- [x] Electronics recesses: ESP32 (49 × 26 mm), DRV8833 (18.5 × 16 mm), battery (~50 × 30 × 6 mm, 603048), MPU-6050 (20 × 15.5 mm), TP4056 (29 × 16 mm)
-- [x] Mounting holes through the corner walls for M2.5 heat-set inserts
-- [x] Front-wall USB slot
-
-### Translucency affordance 💡
-
-Because the chassis is translucent PETG, **any LED placed inside the chassis becomes a chassis-wide glow**:
-
-- The existing `STATUS_LED` (GPIO 19) becomes a full-bot status indicator
-- Optional: add a short WS2812B / NeoPixel strip (5 LEDs ≈ €1) along the centerline → ambient lighting, direction indicators, low-battery pulse, etc. ESP32 drives NeoPixels off any GPIO using the `Adafruit_NeoPixel` or `FastLED` library; one data pin + 5V + GND.
-- Wall thickness affects glow: 2 mm walls = bright/visible LED, 4 mm walls = diffused even glow. Mix for accent vs. ambient.
+Translucent PETG: tough, good layer adhesion, and the status LED lights the whole hull.
