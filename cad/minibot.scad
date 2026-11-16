@@ -50,6 +50,7 @@ imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
 sw = [8.5, 3.5, 3.5];       // SS12D00 slide switch: length, height, depth along the lever
 sw_lever = 3;               // how far the lever stands out of the body
 sw_slot = [4.4, 2];         // opening for the lever and its travel
+sw_x = 17.5;                // where the switch sits along the right wall, beside the ESP32
 
 /* [Fit] */
 fit = 0.25;             // clearance around a board, per side
@@ -67,8 +68,7 @@ snap_lead = 35;         // closing flank, degrees from the push direction
 snap_ret = 55;          // holding flank
 snap_preload = 0.15;    // how far a finger stays bent once the lid is down
 snap_bay_w = 14;        // fingers beside the motors, two per motor
-snap_side_w = 10;       // fingers on the side walls
-snap_sides = [["+y", 17], ["+y", -17], ["-y", 17]];
+snap_sides = [["+y", 17, 10], ["+y", -17, 10], ["-y", -24.7, 5]];   // side walls: wall, x, width
 
 /* [Hidden] */
 e = 0.01;
@@ -99,9 +99,9 @@ bay_x0 = axle_x - motor_w / 2 - motor_fit;
 bay_x1 = axle_x + motor_w / 2 + motor_fit;
 motor_rear_y = corridor / 2;
 
-// Layout across the middle section, right to left: ESP32 with its micro-USB in the right wall,
-// battery lengthwise in the middle, charger with its USB-C in the left wall, driver and IMU
-// on either side of the charger. Both USB ports sit at x = 0.
+// Layout across the middle section, right to left: ESP32 with its micro-USB in the right wall
+// and the power switch beside it, battery lengthwise in the middle, charger with its USB-C in
+// the left wall, driver and IMU on either side of the charger. Both USB ports sit at x = 0.
 esp_cx = -esp_usb_off;
 esp_x0 = esp_cx - esp[0] / 2;
 esp_x1 = esp_cx + esp[0] / 2;
@@ -139,6 +139,7 @@ assert(esp_x0 - fit - rib >= -mid_x && esp_x1 + fit + rib <= mid_x, "ESP32 does 
 assert(bat_y0 - fit - rib >= esp_y1 + fit + rib, "battery runs into the ESP32");
 assert(bat_half + rib <= bay_x0 - bay_rib - snap_gap - snap_t - 1, "battery runs into the snap fingers");
 assert(sw_wall >= 0, "switch lever is shorter than the wall is thick");
+assert(sw_x - sw_recess[0] / 2 - 1 >= esp_x1 + fit + rib && sw_x + sw_recess[0] / 2 + 1 <= mid_x, "switch does not fit beside the ESP32");
 assert(pod_x0 + max(drv[0], imu[0]) + fit <= mid_x, "driver or IMU does not fit beside the charger");
 
 echo(str("hull (l x w x h): ", hull_l, " x ", hull_w, " x ", hull_h));
@@ -206,9 +207,9 @@ module at_wall(side, along, w) {
       rotate([90, 0, 0]) linear_extrude(w, center = true) children();
 }
 
-// things on the rear wall are drawn against the left wall and turned a quarter
-module at_tail() {
-  rotate([0, 0, 90]) children();
+// the switch is drawn against the left wall and mirrored to its place on the right one
+module at_switch() {
+  translate([sw_x, 0, 0]) mirror([0, 1, 0]) children();
 }
 
 // ---------- shell ----------
@@ -293,10 +294,10 @@ module openings() {
   port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.5);
   // micro-USB for flashing, right side
   port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 1.5);
-  // power switch, in the tail: a recess as deep as the wall, with the lever slot in its floor.
-  // The lever ends flush with the hull, so a crash cannot flick or shear it.
-  port([-hull_l / 2, 0, 0], "x", sw_recess[0], sw_recess[1], 2 * wall, 1.5);
-  port([-in_x, 0, 0], "x", sw_slot[0], sw_slot[1], 2 * sw_wall + 2, 0.5);
+  // power switch, right side, beside the micro-USB: a recess as deep as the wall, with the lever
+  // slot in its floor. The lever ends flush with the hull, so a crash cannot flick or shear it.
+  port([sw_x, -hull_w / 2, 0], "y", sw_recess[0], sw_recess[1], 2 * wall, 1.5);
+  port([sw_x, -in_y, 0], "y", sw_slot[0], sw_slot[1], 2 * sw_wall + 2, 0.5);
 }
 
 // The base's lip has to let the shafts, the plugs and the switch lever through.
@@ -305,7 +306,7 @@ module tongue_gaps() {
   quadrants() translate([axle_x, gear_y, 0]) box([-motor_boss_d / 2 - 0.8, motor_boss_d / 2 + 0.8], [-1, 2], h);
   translate([0, in_y, 0]) box([-usbc_open[0] / 2 - 0.5, usbc_open[0] / 2 + 0.5], [-1, 2], h);
   translate([0, -in_y, 0]) box([-usb_open[0] / 2 - 0.5, usb_open[0] / 2 + 0.5], [-2, 1], h);
-  translate([-in_x, 0, 0]) box([-2, 1], [-sw_recess[0] / 2 - 0.5, sw_recess[0] / 2 + 0.5], h);
+  translate([sw_x, -in_y, 0]) box([-sw_recess[0] / 2 - 0.5, sw_recess[0] / 2 + 0.5], [-2, 1], h);
 }
 
 // ---------- snap fit ----------
@@ -347,7 +348,7 @@ module snaps(wider = 0) {
     translate([bay_x1 + bay_rib, snap_bay_y, 0])
       rotate([90, 0, 0]) linear_extrude(snap_bay_w + wider, center = true) children();
   }
-  for (s = snap_sides) at_wall(s[0], s[1], snap_side_w + wider) children();
+  for (s = snap_sides) at_wall(s[0], s[1], s[2] + wider) children();
 }
 
 module snap_fingers() {
@@ -361,7 +362,7 @@ module snap_grooves() {
 // Slots on the seam, near the fingers: twist a coin in one to lift the lid there.
 module pry_slots() {
   sym_x() sym_y() port([hull_l / 2, snap_bay_y, 0], "x", 12, 2.2, 2, 0.4);
-  for (s = snap_sides) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, 2, 0.4);
+  for (s = snap_sides) if (s[2] >= 10) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, 2, 0.4);
 }
 
 // ---------- motor bays ----------
@@ -460,15 +461,15 @@ module base_fittings() {
   mirror([1, 0, 0]) board_seat(imu);
   esp_seat();
   battery_seat();
-  at_tail() {
-    switch_seat(in_x - sw_wall);
+  at_switch() {
+    switch_seat(in_y - sw_wall);
     switch_pad([-in_z - e, 0]);
   }
 }
 
 // behind the switch recess the wall is a pad in each shell, with the lever slot in it
 module switch_pad(zr) {
-  box([-sw_recess[0] / 2 - 1, sw_recess[0] / 2 + 1], [in_x - sw_wall, in_x + e], zr);
+  box([-sw_recess[0] / 2 - 1, sw_recess[0] / 2 + 1], [in_y - sw_wall, in_y + e], zr);
 }
 
 module base() {
@@ -518,7 +519,7 @@ module lid_fittings() {
   // battery: a backstop, the foam tape under it does the holding
   for (y = [-8, 8]) keeper([-20, 20], [bat_cy + y - rib / 2, bat_cy + y + rib / 2], bat_z0 + bat[2] + 0.7);
   // switch
-  at_tail() keeper([-sw[0] / 2 + 0.2, sw[0] / 2 - 0.2], [in_x - sw_wall - sw[2], in_x - sw_wall + e], sw_z + 0.15);
+  at_switch() keeper([-sw[0] / 2 + 0.2, sw[0] / 2 - 0.2], [in_y - sw_wall - sw[2], in_y - sw_wall + e], sw_z + 0.15);
 }
 
 module lid() {
@@ -539,7 +540,7 @@ module lid() {
         lip_relief();
       }
       snap_fingers();
-      at_tail() switch_pad([0, 4]);
+      at_switch() switch_pad([0, 4]);
     }
     openings();
     pry_slots();
@@ -681,13 +682,13 @@ module pod_gold(size) {
 }
 
 module switch_body() {
-  at_tail() box([-sw[0] / 2, sw[0] / 2], [in_x - sw_wall - sw[2], in_x - sw_wall], [-sw_z, sw_z]);
+  at_switch() box([-sw[0] / 2, sw[0] / 2], [in_y - sw_wall - sw[2], in_y - sw_wall], [-sw_z, sw_z]);
 }
 
 module switch_metal() {
-  at_tail() {
-    translate([1, in_x - sw_wall - e, 0]) box([-0.75, 0.75], [0, sw_lever], [-0.75, 0.75]);
-    for (x = [-2.5, 0, 2.5]) translate([x, in_x - sw_wall - sw[2], 0]) box([-0.25, 0.25], [-3, 0], [-0.15, 0.15]);
+  at_switch() {
+    translate([1, in_y - sw_wall - e, 0]) box([-0.75, 0.75], [0, sw_lever], [-0.75, 0.75]);
+    for (x = [-2.5, 0, 2.5]) translate([x, in_y - sw_wall - sw[2], 0]) box([-0.25, 0.25], [-3, 0], [-0.15, 0.15]);
   }
 }
 
@@ -796,7 +797,7 @@ if (part == "layout") {
   label([0, tp_y0 + 10], "TP4056", 2.4);
   label([pod_x0 + drv[0] / 2, pod_y0 + drv[1] / 2], "DRV", 2.4);
   label([-pod_x0 - imu[0] / 2, pod_y0 + imu[1] / 2], "IMU", 2.4);
-  label([-in_x + 10, 0], "switch", 2.4);
+  label([sw_x, -in_y + 9], "switch", 2.4);
   label([0, hull_w / 2 + 5], "USB-C: charge", 2.6);
   label([0, -hull_w / 2 - 5], "micro-USB: flash", 2.6);
   for (sx = [-1, 1], sy = [-1, 1]) label([sx * axle_x, sy * (gear_y - 12)], "N20", 2.4);
