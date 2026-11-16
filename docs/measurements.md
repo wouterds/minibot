@@ -29,8 +29,8 @@ N20 with an open brass gearbox and a smooth D-shaft.
 | Width | 11.96 | Model: 12 |
 | Height, across the flats | 9.92 | Model: 10 |
 | Total length, shaft tip to the rear end | 45.40 | Includes the shaft and whatever sticks out at the back |
-| Shaft length from the gearbox face | | Needed to split the 45.40 |
-| Gearbox face to the end of the can, without the tabs | | Model: 24 |
+| Shaft length from the gearbox face | 18.73 | Model: 20. The D flat runs most of its length |
+| Gearbox face to the end of the can, without the tabs | | Model: 24. Total minus shaft leaves 26.67 for body plus tabs, so the body is probably nearer 25 |
 | Solder tabs | | Model: 1.8 |
 | Gearbox length | | Model: 9 |
 | Shaft diameter, and across the D flat | | |
