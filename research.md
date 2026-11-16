@@ -31,10 +31,10 @@ Running log of what we learned while building minibot. Updated as we go.
 
 ### Motors
 
-- **Type**: N20 micro metal gear motors, **6 V 400 RPM, 20 mm shaft**, four of them
-- **Measured**: 12 × 10 mm across, 26 mm long including the solder tabs. That matches the usual drawing: 9 mm gearbox, 15 mm can, 1.8 mm tabs
+- **Type**: N20 micro metal gear motors, **6 V 400 RPM, long D-shaft**, four of them
+- **Measured**: 12 × 10 mm across, 25.6 mm from the brass front face to the end cap, of which 9.4 mm is gearbox. Solder tabs add another millimetre
 - **Voltage choice**: 6 V rather than 3 V, because a full LiPo (4.2 V) overvolts a 3 V motor by 40 %. Undervolting a 6 V motor is harmless, it just runs slower
-- **Shaft length**: 20 mm. The motor sits inside the hull, so the shaft first has to cross the wall of the wheel well and the gap to the wheel. With 20 mm, 16.5 mm ends up inside the hub
+- **Shaft length**: 18.7 mm from the gearbox face. The wheel hubs are hollow, and the motor reaches 3.4 mm into them; from there the shaft spans the rest of the hub to its solid end
 - **RPM choice**: 400 RPM was what was in stock; 600 would feel snappier. At 3.7 V under load with ⌀25 mm wheels: about 1 km/h. A 2S battery would nearly double that
 - **Current**: about 200 mA cruising and 500–700 mA stalled per motor at 6 V, less at 3.7 V
 - **Encoders**: none, so control is open loop
@@ -42,13 +42,13 @@ Running log of what we learned while building minibot. Updated as we go.
 ### Wheels
 
 - JS2622 or a clone: metal hub with a 3 mm bore and a set screw, silicone tyre
-- **Measured**: ⌀25 × 23 mm. The original is listed as ⌀26 × 22 mm
+- **Measured**: ⌀26 mm over the tyre, 22.2 mm wide over the hub's flanges. The hub is a cup, solid at one end
 
 ### Motor driver: DRV8833
 
 | Driver | Price | Continuous | Peak | Notes |
 |---|---|---|---|---|
-| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A | MOSFET, 18.5 × 16 mm, runs from 2.7 V, 4 GPIOs |
+| **DRV8833** ✅ | ~€1.50 | 1.5 A / ch | 2 A | MOSFET, 18.4 × 16 mm, runs from 2.7 V, 4 GPIOs |
 | TB6612FNG | ~€1.50 | 1.2 A / ch | 3 A | MOSFET, 22 × 22 mm, 6 GPIOs |
 | L298N | ~€2 | 2 A / ch | — | BJT, loses about 2 V, hopeless on one cell |
 | L9110S / MX1508 | ~€1 | 800 mA / ch | — | Marginal for stalled N20s |
@@ -60,7 +60,7 @@ The breakout's pads: `IN1`–`IN4`, `VCC`, `GND` on one edge; `EEP` (sleep), `OU
 ### Charging and protection: TP4056 board
 
 - USB-C in, `B+` / `B−` to the cell, `OUT+` / `OUT−` to the load
-- TP4056 charges at 1 A as shipped (1.2 kΩ programming resistor). That is 1C for a 1000 mAh cell; 2.4 kΩ halves it
+- TP4056 charges at 1 A as shipped (1.2 kΩ programming resistor). That is 0.5C for the 2000 mAh cell
 - DW01A cuts the output on overcharge (4.3 V), overdischarge (2.4 V), overcurrent (about 3 A) and short circuit
 - The load has to hang on `OUT±`, not on `B±`, or the protection does nothing
 - Some of these boards lack the two 5.1 kΩ resistors a USB-C to USB-C cable needs to see before it supplies power. Those only charge from a USB-A to USB-C cable
@@ -245,15 +245,18 @@ The full description is in [`cad/README.md`](cad/README.md). The reasoning:
 
 ### Wheels inside
 
-The hull is a closed square, 120 × 120 × 16 mm, and the wheels run in wells inside it. Each well is a cylinder around the axle, 1.5 mm larger than the tyre all round, open to both faces. The tyres stand 4.5 mm proud of each face. Nothing sticks out in any other direction, so the bot hits walls with its hull, not with a wheel.
+The hull is a closed square, 124 × 124 × 17 mm, and the wheels run in wells inside it. Each well is a cylinder around the axle, 1.5 mm larger than the tyre all round, open to both faces. The tyres stand 4.5 mm proud of each face. Nothing sticks out in any other direction, so the bot hits walls with its hull, not with a wheel.
 
 The price is ground clearance: 4.5 mm, flat floors only.
 
 ### Motor mount
 
-The motor sits in the sealed middle with its gearbox against the wall of the well, and its shaft goes through that wall into the wheel. That wall is the mount, which is why the shaft has to be long. Each motor lies on two saddles in the base and under two in the lid.
+The wheel hubs are cups, so the motor does not have to stop short of its wheel. It passes through the wall of the well, and the front 3.4 mm of its gearbox stands inside the hub. That depth is the hub's width minus the shaft's length, which puts the shaft tip flush with the hub's outer face and the whole solid end of the hub on the shaft. It also makes the hull about 7 mm narrower than with the gearbox in front of the wall.
 
-A wheel that hits the floor levers its motor against those saddles: the wheel hangs 17 mm outside the nearer saddle, so the saddles see about twice the force on the wheel, one pushing on the lid and one on the base. The saddles are as far apart as the motor allows, and the lid's snap fingers stand right beside each motor.
+Each motor lies on two saddles in the base and under two in the lid: one under the end cap, one from the front of the can up to the well wall. The gearbox is an open frame of brass plates, so the front saddle is long enough to always carry one of them.
+
+- **Along its axis** the motor is held by a stop behind its end cap, and by a small stop on the outer wall of the well that faces the shaft tip. That one touches only at the centre of rotation, so it does not drag.
+- **A wheel that hits the floor levers its motor against the saddles.** The wheel hangs outside the front saddle, so the saddles see up to about twice the force on the wheel, one pushing on the lid and one on the base. That is why the lid's snap fingers stand right beside each motor.
 
 ### Split on the axle line
 
@@ -270,7 +273,7 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 
 - USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side. Each board lies with its socket against the wall.
 - The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
-- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.7 mm. A foil pouch that close can cost range.
+- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.2 mm. A foil pouch that close can cost range.
 - Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.
 
 ### Material

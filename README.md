@@ -14,8 +14,8 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **4× N20 6 V / 400 RPM** gear motors, paired left and right on one **DRV8833** dual H-bridge
 - **MPU-6050 IMU**: when the bot lands on its back, forward stays forward. It also wakes the bot from sleep, so there is no power switch
 - **TP4056 USB-C charge board with DW01A protection**
-- **1S LiPo 3.7 V / 1000 mAh (603048)**, about an hour of cruising
-- **Translucent PETG hull**, 120 × 120 × 16 mm, two shells that click together with the wheels inside. See [`cad/`](cad/README.md)
+- **1S LiPo 3.7 V / 2000 mAh (103450)**, about two hours of cruising
+- **Translucent PETG hull**, 124 × 124 × 17 mm, two shells that click together with the wheels inside. See [`cad/`](cad/README.md)
 
 ![Exploded view](cad/renders/product-exploded.jpg)
 
@@ -123,7 +123,7 @@ scripts/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ![Lid off](cad/renders/product-open.jpg)
 
-Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.5 mm proud of both faces, so the bot drives the same on its back. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Eleven snap fingers hold the lid, no screws.
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.5 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Eleven snap fingers hold the lid, no screws.
 
 Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
@@ -135,12 +135,12 @@ See [`docs/parts.md`](docs/parts.md) for the full list.
 |---|---|---:|
 | ESP32 LOLIN32 Lite | 1 | €5–8 |
 | DRV8833 breakout | 1 | €1.50 |
-| N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
-| Wheel, ⌀25 × 23 mm | 4 | €7.20 |
+| N20 6 V 400 RPM motor, long D-shaft | 4 | €10 |
+| Wheel, ⌀26 × 22 mm, hollow hub | 4 | €7.20 |
 | MPU-6050 module | 1 | €1.50 |
 | TP4056 USB-C board with protection | 1 | €1–2 |
-| 1S LiPo 1000 mAh (603048) | 1 | €6 |
+| 1S LiPo 2000 mAh (103450) | 1 | €8 |
 | Capacitor, resistors, wire, foam tape | | €3–5 |
-| Translucent PETG, ~90 g | | €2 |
+| Translucent PETG, ~100 g | | €2 |
 | PS3 controller (reuse) | 1 | €0–20 |
 | **Total** | | **~€37–43** |

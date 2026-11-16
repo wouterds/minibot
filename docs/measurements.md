@@ -1,6 +1,6 @@
 # Measurements
 
-Caliper readings of the actual parts, taken by the owner. These outrank datasheets and anything measured off a photo. The model in [`cad/minibot.scad`](../cad/minibot.scad) should follow this file.
+Caliper readings of the actual parts, taken by the owner. These outrank datasheets and anything measured off a photo. The model in [`cad/minibot.scad`](../cad/minibot.scad) follows this file.
 
 Readings are in mm, as shown on the caliper.
 
@@ -10,12 +10,9 @@ Aluminium hub with two flanges and a red silicone tyre between them. One end of 
 
 | What | Reading | Notes |
 |---|---:|---|
-| Outer diameter, tyre on the hub | 25.99 | The model has 25 |
-| Hub width, flange to flange | 22.16 | This is the width of the whole wheel: the tyre sits between the flanges. The model has 23 |
-| Cup inner diameter | | The motor slides in; how much play? |
-| Cup depth, rim to plate | | |
-| Plate thickness | | |
-| Set screw, distance from the plate's outer face | | It sits near one flange; which end? |
+| Outer diameter, tyre on the hub | 25.99 | |
+| Hub width, flange to flange | 22.16 | This is the width of the whole wheel: the tyre sits between the flanges |
+| Cup inner diameter | | Not measured. The motor goes in and the hub turns freely around it |
 
 ## Motor
 
@@ -23,15 +20,15 @@ N20 with an open brass gearbox and a smooth D-shaft.
 
 | What | Reading | Notes |
 |---|---:|---|
-| Width | 11.96 | Model: 12 |
-| Height, across the flats | 9.92 | Model: 10 |
+| Width | 11.96 | |
+| Height, across the flats | 9.92 | |
 | Total length, shaft tip to the rear end | 45.40 | Includes the shaft and whatever sticks out at the back |
-| Shaft length from the gearbox face | 18.73 | Model: 20. The D flat runs most of its length |
-| Body: brass front face to the black end cap | 25.64 | Model: 24, so the bay in the model is 1.6 too short |
+| Shaft length from the gearbox face | 18.73 | The D flat runs most of its length |
+| Body: brass front face to the black end cap | 25.64 | The first hull assumed 24 and would have been 1.6 too short |
 | Brass front face to the rearmost point | 26.04 | Jaw on the back of the motor rather than beside the tabs. Total minus shaft gives 26.67 to the tab tips |
 | Can with its end cap | 16.25 | Leaves 9.4 for the gearbox |
-| Solder tabs past the end cap | about 1.0 | Derived: 26.67 minus 25.64. Model: 1.8 |
-| Gearbox length | about 9.4 | Derived: 25.64 minus 16.25. Model: 9 |
+| Solder tabs past the end cap | about 1.0 | Derived: 26.67 minus 25.64 |
+| Gearbox length | about 9.4 | Derived: 25.64 minus 16.25 |
 | Shaft diameter, and across the D flat | | |
 
 ## Battery, 2000 mAh
@@ -44,7 +41,7 @@ Marked `TY 103450 2000mAh 3.7V 7.4Wh`. Protection board under yellow tape at the
 | Width | 33.99 | |
 | Thickness | 10.35 | Measured over the taped end, the thickest spot |
 
-The cavity is 12 mm high. With 1 mm of foam tape underneath, this cell leaves 0.65 mm, so the hull has to grow about 1 mm in height to take it.
+This is the cell the hull is built for. The cavity is 13 mm high: 1 mm of foam tape, the cell, and 1.65 mm above it.
 
 ## Battery, 1000 mAh
 
@@ -53,17 +50,17 @@ Marked `603048 3.7V 1000mAh`.
 | What | Reading | Notes |
 |---|---:|---|
 | Length × width | 50 × 30 | From the earlier CAD, not re-measured |
-| Thickness | | Model: 6 |
+| Thickness | | Not measured, about 6. This cell is not the one in the hull |
 
 ## ESP32, LOLIN32 Lite
 
 | What | Reading | Notes |
 |---|---:|---|
-| Length | 49.22 | Model: 49 |
-| Width | 25.70 | Model: 26 |
-| Micro-USB centre to the long edge beside pin `13` | | Model: 6 |
-| Board plus micro-USB socket | 3.77 | Model: 4.2. A micro-USB socket is about 2.6 high, so the board is about 1.2 and the socket's centre sits about 2.5 above the board's underside |
-| Board plus the white battery socket, the tallest part | 6.75 | Model: 7.1 |
+| Length | 49.22 | |
+| Width | 25.70 | |
+| Micro-USB centre to the long edge beside pin `13` | | Not measured. The model assumes 5.85 and has a 15 mm wide opening to allow for being off |
+| Board plus micro-USB socket | 3.77 | A micro-USB socket is about 2.6 high, so the board is about 1.2 and the socket's centre sits about 2.5 above the board's underside |
+| Board plus the white battery socket, the tallest part | 6.75 | |
 | Length with a jaw on the sockets | 49.22 | Same as the length above, so that reading is over the sockets: they end flush with the board edge or stand proud of it, and 49.22 is what has to fit |
 
 Seen in the photos: two mounting holes, one in the corner beside `VP` at the antenna end and one beside pin `13` at the USB end. The micro-USB sits on the `3V … 13` side, the white battery socket on the `VP … G` side, the reset button between them.
@@ -76,13 +73,13 @@ Seen in the photos: two mounting holes, one in the corner beside `VP` at the ant
 | Length over the USB-C socket | 28.13 | |
 | Board length, without the socket | 27.78 | The earlier CAD had 26.5 |
 | USB-C socket past the board edge | 0.35 | 28.13 minus 27.78. The earlier CAD had 2.5 |
-| Board plus USB-C socket | 4.19 | Model: 4.4. A USB-C socket is about 3.2 high, so the board is about 1.0 and the socket's centre sits about 2.6 above the board's underside |
+| Board plus USB-C socket | 4.19 | A USB-C socket is about 3.2 high, so the board is about 1.0 and the socket's centre sits about 2.6 above the board's underside |
 
 ## Driver and IMU
 
 | What | Reading | Notes |
 |---|---:|---|
-| DRV8833 board | 18.40 × 15.95 | Marked `HW-627`. The two rows of six pads run along the 15.95 edges, 18.40 apart. The model has them on the other pair of edges |
-| DRV8833 total thickness | | Model: 3.1 |
+| DRV8833 board | 18.40 × 15.95 | Marked `HW-627`. The two rows of six pads run along the 15.95 edges, 18.40 apart, so the board rests on its 18.40 edges |
+| DRV8833 total thickness | | Not measured, about 3. Its keeper in the lid stays 2.4 above the board |
 | MPU-6050 board | 20 × 15.5 | From the earlier CAD |
-| MPU-6050 total thickness | | Model: 3.1 |
+| MPU-6050 total thickness | | Not measured, about 3. Its keeper in the lid stays 2.4 above the board |
