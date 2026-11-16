@@ -26,7 +26,7 @@ jobs:
           restore-keys: ${{ runner.os }}-pio-
 
       - name: Install PlatformIO and clang-format
-        run: pip install --upgrade platformio clang-format
+        run: pip install platformio==6.1.19 clang-format==23.1.5
 
       - name: Check formatting
         run: clang-format --dry-run --Werror src/*.cpp src/*.h
