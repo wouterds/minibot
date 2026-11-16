@@ -2,10 +2,15 @@
 include <../minibot.scad>
 a = "base";
 b = "lid";
+shift = [0, 0];   // moves b sideways, to try a lid that sits off-centre in the play of its lip
 
 module thing(name) {
   if (name == "base") base();
   if (name == "lid") lid();
+  if (name == "keepers") intersection() {
+    cavity(0.05);
+    lid_fittings();
+  }
   if (name == "electronics") electronics();
   if (name == "motors") motors();
   if (name == "wheels") wheels();
@@ -13,5 +18,5 @@ module thing(name) {
 
 intersection() {
   thing(a);
-  thing(b);
+  translate([shift[0], shift[1], 0]) thing(b);
 }
