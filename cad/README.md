@@ -1,10 +1,10 @@
 # Hull
 
-Two printed shells that click together around everything, 124 × 124 × 17 mm, no hardware.
+Two printed shells that click together around everything, 123 × 123 × 16 mm, no hardware.
 
 ![The bot on its wheels and on its back](renders/product-pair.jpg)
 
-- **Wheels inside.** Each wheel runs in its own well. The well is a cylinder around the axle, so its wall stays 1.5 mm from the tyre all the way round. The wells are open to both faces and the tyres stand 4.5 mm proud of each, so the bot drives the same on its back. Nothing sticks out sideways, in front or behind.
+- **Wheels inside.** Each wheel runs in its own well. The well is a cylinder around the axle, so its wall stays 1.5 mm from the tyre all the way round. The wells are open to both faces and the tyres stand 4.9 mm proud of each, so the bot drives the same on its back. Nothing sticks out sideways, in front or behind.
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
 - **Same either way up.** The shells split on the axle line and everything that goes through a wall is centred on that seam. USB-C for charging sits in the middle of the left side, micro-USB for flashing in the middle of the right side. Front and tail are plain walls, and there is no power switch: the firmware sleeps and the IMU wakes it.
 - **Click fit.** Eleven snap fingers hang from the lid. Two grip the walls of every motor bay, right where the wheel loads come in, and three hold the side walls. A lip runs round the cavity and the whole outer wall and centres the lid.
@@ -36,7 +36,7 @@ Cut through the front axle: wheels in their wells, motors between them, each one
 
 The STLs are already in print orientation. No supports: nothing overhangs more than 45° except the hooks of the snap fingers and their grooves, which are 55° and under 1 mm deep.
 
-**Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, two snap fingers. It takes about 15 g and shows whether the motor drops in, the wheel clears its well and the click feels right, before 100 g goes into the full shells.
+**Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, two snap fingers. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the click feels right, before 80 g goes into the full shells.
 
 ![Shells in print orientation](renders/print.png)
 
@@ -79,6 +79,7 @@ The parameters most likely to need a change after the coupon:
 - `shaft_l`, `wheel_w`: together they set how far the gearbox stands inside the hub.
 - `snap_bump`, `snap_gap`, `snap_t`: how hard the lid clicks. A lid that pops off wants a bigger `snap_bump`; fingers that crack want a thinner `snap_t`.
 - `snap_preload`: how firmly a closed lid is pulled down. Raise it if the lid rattles.
+- `wall`, `skin`: the outer walls and the two faces, both 1.6 mm. The two lips on the seam share the wall, so they are 0.7 mm each; a thinner wall leaves them too thin to print.
 - `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
 
@@ -109,4 +110,4 @@ Not checked yet:
 - **The click.** Its strength depends on the printer and the filament.
 - **Drops.** The fingers are printed standing up, which is the weak direction of a print. By calculation they hold roughly 190 N together. A wheel that lands hard levers its motor against the lid with about twice the force on the wheel, so a hard, flat landing on all four wheels may still pop the lid. Drop the coupon before trusting it.
 - **A few dimensions.** Nearly everything is measured, see [`docs/measurements.md`](../docs/measurements.md). Still estimated: where the micro-USB sits across the ESP32 (its opening is 15 mm wide to allow for that), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
-- **Radio range.** The ESP32's antenna ends 5.2 mm from the battery, which is close for a foil pouch.
+- **Radio range.** The ESP32's antenna ends 5.1 mm from the battery, which is close for a foil pouch.

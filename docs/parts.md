@@ -32,7 +32,7 @@ The charge board ships set to 1 A, which is half the cell's capacity per hour an
 
 | Qty | Component | Notes | Cost |
 |---|---|---|---:|
-| ~100 g | **Translucent PETG** | Both shells. | €2 |
+| ~80 g | **Translucent PETG** | Both shells. | €2 |
 | 1 strip | **Double-sided foam tape, 1 mm** | Sticks the battery to the floor. | — |
 | | **Silicone wire 26–28 AWG, heat shrink, solder** | About 1 m of wire. Heat shrink over the motor tabs. | €3–5 |
 

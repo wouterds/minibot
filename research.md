@@ -245,9 +245,9 @@ The full description is in [`cad/README.md`](cad/README.md). The reasoning:
 
 ### Wheels inside
 
-The hull is a closed square, 124 × 124 × 17 mm, and the wheels run in wells inside it. Each well is a cylinder around the axle, 1.5 mm larger than the tyre all round, open to both faces. The tyres stand 4.5 mm proud of each face. Nothing sticks out in any other direction, so the bot hits walls with its hull, not with a wheel.
+The hull is a closed square, 123 × 123 × 16 mm, and the wheels run in wells inside it. Each well is a cylinder around the axle, 1.5 mm larger than the tyre all round, open to both faces. The tyres stand 4.9 mm proud of each face. Nothing sticks out in any other direction, so the bot hits walls with its hull, not with a wheel.
 
-The price is ground clearance: 4.5 mm, flat floors only.
+The price is ground clearance: 4.9 mm, flat floors only.
 
 ### Motor mount
 
@@ -273,7 +273,7 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 
 - USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side. Each board lies with its socket against the wall.
 - The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
-- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.2 mm. A foil pouch that close can cost range.
+- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.1 mm. A foil pouch that close can cost range.
 - Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.
 
 ### Material
