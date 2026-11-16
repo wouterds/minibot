@@ -13,6 +13,8 @@ namespace controller
 
 static volatile uint32_t s_lastPacketAt = 0;
 static uint32_t s_lowSince = 0;
+static int s_left = 0;
+static int s_right = 0;
 
 static void onConnect()
 {
@@ -48,6 +50,18 @@ static bool linkAlive()
   return Ps3.isConnected() && millis() - last < config::LINK_TIMEOUT_MS;
 }
 
+static void halt()
+{
+  s_left = 0;
+  s_right = 0;
+  motors::stop();
+}
+
+static int approach(int current, int target)
+{
+  return current + constrain(target - current, -config::SLEW_STEP, config::SLEW_STEP);
+}
+
 void begin()
 {
   Ps3.attach(onNotify);
@@ -62,7 +76,7 @@ void update()
   if (battery::isLow())
   {
     status_led::set(status_led::LOW_BATTERY);
-    motors::stop();
+    halt();
 
     // Bluetooth alone would still run the cell down to the protection board's cutoff.
     if (s_lowSince == 0) s_lowSince = millis() | 1;
@@ -74,7 +88,7 @@ void update()
   status_led::set(alive ? status_led::CONNECTED : status_led::WAITING);
   if (!alive)
   {
-    motors::stop();
+    halt();
     return;
   }
 
@@ -96,7 +110,11 @@ void update()
     right = right * 255 / peak;
   }
 
-  motors::drive(left, right);
+  // Stepping towards the target keeps a slammed stick, or a flip with the stick held, from
+  // throwing the motors from full ahead to full astern in one go.
+  s_left = approach(s_left, left);
+  s_right = approach(s_right, right);
+  motors::drive(s_left, s_right);
 }
 
 } // namespace controller

@@ -35,6 +35,7 @@ constexpr uint32_t BATTERY_LOW_HOLD_MS = 3000;
 constexpr uint32_t BATTERY_LOW_SLEEP_MS = 30000; // blink this long, then power down
 
 constexpr uint8_t STICK_DEAD_ZONE = 16;
+constexpr int SLEW_STEP = 40;             // largest change in speed per 10 ms loop
 constexpr uint8_t STEER_PERCENT = 70;     // steering authority relative to throttle
 constexpr uint32_t LINK_TIMEOUT_MS = 500; // stop when the controller goes quiet for this long
 
