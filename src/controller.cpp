@@ -16,17 +16,12 @@ static void onConnect()
 {
   Serial.println("PS3 connected");
   s_lastPacketAt = millis();
-  status_led::set(status_led::CONNECTED);
-}
-
-static void onDisconnect()
-{
-  Serial.println("PS3 disconnected");
-  status_led::set(status_led::WAITING);
 }
 
 static void onNotify()
 {
+  // The library lights the controller's player LED on the first connection only.
+  if (millis() - s_lastPacketAt >= config::LINK_TIMEOUT_MS) Ps3.setPlayer(1);
   s_lastPacketAt = millis();
 }
 
@@ -43,19 +38,18 @@ static int16_t shape(int8_t raw)
   return raw < 0 ? -speed : speed;
 }
 
-// The controller streams reports continuously, so a gap means the link is gone even though the
-// Bluetooth stack has not noticed yet. Without this the bot keeps driving on the last stick
-// position.
+// The controller streams reports continuously, so a gap means the link is gone. The library
+// never reports a disconnect, which makes this the only way to tell.
 static bool linkAlive()
 {
-  return Ps3.isConnected() && millis() - s_lastPacketAt < config::LINK_TIMEOUT_MS;
+  const uint32_t last = s_lastPacketAt; // before millis(), or a packet in between reads as ancient
+  return Ps3.isConnected() && millis() - last < config::LINK_TIMEOUT_MS;
 }
 
 void begin()
 {
   Ps3.attach(onNotify);
   Ps3.attachOnConnect(onConnect);
-  Ps3.attachOnDisconnect(onDisconnect);
   Ps3.begin(config::HOST_MAC);
 
   Serial.printf("Waiting for PS3 controller on %s ...\n", config::HOST_MAC);
@@ -70,7 +64,9 @@ void update()
     return;
   }
 
-  if (!linkAlive())
+  const bool alive = linkAlive();
+  status_led::set(alive ? status_led::CONNECTED : status_led::WAITING);
+  if (!alive)
   {
     motors::stop();
     return;
