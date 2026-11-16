@@ -74,6 +74,7 @@ Considered the Moddable SDK (TypeScript on the ESP) first, but the SDK plus tool
 ### Library
 
 - `jvpernis/esp32-ps3`, pulled by git URL. It handles Bluetooth Classic, HID and the controller's reports.
+- It never reports a disconnect: nothing in it calls its own disconnect path. The firmware tells from the report stream instead.
 - It is unmaintained and reaches into Bluedroid internals, so it only compiles against Arduino core 2.0.x. `platformio.ini` pins the platform (6.12.0, core 2.0.17) and the library commit for that reason. An unpinned platform once resolved to core 3.x and the build broke.
 - Bluepad32 is the maintained alternative if this library ever stops working. It supports the DualShock 3 and lists some ShanWan clones.
 
@@ -166,7 +167,11 @@ If one side would exceed full speed, both are scaled down together, so the turn 
 
 ### Losing the link
 
-The controller streams reports all the time. When they stop for half a second the firmware brakes, without waiting for the Bluetooth stack to declare the connection dead. Otherwise the bot would keep driving on the last stick position for seconds.
+The controller streams reports all the time. When they stop for half a second the firmware brakes and the status LED goes back to blinking. The library never says the connection is gone, so without this the bot would keep driving on the last stick position.
+
+### Slew limit
+
+The speed of each side moves towards its target by at most 40 of 255 per 10 ms loop. Full ahead to full astern in one step is how paralleled motors on one cell trip the driver's overcurrent limit or brown out the ESP32. Stopping is immediate.
 
 ### Open loop
 
@@ -182,7 +187,9 @@ USB-C ── TP4056 ── B+/B− ── battery
 ```
 
 - **The switch sits in the ESP32's supply only.** A slide switch this size is rated for 0.3 A. The motors bypass it, and the driver sleeps when the ESP32's 3.3 V rail is gone.
-- **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A 100 kΩ / 100 kΩ divider on GPIO 35 lets the firmware stop the motors at 3.3 V. The dip has to last three seconds, because motor starts pull the voltage down briefly. Without the divider the pin reads near zero at boot and the check switches itself off.
+- **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A 100 kΩ / 100 kΩ divider on GPIO 35 lets the firmware stop the motors at 3.3 V, or at 3.0 V while they are running, because load pulls the voltage down. The dip has to last three seconds. Half a minute later the ESP32 goes into deep sleep, since Bluetooth alone would keep draining the cell.
+- **The divider is a setting, not detected.** GPIO 35 has no pull resistors, so without the divider it floats and can read as anything. `BATTERY_SENSE_FITTED` says whether it is there.
+- **Calibrate it.** Many ESP32s of this generation have no ADC calibration burnt in, which leaves the reading up to 10 % off. A 100 nF capacitor on the pin steadies it; `BATTERY_DIVIDER` corrects it against a multimeter.
 - **Decoupling.** 220–470 µF across the driver's supply. The regulator needs about 3.4 V in to hold 3.3 V out, and a stalled motor can pull a tired cell below that.
 - **Two chargers.** The LOLIN32's own TP4054 charges whatever hangs on its battery input, so with both USB ports plugged in two chargers feed one cell. Plug in one at a time.
 - **Never route motor current through the ESP32 board.** Its regulator and traces are sized for a few hundred mA.
@@ -246,7 +253,7 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 
 - USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side, switch in the middle of the tail. Each board lies with its socket against the wall.
 - The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
-- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 4.6 mm. A foil pouch that close can cost range.
+- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.7 mm. A foil pouch that close can cost range.
 - Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.
 
 ### Material
