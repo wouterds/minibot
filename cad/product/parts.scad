@@ -15,7 +15,6 @@ if (piece == "steel") {
   }
   esp_metal();
   charger_metal();
-  switch_metal();
 }
 if (piece == "brass") {
   quadrants() motor_brass();
@@ -35,7 +34,6 @@ if (piece == "chips") {
   charger_chips();
   pod_chip(drv);
   mirror([1, 0, 0]) pod_chip(imu);
-  switch_body();
 }
 if (piece == "white") esp_white();
 if (piece == "battery") battery();
