@@ -130,8 +130,9 @@ board_z0 = -in_z + 1.5;                       // their underside
 fence_z = -in_z + 3.5;                        // top of the low fences
 snap_bay_y = wall_y - 4 - snap_bay_w / 2;
 
-usbc_open = [14, 8.5];
-usb_open = [15, 9];
+// Both sockets sit behind the wall, so the grip of a plug has to pass through it.
+usbc_open = [13, 7];
+usb_open = [12.5, 7.5];
 
 assert(protrusion >= 2, "wheels barely clear the hull");
 assert(motor_nest >= 0, "shaft longer than the wheel is wide: it would stick out of the hub");
@@ -295,9 +296,9 @@ module openings() {
   // motors, through the well walls
   quadrants() port([axle_x, wall_y + wall / 2, 0], "y", motor_w + 2 * motor_fit + 0.2, motor_h + 0.2, wall + 2 * e, 0.5);
   // USB-C charging, left side
-  port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.5);
+  port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 2);
   // micro-USB for flashing, right side
-  port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 1.5);
+  port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 2);
 }
 
 // The base's lip has to let the motors and the plugs through.
