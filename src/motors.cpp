@@ -1,5 +1,6 @@
 #include "motors.h"
 #include "config.h"
+#include <driver/gpio.h>
 
 namespace motors
 {
@@ -41,6 +42,10 @@ static void attach(const Side &side)
 
 void begin()
 {
+  gpio_hold_dis((gpio_num_t)config::MOTOR_SLEEP); // left held LOW by sleep()
+  pinMode(config::MOTOR_SLEEP, OUTPUT);
+  digitalWrite(config::MOTOR_SLEEP, HIGH);
+
   attach(LEFT);
   attach(RIGHT);
   stop();
@@ -61,6 +66,13 @@ void stop()
 bool isStopped()
 {
   return s_stopped;
+}
+
+void sleep()
+{
+  digitalWrite(config::MOTOR_SLEEP, LOW);
+  gpio_hold_en((gpio_num_t)config::MOTOR_SLEEP);
+  gpio_deep_sleep_hold_en();
 }
 
 } // namespace motors
