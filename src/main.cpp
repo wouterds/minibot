@@ -19,8 +19,8 @@ void setup()
 void loop()
 {
   imu::update();
-  battery::update();
   controller::update();
+  battery::update(!motors::isStopped());
   status_led::update();
   delay(10);
 }

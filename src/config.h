@@ -24,11 +24,13 @@ constexpr uint8_t IMU_SCL = 23;
 constexpr int8_t IMU_Z_SIGN = 1;       // -1 when the IMU board is mounted component side down
 constexpr uint32_t FLIP_HOLD_MS = 300; // a new orientation has to last this long to count
 
-// Battery voltage through a 100k/100k divider. Optional: left unwired, the cutoff switches off.
+// Battery voltage through a 100k/100k divider. Set BATTERY_SENSE_FITTED once it is soldered in;
+// the pin floats without it and would read as an empty cell.
+constexpr bool BATTERY_SENSE_FITTED = false;
 constexpr uint8_t BATTERY_SENSE = 35;
-constexpr float BATTERY_DIVIDER = 2.0f;
-constexpr float BATTERY_PRESENT_MV = 2500; // below this at boot: no divider fitted
-constexpr float BATTERY_LOW_MV = 3300;     // the protection board only cuts at 2.4 V, too late
+constexpr float BATTERY_DIVIDER = 2.0f;       // correct this against a multimeter
+constexpr float BATTERY_LOW_MV = 3300;        // the protection board only cuts at 2.4 V, too late
+constexpr float BATTERY_LOW_LOADED_MV = 3000; // the motors pull the voltage down while they run
 constexpr uint32_t BATTERY_LOW_HOLD_MS = 3000;
 
 constexpr uint8_t STICK_DEAD_ZONE = 16;

@@ -15,6 +15,8 @@ struct Side
 static const Side LEFT = {config::MOTOR_LEFT_IN1, config::MOTOR_LEFT_IN2, 0, 1};
 static const Side RIGHT = {config::MOTOR_RIGHT_IN1, config::MOTOR_RIGHT_IN2, 2, 3};
 
+static bool s_stopped = true;
+
 static const int16_t MAX_SPEED = (1 << config::MOTOR_PWM_RES_BITS) - 1;
 
 // Slow decay: one input stays HIGH and the other is pulsed LOW, so the motor is shorted (braked)
@@ -46,6 +48,7 @@ void begin()
 
 void drive(int16_t left, int16_t right)
 {
+  s_stopped = left == 0 && right == 0;
   write(LEFT, left);
   write(RIGHT, right);
 }
@@ -53,6 +56,11 @@ void drive(int16_t left, int16_t right)
 void stop()
 {
   drive(0, 0);
+}
+
+bool isStopped()
+{
+  return s_stopped;
 }
 
 } // namespace motors
