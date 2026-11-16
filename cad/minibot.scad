@@ -58,7 +58,7 @@ motor_fit = 0.1;        // beside the motor, per side
 motor_crush = 0.1;      // how far the lid's crush ribs bite into the motor
 motor_end_fit = 0.15;   // behind the motor
 lap_gap = 0.2;          // between the lips of the two shells
-lip_h = 2;              // height of the lip that centres the lid on the base
+lip_h = 1;              // height of the lip that centres the lid on the base
 
 /* [Snap fingers] */
 snap_t = 1.1;
