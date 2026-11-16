@@ -18,6 +18,12 @@ constexpr uint8_t MOTOR_RIGHT_IN2 = 26;
 constexpr uint32_t MOTOR_PWM_FREQ = 20000; // above hearing range
 constexpr uint8_t MOTOR_PWM_RES_BITS = 8;
 
+// MPU-6050 on I2C. GPIO 21, the usual SDA, is not broken out on the LOLIN32 Lite.
+constexpr uint8_t IMU_SDA = 19;
+constexpr uint8_t IMU_SCL = 23;
+constexpr int8_t IMU_Z_SIGN = 1;        // -1 when the IMU board is mounted component side down
+constexpr uint32_t FLIP_HOLD_MS = 300;  // a new orientation has to last this long to count
+
 constexpr uint8_t STICK_DEAD_ZONE = 16;
 constexpr uint8_t STEER_PERCENT = 70;     // steering authority relative to throttle
 constexpr uint32_t LINK_TIMEOUT_MS = 500; // stop when the controller goes quiet for this long

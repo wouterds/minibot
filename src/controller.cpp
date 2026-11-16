@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "config.h"
+#include "imu.h"
 #include "motors.h"
 #include "status_led.h"
 #include <Arduino.h>
@@ -66,7 +67,10 @@ void update()
   }
 
   // Left stick up/down is throttle (up reads negative), right stick left/right steers.
-  const int throttle = -shape(Ps3.data.analog.stick.ly);
+  // On its back the wheels touch the floor with their other side, which reverses the direction
+  // of travel. Steering needs no change: the sides swap and reverse at the same time.
+  const int forward = imu::isFlipped() ? -1 : 1;
+  const int throttle = -shape(Ps3.data.analog.stick.ly) * forward;
   const int steer = shape(Ps3.data.analog.stick.rx) * config::STEER_PERCENT / 100;
 
   int left = throttle + steer;
