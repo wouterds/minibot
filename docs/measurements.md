@@ -60,10 +60,9 @@ Marked `603048 3.7V 1000mAh`.
 | Length | 49.22 | Model: 49 |
 | Width | 25.70 | Model: 26 |
 | Micro-USB centre to the long edge beside pin `13` | | Model: 6 |
-| Micro-USB socket height above the board | | Model: 2.6 |
-| How far the socket sticks out past the board edge | | Model: 0 |
-| Board thickness | | Model: 1.6 |
-| Tallest part above the board | | Model: 5.5 |
+| Board plus micro-USB socket | 3.77 | Model: 4.2. A micro-USB socket is about 2.6 high, so the board is about 1.2 and the socket's centre sits about 2.5 above the board's underside |
+| Board plus the white battery socket, the tallest part | 6.75 | Model: 7.1 |
+| How far the micro-USB sticks out past the board edge | | Model: 0 |
 
 Seen in the photos: two mounting holes, one in the corner beside `VP` at the antenna end and one beside pin `13` at the USB end. The micro-USB sits on the `3V … 13` side, the white battery socket on the `VP … G` side, the reset button between them.
 
@@ -71,16 +70,16 @@ Seen in the photos: two mounting holes, one in the corner beside `VP` at the ant
 
 | What | Reading | Notes |
 |---|---:|---|
-| Board | 26.5 × 16 | From the earlier CAD |
-| USB-C socket past the board edge | 2.5 | From the earlier CAD |
-| USB-C socket height above the board | | Model: 3.2 |
-| Board thickness | | Model: 1.2 |
+| Width | 17.40 | The earlier CAD had 16 |
+| Length, USB-C mouth to the far edge of the board | 28.13 | A second reading, taken edge-on, gave 27.78. The earlier CAD had 26.5 for the board plus 2.5 for the socket |
+| Board plus USB-C socket | 4.19 | Model: 4.4. A USB-C socket is about 3.2 high, so the board is about 1.0 and the socket's centre sits about 2.6 above the board's underside |
+| USB-C socket past the board edge | | The earlier CAD had 2.5; in the photo it looks nearer 1 |
 
 ## Driver and IMU
 
 | What | Reading | Notes |
 |---|---:|---|
-| DRV8833 board | 18.5 × 16 | From the earlier CAD. Marked `HW-627` |
+| DRV8833 board | 18.40 × 15.95 | Marked `HW-627`. The two rows of six pads run along the 15.95 edges, 18.40 apart. The model has them on the other pair of edges |
 | DRV8833 total thickness | | Model: 3.1 |
 | MPU-6050 board | 20 × 15.5 | From the earlier CAD |
 | MPU-6050 total thickness | | Model: 3.1 |
