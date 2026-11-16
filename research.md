@@ -12,7 +12,7 @@ Running log of what we learned while building minibot. Updated as we go.
 - **Bluetooth MAC**: `24:6F:28:B1:F8:B6` (base + 2, per ESP32's MAC derivation rule)
 - **Board**: WeMos LOLIN32 Lite (or a clone), 49 × 26 mm measured, no headers soldered
 - **Onboard**:
-  - JST PH2.0 socket for a 1S LiPo, next to the micro-USB. Not used as a socket; its `+` leg is where the switched battery wire is soldered
+  - JST PH2.0 socket for a 1S LiPo, next to the micro-USB. Not used as a socket; its `+` leg is where the battery wire from the charge board is soldered
   - TP4054 charge IC, about 500 mA. Not used: charging goes through the external TP4056 board
   - ME6211 3.3 V regulator
   - Micro-USB, for flashing only
@@ -55,7 +55,7 @@ Running log of what we learned while building minibot. Updated as we go.
 
 One DRV8833 drives all four motors: the two motors on a side are wired in parallel and treated as one.
 
-The breakout's pads: `IN1`–`IN4`, `VCC`, `GND` on one edge; `EEP` (sleep), `OUT1`–`OUT4`, `ULT` (fault) on the other. On the chip itself the sleep pin is pulled low, so the driver sleeps unless `EEP` is driven high. Some clones add their own pull-up behind a solder jumper. Wiring `EEP` to the ESP32's 3.3 V rail works either way: with the ESP32 off, the dead rail holds the pin low.
+The breakout's pads: `IN1`–`IN4`, `VCC`, `GND` on one edge; `EEP` (sleep), `OUT1`–`OUT4`, `ULT` (fault) on the other. On the chip itself the sleep pin is pulled low, so the driver sleeps unless `EEP` is driven high. Some clones add their own pull-up behind a solder jumper. The firmware drives `EEP` from GPIO 27 and holds it low while the ESP32 sleeps, which works either way.
 
 ### Charging and protection: TP4056 board
 
@@ -125,7 +125,9 @@ A motor driver input on one of these twitches the motors every time the board re
 | 22 | Status LED (onboard, active low) |
 | 32, 33 | DRV8833 `IN1`, `IN2`: left motors |
 | 25, 26 | DRV8833 `IN3`, `IN4`: right motors |
+| 27 | DRV8833 `EEP`: wakes the driver |
 | 19, 23 | I²C `SDA`, `SCL` to the MPU-6050 |
+| 34 | MPU-6050 `INT`: wakes the ESP32 from sleep |
 | 35 | Battery voltage through a divider (optional) |
 
 32, 33, 25 and 26 sit next to each other on the header, are quiet at boot and are outputs. 19 and 23 sit next to `3V3`, which the IMU needs anyway.
@@ -181,18 +183,33 @@ No encoders, so the firmware commands a speed and trusts the motors. Precise dis
 
 ```
 USB-C ── TP4056 ── B+/B− ── battery
-              └── OUT+ ──┬── switch ── LOLIN32 battery + ── 3.3 V regulator ── ESP32, IMU, driver EEP
+              └── OUT+ ──┬── LOLIN32 battery + ── 3.3 V regulator ── ESP32, IMU
                          └── DRV8833 VCC ── motors
               └── OUT− ── common ground
 ```
 
-- **The switch sits in the ESP32's supply only.** A slide switch this size is rated for 0.3 A. The motors bypass it, and the driver sleeps when the ESP32's 3.3 V rail is gone.
+- **No power switch.** Nothing is ever disconnected from the cell; the firmware sleeps instead. See [Sleep and wake](#sleep-and-wake).
 - **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A 100 kΩ / 100 kΩ divider on GPIO 35 lets the firmware stop the motors at 3.3 V, or at 3.0 V while they are running, because load pulls the voltage down. The dip has to last three seconds. Half a minute later the ESP32 goes into deep sleep, since Bluetooth alone would keep draining the cell.
 - **The divider is a setting, not detected.** GPIO 35 has no pull resistors, so without the divider it floats and can read as anything. `BATTERY_SENSE_FITTED` says whether it is there.
 - **Calibrate it.** Many ESP32s of this generation have no ADC calibration burnt in, which leaves the reading up to 10 % off. A 100 nF capacitor on the pin steadies it; `BATTERY_DIVIDER` corrects it against a multimeter.
 - **Decoupling.** 220–470 µF across the driver's supply. The regulator needs about 3.4 V in to hold 3.3 V out, and a stalled motor can pull a tired cell below that.
 - **Two chargers.** The LOLIN32's own TP4054 charges whatever hangs on its battery input, so with both USB ports plugged in two chargers feed one cell. Plug in one at a time.
 - **Never route motor current through the ESP32 board.** Its regulator and traces are sized for a few hundred mA.
+
+## Sleep and wake
+
+An ESP32 with Bluetooth on draws around 100 mA, which empties the cell in hours, and the build has no switch. So after three minutes without driving the firmware powers down:
+
+- **Motor driver**: `EEP` low, held low through the ESP32's sleep. A few µA.
+- **ESP32**: deep sleep. The board around it (regulator, USB chip) decides what that really draws; expect somewhere under 1 mA.
+- **IMU**: left awake on its accelerometer alone, about 0.5 mA, with its motion interrupt armed. Its `INT` pin goes to GPIO 34 and wakes the ESP32.
+
+Picking the bot up or nudging it raises `INT`, and the ESP32 boots as if switched on. If nobody drives within three minutes it sleeps again.
+
+- **Not the IMU's cycle mode.** It draws a fraction of that, but several people report that the motion interrupt never fires in it.
+- **`INT` is latched**, so it stays high until the status register is read. A short pulse could be missed by the wake circuit.
+- **A high-pass filter in the chip removes gravity**, so the threshold (`WAKE_THRESHOLD`, about 2 mg per step) compares against movement only.
+- **Without an IMU the bot stays awake**, because nothing could wake it inside a sealed hull. A low battery still sends it to sleep; then only a reset brings it back, which the serial monitor does when it opens the port.
 
 ## Paired motors per side
 
@@ -252,7 +269,6 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 ### Layout
 
 - USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side. Each board lies with its socket against the wall.
-- The switch sits in the corner beside the ESP32, in the same wall as the micro-USB. It switches the ESP32's supply, so that is also the shortest wire. Its lever ends flush with the hull.
 - The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
 - The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.7 mm. A foil pouch that close can cost range.
 - Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.

@@ -13,7 +13,6 @@ Everything needed to build a minibot from scratch. Prices are rough AliExpress p
 | 1 | **MPU-6050 module (GY-521)** | Tells the firmware which way is up. | €1.50 | €1.50 |
 | 1 | **TP4056 USB-C charge board with DW01A protection** | About 27 × 16 mm. The version with six pads, including `OUT+` and `OUT−`. | €1–2 | €1.50 |
 | 1 | **1S LiPo 3.7 V 1000 mAh, 603048** | 50 × 30 × 6 mm with its sealed edge. Wires go straight to the charge board. | €6 | €6 |
-| 1 | **Slide switch SS12D00, 3 mm lever** | Only switches the ESP32, so its 0.3 A rating is enough. | €0.10 | €0.10 |
 | 1 | **Electrolytic capacitor, 220–470 µF, 6.3 V or more** | Across the driver's supply. Up to 8 mm thick fits in the free corner beside the ESP32. | €0.10 | €0.10 |
 | 2 | **Resistor 100 kΩ**, 1 | **capacitor 100 nF** | Divider for the battery voltage. Optional. | — | — |
 | 1 | **PS3 controller** | DualShock 3 or a clone. | €0–20 | €0 |
@@ -35,7 +34,7 @@ The charge board ships set to 1 A, which is 1C for this cell and warm work insid
 | 1 strip | **Double-sided foam tape, 1 mm** | Sticks the battery to the floor. | — |
 | | **Silicone wire 26–28 AWG, heat shrink, solder** | About 1 m of wire. Heat shrink over the motor tabs. | €3–5 |
 
-No screws and no inserts: the shells click together.
+No screws, no inserts and no power switch: the shells click together, and the bot sleeps when left alone.
 
 ## Later, maybe
 

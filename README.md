@@ -12,7 +12,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **ESP32 (WeMos LOLIN32 Lite)** with Bluetooth Classic
 - **PS3 DualShock 3 controller** as the remote
 - **4× N20 6 V / 400 RPM** gear motors, paired left and right on one **DRV8833** dual H-bridge
-- **MPU-6050 IMU**: when the bot lands on its back, forward stays forward
+- **MPU-6050 IMU**: when the bot lands on its back, forward stays forward. It also wakes the bot from sleep, so there is no power switch
 - **TP4056 USB-C charge board with DW01A protection**
 - **1S LiPo 3.7 V / 1000 mAh (603048)**, about an hour of cruising
 - **Translucent PETG hull**, 120 × 120 × 16 mm, two shells that click together with the wheels inside. See [`cad/`](cad/README.md)
@@ -28,12 +28,12 @@ The firmware builds and the hull passes its fit checks in CAD. Neither has met t
 ```mermaid
 flowchart LR
     PS3([PS3 controller]) -->|Bluetooth Classic| ESP[ESP32<br/>LOLIN32 Lite]
-    IMU[MPU-6050] -->|I²C<br/>which way is up| ESP
-    ESP -->|4 PWM pins| DRV[DRV8833]
+    IMU[MPU-6050] -->|I²C: which way is up<br/>INT: wake up| ESP
+    ESP -->|4 PWM pins<br/>+ sleep| DRV[DRV8833]
     DRV --> MOT[4× N20 motors<br/>2 in parallel per side]
     BAT[(1S LiPo)] --> TP[TP4056<br/>charge + protect]
-    TP -->|through the switch| ESP
-    TP -->|direct| DRV
+    TP --> ESP
+    TP --> DRV
 ```
 
 ## Wiring
@@ -43,24 +43,27 @@ No pin headers anywhere: every wire is soldered straight to a pad, so nothing st
 | From | To | Purpose |
 |---|---|---|
 | Battery `+` / `−` | TP4056 `B+` / `B−` | The only place the battery connects |
-| TP4056 `OUT+` | DRV8833 `VCC` | Motor supply, not switched |
-| TP4056 `OUT+` | switch → LOLIN32 battery `+` | Logic supply. Solder to the `+` leg of the JST socket; the board has no battery pin on its headers |
+| TP4056 `OUT+` | DRV8833 `VCC` | Motor supply |
+| TP4056 `OUT+` | LOLIN32 battery `+` | Logic supply. Solder to the `+` leg of the JST socket; the board has no battery pin on its headers |
 | TP4056 `OUT−` | LOLIN32 `GND`, DRV8833 `GND` | Common ground |
-| LOLIN32 `3V3` | DRV8833 `EEP`, MPU-6050 `VCC` | The driver only wakes while the ESP32 is on |
+| LOLIN32 `3V3` | MPU-6050 `VCC` | |
 | LOLIN32 `GND` | MPU-6050 `GND` | |
 | `GPIO 32` | DRV8833 `IN1` | Left side |
 | `GPIO 33` | DRV8833 `IN2` | Left side |
 | `GPIO 25` | DRV8833 `IN3` | Right side |
 | `GPIO 26` | DRV8833 `IN4` | Right side |
+| `GPIO 27` | DRV8833 `EEP` | Wakes the driver. Low while the bot sleeps |
 | `GPIO 19` | MPU-6050 `SDA` | |
 | `GPIO 23` | MPU-6050 `SCL` | |
+| `GPIO 34` | MPU-6050 `INT` | Wakes the ESP32 when the bot is moved |
 | `GPIO 35` | middle of a 100 kΩ / 100 kΩ divider from battery `+` to `GND` | Battery voltage, optional |
 | DRV8833 `OUT1` / `OUT2` | both left motors, in parallel | |
 | DRV8833 `OUT3` / `OUT4` | both right motors, in parallel | |
 
 Notes:
 
-- **The switch only carries the ESP32.** A small slide switch is rated for 0.3 A, the motors pull several times that. With the ESP32 off, its 3.3 V rail drops, the driver goes to sleep and draws a few µA.
+- **There is no power switch.** After three minutes without driving, the firmware puts the motor driver and the ESP32 to sleep and sets the IMU to watch for movement. Pick the bot up or nudge it and it wakes. Asleep it should draw around 1 mA, which is weeks on a full cell; that figure is an estimate, not a measurement.
+- **Without the IMU the bot never sleeps**, because nothing could wake it again inside a sealed hull. The battery is then empty in a few hours.
 - **`GPIO 21` is not on this board**, which is why I²C sits on 19 and 23. The onboard LED on `GPIO 22` is the status light.
 - **The four motor pins are quiet during boot.** Several other pins pulse at reset and would twitch the motors.
 - **A 220–470 µF capacitor** across the driver's `VCC` and `GND` keeps motor starts from browning out the ESP32.
@@ -78,10 +81,9 @@ flowchart LR
     USBC([USB-C 5 V]) --> TP[TP4056<br/>charger]
     TP --> BAT[(1S LiPo<br/>3.0–4.2 V)]
     BAT --> DW[DW01A<br/>protection]
-    DW -->|OUT+| SW[switch]
-    SW --> LDO[LOLIN32<br/>3.3 V regulator]
+    DW -->|OUT+| LDO[LOLIN32<br/>3.3 V regulator]
     DW -->|OUT+| VM[DRV8833 VCC]
-    LDO -->|3.3 V| LOGIC[ESP32, IMU,<br/>driver enable]
+    LDO -->|3.3 V| LOGIC[ESP32, IMU]
     VM --> MOT[4× N20 motors]
 ```
 
@@ -98,7 +100,8 @@ The TP4056 board charges the cell from USB-C, and its DW01A cuts the output on o
 |---|---|
 | Slow blink | Waiting for the controller |
 | On | Connected |
-| Fast blink | Battery low, motors off, powering down in 30 s |
+| Fast blink | Battery low, motors off, going to sleep in 30 s |
+| Off | Asleep. Move the bot to wake it |
 
 The bot brakes when the controller stops sending for half a second. Speed changes are stepped, so a full reversal takes about 130 ms.
 
@@ -120,7 +123,7 @@ scripts/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ![Lid off](cad/renders/product-open.jpg)
 
-Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.5 mm proud of both faces, so the bot drives the same on its back. USB-C sits in the middle of the left side, micro-USB in the middle of the right side with the power switch beside it, all on the seam. Eleven snap fingers hold the lid, no screws.
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.5 mm proud of both faces, so the bot drives the same on its back. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Eleven snap fingers hold the lid, no screws.
 
 Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
@@ -137,7 +140,7 @@ See [`docs/parts.md`](docs/parts.md) for the full list.
 | MPU-6050 module | 1 | €1.50 |
 | TP4056 USB-C board with protection | 1 | €1–2 |
 | 1S LiPo 1000 mAh (603048) | 1 | €6 |
-| Slide switch, capacitor, resistors, wire, foam tape | | €3–5 |
+| Capacitor, resistors, wire, foam tape | | €3–5 |
 | Translucent PETG, ~90 g | | €2 |
 | PS3 controller (reuse) | 1 | €0–20 |
 | **Total** | | **~€37–43** |
