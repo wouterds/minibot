@@ -58,7 +58,7 @@ Marked `603048 3.7V 1000mAh`.
 |---|---:|---|
 | Length | 49.22 | |
 | Width | 25.70 | |
-| Micro-USB centre to the long edge beside pin `13` | | Not measured. The model assumes 5.85 and has a 15 mm wide opening to allow for being off |
+| Micro-USB centre to the long edge beside pin `13` | about 6 | Read off a video frame of the board in the printed base, good to about half a mm. The model uses 5.85 and its opening leaves 0.9 mm on either side of a 10.7 mm wide plug |
 | Board plus micro-USB socket | 3.77 | A micro-USB socket is about 2.6 high, so the board is about 1.2 and the socket's centre sits about 2.5 above the board's underside |
 | Board plus the white battery socket, the tallest part | 6.75 | |
 | Length with a jaw on the sockets | 49.22 | Same as the length above, so that reading is over the sockets: they end flush with the board edge or stand proud of it, and 49.22 is what has to fit |

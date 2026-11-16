@@ -82,6 +82,7 @@ The parameters most likely to need a change after the coupon:
 - `wall`, `skin`: the outer walls and the two faces, both 1.6 mm. The two lips on the seam share the wall, so they are 0.7 mm each; a thinner wall leaves them too thin to print.
 - `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
+- `usbc_open`, `usb_open`: the openings for the plugs, 13 × 7 mm and 12.5 × 7.5 mm. Both sockets sit behind the wall, so the grip of the plug has to pass through it, not just its metal tip. Widen one if a cable with a fat grip does not go in.
 
 ## Commands
 
@@ -109,5 +110,5 @@ Not checked yet:
 
 - **The click.** Its strength depends on the printer and the filament.
 - **Drops.** The fingers are printed standing up, which is the weak direction of a print. By calculation they hold roughly 190 N together. A wheel that lands hard levers its motor against the lid with about twice the force on the wheel, so a hard, flat landing on all four wheels may still pop the lid. Drop the coupon before trusting it.
-- **A few dimensions.** Nearly everything is measured, see [`docs/measurements.md`](../docs/measurements.md). Still estimated: where the micro-USB sits across the ESP32 (its opening is 15 mm wide to allow for that), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
+- **A few dimensions.** Nearly everything is measured, see [`docs/measurements.md`](../docs/measurements.md). Still estimated: where the micro-USB sits across the ESP32 (taken from a video frame, good to about half a mm), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
 - **Radio range.** The ESP32's antenna ends 5.1 mm from the battery, which is close for a foil pouch.
