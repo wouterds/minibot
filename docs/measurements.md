@@ -27,9 +27,11 @@ N20 with an open brass gearbox and a smooth D-shaft.
 | Height, across the flats | 9.92 | Model: 10 |
 | Total length, shaft tip to the rear end | 45.40 | Includes the shaft and whatever sticks out at the back |
 | Shaft length from the gearbox face | 18.73 | Model: 20. The D flat runs most of its length |
-| Gearbox face to the end of the can, without the tabs | | Model: 24. Total minus shaft leaves 26.67 for body plus tabs, so the body is probably nearer 25 |
-| Solder tabs | | Model: 1.8 |
-| Gearbox length | | Model: 9 |
+| Body: brass front face to the black end cap | 25.64 | Model: 24, so the bay in the model is 1.6 too short |
+| Brass front face to the rearmost point | 26.04 | Jaw on the back of the motor rather than beside the tabs. Total minus shaft gives 26.67 to the tab tips |
+| Can with its end cap | 16.25 | Leaves 9.4 for the gearbox |
+| Solder tabs past the end cap | about 1.0 | Derived: 26.67 minus 25.64. Model: 1.8 |
+| Gearbox length | about 9.4 | Derived: 25.64 minus 16.25. Model: 9 |
 | Shaft diameter, and across the D flat | | |
 
 ## Battery, 2000 mAh
