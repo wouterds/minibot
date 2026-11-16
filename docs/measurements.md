@@ -73,9 +73,10 @@ Seen in the photos: two mounting holes, one in the corner beside `VP` at the ant
 | What | Reading | Notes |
 |---|---:|---|
 | Width | 17.40 | The earlier CAD had 16 |
-| Length, USB-C mouth to the far edge of the board | 28.13 | A second reading, taken edge-on, gave 27.78. The earlier CAD had 26.5 for the board plus 2.5 for the socket |
+| Length over the USB-C socket | 28.13 | |
+| Board length, without the socket | 27.78 | The earlier CAD had 26.5 |
+| USB-C socket past the board edge | 0.35 | 28.13 minus 27.78. The earlier CAD had 2.5 |
 | Board plus USB-C socket | 4.19 | Model: 4.4. A USB-C socket is about 3.2 high, so the board is about 1.0 and the socket's centre sits about 2.6 above the board's underside |
-| USB-C socket past the board edge | | The earlier CAD had 2.5; in the photo it looks nearer 1 |
 
 ## Driver and IMU
 
