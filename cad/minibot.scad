@@ -37,15 +37,16 @@ well_lip = 1;           // straight rim of the wheel openings
 corner_r = 3;
 
 /* [Electronics: x size, y size, board thickness] */
-esp = [25.5, 49.2, 1.6];    // LOLIN32 Lite, micro-USB on the -Y end
+esp = [26, 49, 1.6];        // LOLIN32 Lite, micro-USB on the -Y end
 esp_usb_off = 7;            // micro-USB centre from the board centreline, towards +X
 esp_usb_h = 2.6;            // micro-USB socket height above the board
 bat = [50, 30, 6];          // 603048 LiPo
 bat_pad = 1;                // foam tape that sticks the battery to the floor
-tp = [17.3, 28, 1.2];       // TP4056 USB-C charger, USB-C on the +Y end
+tp = [16, 26.5, 1.2];       // TP4056 USB-C charger, USB-C on the +Y end
 usbc_h = 3.2;               // USB-C socket height above the board
+usbc_over = 2.5;            // how far that socket sticks out past the board
 drv = [16, 18.5, 1.6];      // DRV8833
-imu = [15.6, 20.3, 1.6];    // GY-521 (MPU-6050)
+imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
 sw = [8.5, 3.5, 3.5];       // SS12D00 slide switch: length, height, depth along the lever
 sw_lever = 3;               // how far the lever stands out of the body
 sw_slot = [4.4, 2];         // opening for the lever and its travel
@@ -108,7 +109,7 @@ esp_y0 = -in_y + 0.3;
 esp_y1 = esp_y0 + esp[1];
 esp_z1 = -esp_usb_h / 2;                      // board top, puts the micro-USB socket on the seam
 esp_z0 = esp_z1 - esp[2];
-tp_y1 = in_y - 0.2;
+tp_y1 = in_y + wall - usbc_over - 0.3;         // the socket's mouth ends just inside the hull's face
 tp_y0 = tp_y1 - tp[1];
 tp_half = tp[0] / 2 + fit;
 tp_stop = 2.4;                                // takes the push of a plug going in
@@ -652,7 +653,7 @@ module charger_pcb() {
 }
 
 module charger_metal() {
-  hull() for (x = [-1, 1]) translate([x * 2.9, tp_y1 + 0.2, 0]) rotate([90, 0, 0]) cylinder(d = usbc_h, h = 7.3);
+  hull() for (x = [-1, 1]) translate([x * 2.9, tp_y1 + usbc_over, 0]) rotate([90, 0, 0]) cylinder(d = usbc_h, h = 7.3);
 }
 
 module charger_chips() {
