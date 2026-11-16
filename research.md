@@ -266,7 +266,7 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 
 - Snap fingers hang from the lid and hook into grooves in the base: two on the walls of every motor bay, three on the side walls.
 - The grooves sit a little lower than the hooks, so a closed finger stays bent by 0.15 mm and pulls the lid down. Without that preload a snapped lid rattles.
-- A lip on the base stands 2 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the fingers only have to hold the lid down.
+- A lip on the base stands 1 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the fingers only have to hold the lid down.
 - The fingers print standing up, bending across the layers, which is the weak direction. They are sized to bend about 1.2 %.
 
 ### Layout
