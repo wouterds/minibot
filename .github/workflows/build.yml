@@ -25,8 +25,11 @@ jobs:
           key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
           restore-keys: ${{ runner.os }}-pio-
 
-      - name: Install PlatformIO
-        run: pip install --upgrade platformio
+      - name: Install PlatformIO and clang-format
+        run: pip install --upgrade platformio clang-format
+
+      - name: Check formatting
+        run: clang-format --dry-run --Werror src/*.cpp src/*.h
 
       - name: Build firmware
         run: pio run
