@@ -53,10 +53,10 @@ drv = [15.95, 18.4, 1.6];   // DRV8833, its pads run along both short edges
 imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
 
 /* [Fit] */
-fit = 0.25;             // clearance around a board, per side
-motor_fit = 0.2;        // beside the motor, per side
+fit = 0.1;              // clearance around a board, per side
+motor_fit = 0.1;        // beside the motor, per side
 motor_crush = 0.1;      // how far the lid's crush ribs bite into the motor
-motor_end_fit = 0.3;    // behind the motor
+motor_end_fit = 0.15;   // behind the motor
 lap_gap = 0.2;          // between the lips of the two shells
 lip_h = 2;              // height of the lip that centres the lid on the base
 
@@ -108,7 +108,7 @@ motor_rear_y = corridor / 2;
 esp_cx = -esp_usb_off;
 esp_x0 = esp_cx - esp[0] / 2;
 esp_x1 = esp_cx + esp[0] / 2;
-esp_y0 = -in_y + 0.3;
+esp_y0 = -in_y + 0.2;
 esp_y1 = esp_y0 + esp[1];
 esp_z1 = -esp_usb_h / 2;                      // board top, puts the micro-USB socket on the seam
 esp_z0 = esp_z1 - esp[2];
@@ -293,7 +293,7 @@ module lip_relief() {
 // Everything that goes through a wall is centred on the seam, so both shells get the same cut.
 module openings() {
   // motors, through the well walls
-  quadrants() port([axle_x, wall_y + wall / 2, 0], "y", motor_w + 0.6, motor_h + 0.2, wall + 2 * e, 0.5);
+  quadrants() port([axle_x, wall_y + wall / 2, 0], "y", motor_w + 2 * motor_fit + 0.2, motor_h + 0.2, wall + 2 * e, 0.5);
   // USB-C charging, left side
   port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.5);
   // micro-USB for flashing, right side
