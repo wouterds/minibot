@@ -5,102 +5,139 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 [![build](https://github.com/wouterds/minibot/actions/workflows/build.yml/badge.svg)](https://github.com/wouterds/minibot/actions/workflows/build.yml)
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-Arduino-orange.svg)](https://platformio.org)
 
+![minibot in its translucent hull](cad/renders/product-hero.jpg)
+
 ## Overview
 
-- **ESP32 (WeMos LOLIN32 Lite)** — WiFi + Bluetooth Classic
-- **PS3 DualShock 3 controller** as the wireless remote (BT Classic + HID)
-- **4× N20 6 V / 400 RPM** gear motors, paired left/right through a single **DRV8833** dual H-bridge
-- **MPU-6050 IMU** for orientation detection — auto-flips drive direction when the bot is upside-down
-- **TP4056 USB-C charge + DW01A protection board** — handles charging, overcharge, overdischarge and short-circuit protection
-- **1S LiPo 3.7 V / 1000 mAh (603048)**, ~1 hour of cruising
-- **3D-printed PETG translucent chassis** — fully enclosed (2.5 mm walls all around), invertible, ~130 × 130 × 18 mm
+- **ESP32 (WeMos LOLIN32 Lite)** with Bluetooth Classic
+- **PS3 DualShock 3 controller** as the remote
+- **4× N20 6 V / 400 RPM** gear motors, paired left and right on one **DRV8833** dual H-bridge
+- **MPU-6050 IMU**: when the bot lands on its back, forward stays forward
+- **TP4056 USB-C charge board with DW01A protection**
+- **1S LiPo 3.7 V / 1000 mAh (603048)**, about an hour of cruising
+- **Translucent PETG hull**, 120 × 120 × 16 mm, two shells that click together with the wheels inside. See [`cad/`](cad/README.md)
+
+![Exploded view](cad/renders/product-exploded.jpg)
+
+## Status
+
+The firmware builds and the hull passes its fit checks in CAD. Neither has met the hardware yet: the drive code has not run on the bot and the hull has not been printed. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
 
 ## System
 
 ```mermaid
 flowchart LR
-    PS3([PS3 Controller]) -->|HID / Bluetooth Classic| ESP[ESP32<br/>LOLIN32 Lite]
-    IMU[MPU-6050 IMU] -->|I²C<br/>orientation| ESP
-    ESP -->|2 PWM pins / side<br/>3.3 V logic| DRV[DRV8833]
-    DRV -->|VM rail| MOT[4× N20 motors<br/>2 paired per side]
-    BAT[(1S LiPo<br/>3.7 V / 1000 mAh)] -->|B+ / B-| TP[TP4056<br/>charge + protect]
-    TP -->|OUT+ protected VBAT| ESP
-    TP -.->|OUT+ to VM| DRV
+    PS3([PS3 controller]) -->|Bluetooth Classic| ESP[ESP32<br/>LOLIN32 Lite]
+    IMU[MPU-6050] -->|I²C<br/>which way is up| ESP
+    ESP -->|4 PWM pins| DRV[DRV8833]
+    DRV --> MOT[4× N20 motors<br/>2 in parallel per side]
+    BAT[(1S LiPo)] --> TP[TP4056<br/>charge + protect]
+    TP -->|through the switch| ESP
+    TP -->|direct| DRV
 ```
 
 ## Wiring
 
-| ESP32 pin | Destination | Purpose |
-|---|---|---|
-| `3V3` | DRV8833 `SLP`, MPU-6050 `VCC` | Wake the driver, power the IMU |
-| `GND` | All `GND` | Common ground |
-| `+` pad next to JST | DRV8833 `VM` (from TP4056 `OUT+`) | Motor supply, protected battery (3–4.2 V). Solder to the **pad next to the white JST connector**, not a side-header pin. |
-| `GPIO 19` | Status LED | Connection indicator |
-| `GPIO 21` | MPU-6050 `SDA` | I²C data (IMU) |
-| `GPIO 22` | MPU-6050 `SCL` | I²C clock (IMU) |
-| `GPIO 13` | DRV8833 `AIN1` | Left side PWM bit 1 |
-| `GPIO 14` | DRV8833 `AIN2` | Left side PWM bit 2 |
-| `GPIO 26` | DRV8833 `BIN1` | Right side PWM bit 1 |
-| `GPIO 27` | DRV8833 `BIN2` | Right side PWM bit 2 |
+No pin headers anywhere: every wire is soldered straight to a pad, so nothing stands taller than the 12 mm cavity.
 
-Each motor uses **2 PWM-capable GPIOs**: drive one HIGH/PWM and hold the other LOW to spin one direction, swap to reverse. The two motors on each side are wired in parallel to a single driver channel — `AOUT1` / `AOUT2` drive both left motors, `BOUT1` / `BOUT2` both right motors. See [`research.md`](research.md) for the design rationale.
+| From | To | Purpose |
+|---|---|---|
+| Battery `+` / `−` | TP4056 `B+` / `B−` | The only place the battery connects |
+| TP4056 `OUT+` | DRV8833 `VCC` | Motor supply, not switched |
+| TP4056 `OUT+` | switch → LOLIN32 battery `+` | Logic supply. Solder to the `+` leg of the JST socket; the board has no battery pin on its headers |
+| TP4056 `OUT−` | LOLIN32 `GND`, DRV8833 `GND` | Common ground |
+| LOLIN32 `3V3` | DRV8833 `EEP`, MPU-6050 `VCC` | The driver only wakes while the ESP32 is on |
+| LOLIN32 `GND` | MPU-6050 `GND` | |
+| `GPIO 32` | DRV8833 `IN1` | Left side |
+| `GPIO 33` | DRV8833 `IN2` | Left side |
+| `GPIO 25` | DRV8833 `IN3` | Right side |
+| `GPIO 26` | DRV8833 `IN4` | Right side |
+| `GPIO 19` | MPU-6050 `SDA` | |
+| `GPIO 23` | MPU-6050 `SCL` | |
+| `GPIO 35` | middle of a 100 kΩ / 100 kΩ divider from battery `+` to `GND` | Battery voltage, optional |
+| DRV8833 `OUT1` / `OUT2` | both left motors, in parallel | |
+| DRV8833 `OUT3` / `OUT4` | both right motors, in parallel | |
+
+Notes:
+
+- **The switch only carries the ESP32.** A small slide switch is rated for 0.3 A, the motors pull several times that. With the ESP32 off, its 3.3 V rail drops, the driver goes to sleep and draws a few µA.
+- **`GPIO 21` is not on this board**, which is why I²C sits on 19 and 23. The onboard LED on `GPIO 22` is the status light.
+- **The four motor pins are quiet during boot.** Several other pins pulse at reset and would twitch the motors.
+- **A 220–470 µF capacitor** across the driver's `VCC` and `GND` keeps motor starts from browning out the ESP32.
+- **The divider on `GPIO 35` is optional.** Once it is soldered in, set `BATTERY_SENSE_FITTED` to `true` in [`src/config.h`](src/config.h), put 100 nF from the pin to `GND`, and correct `BATTERY_DIVIDER` until the voltage in the serial log matches a multimeter.
+- **If a side runs backwards**, swap the two motor leads of that side at the driver.
+- **Mount the IMU component side up.** If the bot drives backwards the right way up, set `IMU_Z_SIGN` to `-1` in [`src/config.h`](src/config.h).
+- **Never plug in both USB ports at once.** The LOLIN32 has its own charger; with both connected, two chargers feed one cell.
+
+All pins are constants in [`src/config.h`](src/config.h). [`research.md`](research.md) has the reasoning.
 
 ## Power
 
 ```mermaid
 flowchart LR
-    USBC([USB-C 5 V]) -->|Vbus| TP[TP4056<br/>charge IC]
-    TP -->|charge| BAT[(1S LiPo<br/>3.0–4.2 V)]
-    BAT --> DW[DW01A<br/>protection IC]
-    DW -->|OUT+ protected| LDO[LOLIN32<br/>3.3 V LDO]
-    DW -->|OUT+ raw| VM[DRV8833 VM]
-    LDO -->|3.3 V| LOGIC[ESP32 core<br/>+ DRV8833 SLP, IMU VCC]
-    VM -->|3–4 A peak| MOT[4× N20 motors]
+    USBC([USB-C 5 V]) --> TP[TP4056<br/>charger]
+    TP --> BAT[(1S LiPo<br/>3.0–4.2 V)]
+    BAT --> DW[DW01A<br/>protection]
+    DW -->|OUT+| SW[switch]
+    SW --> LDO[LOLIN32<br/>3.3 V regulator]
+    DW -->|OUT+| VM[DRV8833 VCC]
+    LDO -->|3.3 V| LOGIC[ESP32, IMU,<br/>driver enable]
+    VM --> MOT[4× N20 motors]
 ```
 
-USB-C plugs into the **TP4056** board: it charges the battery (constant-current → constant-voltage) and the paired **DW01A** protects against overcharge, overdischarge, overcurrent, and short-circuit. The **OUT+ / OUT-** terminals are the protected battery output that feeds both the LOLIN32's 3.3 V LDO and the DRV8833's VM rail. The LOLIN32's onboard TP4054 + JST connector is left unused — battery only ever connects to the TP4056's `B+ / B-`.
+The TP4056 board charges the cell from USB-C, and its DW01A cuts the output on overcharge, overdischarge, overcurrent and short circuit. That cutoff only comes at 2.4 V, so with the divider fitted the firmware stops the motors at 3.3 V, blinks the LED fast for half a minute and then powers the ESP32 down.
 
+## Driving
 
-## Chassis
+| Control | Does |
+|---|---|
+| Left stick, up / down | Throttle |
+| Right stick, left / right | Steering |
 
-![Top-down chassis layout](docs/cad/layout.png)
+| Status LED | Means |
+|---|---|
+| Slow blink | Waiting for the controller |
+| On | Connected |
+| Fast blink | Battery low, motors off, powering down in 30 s |
 
-Two identical tray-shaped plates (3 mm floor + 6 mm half-walls) join open-face-to-open-face into a closed box. Four motors mount in half-cylinder pockets in each plate, shafts pointing outward toward the side walls. Wheels sit on the shafts close to but inside the walls, and protrude only through cutouts in the top and bottom plates. Nothing is exposed laterally.
+The bot brakes when the controller stops sending for half a second. Speed changes are stepped, so a full reversal takes about 130 ms.
 
-The parametric source is at [`docs/cad/chassis.scad`](docs/cad/chassis.scad). Render to STL with OpenSCAD:
+## Building
 
 ```sh
-openscad --export-format=stl -o plate.stl docs/cad/chassis.scad
+pio run                 # build
+pio run -t upload       # flash over micro-USB
+pio device monitor      # serial log
 ```
 
-Print the same shape twice — the chassis is invertible.
+The PS3 controller only talks to the one Bluetooth address stored in it. The firmware gives the ESP32 the address in `HOST_MAC` ([`src/config.h`](src/config.h)). Plug the controller in over USB once and write that same address to it:
 
-### Print settings
+```sh
+scripts/pair-ps3.py 24:6f:28:b1:f8:b6
+```
 
-| Setting | Value |
-|---|---|
-| Material | PETG translucent |
-| Plate thickness | 3 mm |
-| Layer height | 0.2 mm |
-| Infill | 25–30 % gyroid |
-| Perimeters | 3–4 walls |
-| Orientation | Plates flat on the bed |
-| Mounting | M2.5 heat-set inserts in the long-edge bosses |
+## Hull
+
+![Lid off](cad/renders/product-open.jpg)
+
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.5 mm proud of both faces, so the bot drives the same on its back. USB-C sits in the middle of the left side, micro-USB in the middle of the right side with the power switch beside it, all on the seam. Eleven snap fingers hold the lid, no screws.
+
+Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
 ## Parts
 
-Quick summary — see [`docs/parts.md`](docs/parts.md) for the full list with vendors.
+See [`docs/parts.md`](docs/parts.md) for the full list.
 
 | Component | Qty | ~Cost |
 |---|---|---:|
 | ESP32 LOLIN32 Lite | 1 | €5–8 |
 | DRV8833 breakout | 1 | €1.50 |
 | N20 6 V 400 RPM motor, 20 mm shaft | 4 | €10 |
-| JS2622 wheel (⌀25 × 23 mm) | 4 | €7.20 |
-| MPU-6050 IMU module | 1 | €1.50 |
-| TP4056 USB-C charge + DW01A protection board | 1 | €1–2 |
+| Wheel, ⌀25 × 23 mm | 4 | €7.20 |
+| MPU-6050 module | 1 | €1.50 |
+| TP4056 USB-C board with protection | 1 | €1–2 |
 | 1S LiPo 1000 mAh (603048) | 1 | €6 |
-| PETG translucent (chassis) | ~50 g | €1–2 |
-| M2.5 hardware, wire, heat-shrink | — | €5–8 |
+| Slide switch, capacitor, resistors, wire, foam tape | | €3–5 |
+| Translucent PETG, ~90 g | | €2 |
 | PS3 controller (reuse) | 1 | €0–20 |
-| **Total (minimum viable build)** | | **~€33–44** |
+| **Total** | | **~€37–43** |
