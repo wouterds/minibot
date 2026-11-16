@@ -21,7 +21,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 
 ## Status
 
-The firmware builds and the hull passes its fit checks in CAD. Neither has met the hardware yet: the drive code has not run on the bot and the hull has not been printed. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
+The firmware builds and the hull passes its fit checks in CAD. The drive code has not run on the bot yet. The base has been test-printed once and the parts drop in; the lid has not been printed, so the click is untested. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
 
 ## System
 

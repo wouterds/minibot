@@ -74,12 +74,12 @@ To open it, twist a coin in one of the slots on the seam. There are four at the 
 The parameters most likely to need a change after the coupon:
 
 - `motor_w`, `motor_h`, `motor_l`: the motor. `motor_l` runs from the brass front face to the black end cap, without the solder tabs.
-- `motor_fit`, `motor_crush`: room beside the motor, and how far the lid's crush ribs bite into it.
+- `motor_fit`, `motor_end_fit`, `motor_crush`: room beside and behind the motor, and how far the lid's crush ribs bite into it.
 - `wheel_d`, `wheel_w`, `wheel_gap`: the wheel and the room around it. The hull's width follows from these.
 - `shaft_l`, `wheel_w`: together they set how far the gearbox stands inside the hub.
 - `snap_bump`, `snap_gap`, `snap_t`: how hard the lid clicks. A lid that pops off wants a bigger `snap_bump`; fingers that crack want a thinner `snap_t`.
 - `snap_preload`: how firmly a closed lid is pulled down. Raise it if the lid rattles.
-- `fit`: room around every board.
+- `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
 
 ## Commands
@@ -100,7 +100,11 @@ Checked in the model:
 - With everything in place nothing overlaps, except where it is meant to: 9 mm³ where the snap fingers stay bent, and 3 mm³ where the crush ribs bite into the motors.
 - The lid's ribs clear the base with the lid 0.2 mm off-centre in any direction.
 
-Not checked, because none of this has been printed yet:
+Seen on a first print of the base, without the lid:
+
+- The boards and the motors drop into their seats. With 0.25 mm of room per side they rattled, so the room around them is now 0.1 mm per side. With the lid off they still lift straight out: the base only locates the parts sideways, the lid holds them down.
+
+Not checked yet:
 
 - **The click.** Its strength depends on the printer and the filament.
 - **Drops.** The fingers are printed standing up, which is the weak direction of a print. By calculation they hold roughly 190 N together. A wheel that lands hard levers its motor against the lid with about twice the force on the wheel, so a hard, flat landing on all four wheels may still pop the lid. Drop the coupon before trusting it.
