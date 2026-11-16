@@ -20,7 +20,7 @@ if (piece == "brass") {
   quadrants() motor_brass();
   esp_gold();
   charger_gold();
-  pod_gold(drv);
+  pod_gold(drv, on_ends = true);
   mirror([1, 0, 0]) pod_gold(imu);
 }
 if (piece == "pcb_dark") esp_pcb();

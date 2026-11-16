@@ -20,7 +20,7 @@ check base lid 14
 for shift in "[0.2,0]" "[-0.2,0]" "[0,0.2]" "[0,-0.2]"; do check base keepers 0 "$shift"; done
 for other in electronics motors wheels; do check base $other 0; done
 check lid electronics 0
-check lid motors 6
+check lid motors 8
 check lid wheels 0
 check electronics motors 0
 check electronics wheels 0

@@ -6,8 +6,11 @@
 //
 // The wheels live inside the hull, each in its own well that is open to both faces. They stand
 // equally proud of the top and the bottom, so the bot drives the same on either face, and
-// nothing sticks out sideways, in front or behind. Each motor sits in the sealed middle with
-// its gearbox against the wall of its well; the shaft goes through that wall into the wheel.
+// nothing sticks out sideways, in front or behind. Each motor sits in the sealed middle and
+// reaches through the wall of its well, so the front of its gearbox stands inside the hollow
+// hub of its wheel.
+//
+// Dimensions of the bought parts come from docs/measurements.md.
 //
 // Coordinates: X forward, Y left, Z up. Origin in the middle of the hull, on the axle line.
 // The seam between the shells is the plane Z = 0.
@@ -15,21 +18,22 @@
 part = "assembly"; // assembly | exploded | open | layout | section | axle | print | base | lid | coupon-base | coupon-lid | none
 
 /* [Drivetrain] */
-wheel_d = 25;           // tyre diameter
-wheel_w = 23;
-wheel_gap = 1.5;        // around the tyre, to the walls of its well
+wheel_d = 26;           // tyre diameter
+wheel_w = 22.16;        // hub, flange to flange
+wheel_gap = 1.5;        // around the wheel, to the walls of its well
 motor_w = 12;           // N20 gearbox, the wide way (lies along X)
 motor_h = 10;           // N20 across the flats (stands along Z)
-motor_l = 24;           // gearbox plus can, without the solder tabs
-motor_tab = 1.8;        // solder tabs behind the can
+motor_l = 25.64;        // brass front face to the black end cap
+motor_gear_l = 9.4;     // the open brass gearbox at the front
+motor_tab = 1.1;        // solder tabs behind the end cap
 motor_boss_d = 4;       // bearing boss around the output shaft
 shaft_d = 3;
-shaft_l = 20;           // from the gearbox face; has to reach well into the wheel hub
+shaft_l = 18.73;        // from the brass front face
 
 /* [Hull] */
-wheelbase = 88;
-corridor = 11.4;        // between the cans of two motors that face each other
-hull_h = 16;
+wheelbase = 91;
+corridor = 28;          // between the end caps of two motors that face each other
+hull_h = 17;
 wall = 2;
 skin = 2;
 chamfer = 1;            // outer edges of both faces
@@ -37,15 +41,15 @@ well_lip = 1;           // straight rim of the wheel openings
 corner_r = 3;
 
 /* [Electronics: x size, y size, board thickness] */
-esp = [26, 49, 1.6];        // LOLIN32 Lite, micro-USB on the -Y end
+esp = [25.7, 49.22, 1.17];  // LOLIN32 Lite, micro-USB on the -Y end; the length is over its sockets
 esp_usb_off = 7;            // micro-USB centre from the board centreline, towards +X
 esp_usb_h = 2.6;            // micro-USB socket height above the board
-bat = [50, 30, 6];          // 603048 LiPo
+bat = [52.56, 33.99, 10.35]; // 103450 LiPo, 2000 mAh
 bat_pad = 1;                // foam tape that sticks the battery to the floor
-tp = [16, 26.5, 1.2];       // TP4056 USB-C charger, USB-C on the +Y end
+tp = [17.4, 27.78, 0.99];   // TP4056 USB-C charger, USB-C on the +Y end
 usbc_h = 3.2;               // USB-C socket height above the board
-usbc_over = 2.5;            // how far that socket sticks out past the board
-drv = [16, 18.5, 1.6];      // DRV8833
+usbc_over = 0.35;           // how far that socket sticks out past the board
+drv = [15.95, 18.4, 1.6];   // DRV8833, its pads run along both short edges
 imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
 
 /* [Fit] */
@@ -77,8 +81,10 @@ lap_in = 0.9;
 
 axle_x = wheelbase / 2;
 well_r = wheel_d / 2 + wheel_gap;
-gear_y = corridor / 2 + motor_end_fit + motor_l;   // gearbox face, on the inside of the well wall
-well_y0 = gear_y + wall;
+gear_y = corridor / 2 + motor_end_fit + motor_l;   // brass front face of the gearbox
+motor_nest = wheel_w - shaft_l;               // gearbox this far inside the hub puts the shaft tip flush with the hub's outer face
+wall_y = gear_y - motor_nest - wheel_gap - wall;   // cavity side of the well wall; the gearbox passes through it
+well_y0 = wall_y + wall;
 well_y1 = well_y0 + wheel_w + 2 * wheel_gap;
 wheel_y = (well_y0 + well_y1) / 2;
 hull_w = 2 * (well_y1 + wall);
@@ -106,7 +112,7 @@ esp_y0 = -in_y + 0.3;
 esp_y1 = esp_y0 + esp[1];
 esp_z1 = -esp_usb_h / 2;                      // board top, puts the micro-USB socket on the seam
 esp_z0 = esp_z1 - esp[2];
-tp_y1 = in_y + wall - usbc_over - 0.3;         // the socket's mouth ends just inside the hull's face
+tp_y1 = min(in_y - 0.2, in_y + wall - usbc_over - 0.3);   // board against the wall, socket mouth inside the hull's face
 tp_y0 = tp_y1 - tp[1];
 tp_half = tp[0] / 2 + fit;
 tp_stop = 2.4;                                // takes the push of a plug going in
@@ -119,23 +125,23 @@ bat_z0 = -in_z + bat_pad;
 tp_z1 = -usbc_h / 2;                          // board top, puts the USB-C socket on the seam
 tp_z0 = tp_z1 - tp[2];
 pod_x0 = tp_half + 1 + fit;                   // inner edge of the driver and of the IMU
-pod_y0 = gear_y + 1.5;                        // their end towards the middle
+pod_y0 = bat_y1 + 2 * rib + fit + 0.3;        // their end towards the middle
 board_z0 = -in_z + 1.5;                       // their underside
 fence_z = -in_z + 3.5;                        // top of the low fences
-snap_bay_y = gear_y - 4 - snap_bay_w / 2;
+snap_bay_y = wall_y - 4 - snap_bay_w / 2;
 
 usbc_open = [14, 8.5];
-usb_open = [13.5, 9];
+usb_open = [15, 9];
 
 assert(protrusion >= 2, "wheels barely clear the hull");
-assert(wall + wheel_gap + 6 <= shaft_l, "shaft too short to hold the wheel");
+assert(motor_nest >= 0, "shaft longer than the wheel is wide: it would stick out of the hub");
 assert(esp_x0 - fit - rib >= -mid_x && esp_x1 + fit + rib <= mid_x, "ESP32 does not fit between the wells");
 assert(bat_y0 - fit - rib >= esp_y1 + fit + rib, "battery runs into the ESP32");
 assert(bat_half + rib <= bay_x0 - bay_rib - snap_gap - snap_t - 1, "battery runs into the snap fingers");
 
 echo(str("hull (l x w x h): ", hull_l, " x ", hull_w, " x ", hull_h));
 echo(str("tyres stand ", protrusion, " mm proud of both faces, ", wheel_gap, " mm clear of their wells"));
-echo(str("shaft inside the wheel: ", shaft_l - wall - wheel_gap, " mm"));
+echo(str("gearbox stands ", motor_nest, " mm inside the hub"));
 
 // ---------- helpers ----------
 
@@ -202,7 +208,7 @@ module at_wall(side, along, w) {
 
 module cavity(grow = 0) {
   g = 2 * grow;
-  cube([2 * in_x + g, 2 * gear_y + g, 2 * in_z + g], center = true);
+  cube([2 * in_x + g, 2 * wall_y + g, 2 * in_z + g], center = true);
   cube([2 * mid_x + g, 2 * in_y + g, 2 * in_z + g], center = true);
 }
 
@@ -217,17 +223,30 @@ module wells() {
   }
 }
 
+// A small stop on the outer wall of each well, facing the tip of the shaft. It keeps the motor
+// and its wheel from sliding outwards, and touches only at the centre of rotation.
+module thrust_stops() {
+  reach = wheel_gap - 0.3;
+  quadrants() translate([axle_x, well_y1, 0]) hull() {
+    translate([0, 0.05, 0]) cube([3, 0.1, 3 + 2 * reach], center = true);
+    translate([0, -reach + 0.05, 0]) cube([1, 0.1, 3], center = true);
+  }
+}
+
 module shell() {
   difference() {
     chamfer_box(hull_l, hull_w, hull_h, corner_r, chamfer);
     cavity();
-    wells();
+    difference() {
+      wells();
+      thrust_stops();
+    }
   }
 }
 
 module inner_outline(grow = 0) {
   offset(delta = grow) {
-    square([2 * in_x, 2 * gear_y], center = true);
+    square([2 * in_x, 2 * wall_y], center = true);
     square([2 * mid_x, 2 * in_y], center = true);
   }
 }
@@ -273,19 +292,18 @@ module lip_relief() {
 
 // Everything that goes through a wall is centred on the seam, so both shells get the same cut.
 module openings() {
-  d = motor_boss_d + 0.8;
-  // drive shafts, through the well walls
-  quadrants() port([axle_x, gear_y + wall / 2, 0], "y", d, d, wall + 1, d / 2 - e);
+  // motors, through the well walls
+  quadrants() port([axle_x, wall_y + wall / 2, 0], "y", motor_w + 0.6, motor_h + 0.2, wall + 2 * e, 0.5);
   // USB-C charging, left side
   port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.5);
   // micro-USB for flashing, right side
   port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 1.5);
 }
 
-// The base's lip has to let the shafts and the plugs through.
+// The base's lip has to let the motors and the plugs through.
 module tongue_gaps() {
   h = [0, lip_h + e];
-  quadrants() translate([axle_x, gear_y, 0]) box([-motor_boss_d / 2 - 0.8, motor_boss_d / 2 + 0.8], [-1, 2], h);
+  quadrants() translate([axle_x, wall_y, 0]) box([-motor_w / 2 - 0.8, motor_w / 2 + 0.8], [-1, 2], h);
   translate([0, in_y, 0]) box([-usbc_open[0] / 2 - 0.5, usbc_open[0] / 2 + 0.5], [-1, 2], h);
   translate([0, -in_y, 0]) box([-usb_open[0] / 2 - 0.5, usb_open[0] / 2 + 0.5], [-2, 1], h);
 }
@@ -348,32 +366,32 @@ module pry_slots() {
 
 // ---------- motor bays ----------
 
-// Front left bay, base half. The motor lies along Y with its gearbox against the well wall.
-// A wheel that hits the floor levers its motor against the saddles, so they sit as far apart
-// as the motor is long.
-saddle_y = [gear_y - 2.5, motor_rear_y + 1.5];
+// Front left bay, base half. The motor lies along Y and passes through the well wall. A wheel
+// that hits the floor levers its motor against the saddles, so they sit as far apart as they
+// can: one under the end cap, one from the front of the can up to the well wall. The gearbox
+// is an open frame, so the front saddle is long enough to always catch one of its plates.
+saddles = [[motor_rear_y + 0.5, motor_rear_y + 2.5], [gear_y - motor_gear_l - 3, wall_y + e]];
+crush_y = [motor_rear_y + 1.5, gear_y - motor_gear_l - 1.5];   // both on the can
 
 module motor_bay() {
   // walls in front of and behind the motor
-  box([bay_x0 - bay_rib, bay_x0], [motor_rear_y - stop_t, gear_y + e], [-in_z - e, -0.1]);
-  box([bay_x1, bay_x1 + bay_rib], [motor_rear_y - stop_t, gear_y + e], [-in_z - e, -0.1]);
-  for (y = saddle_y) box([bay_x0 - e, bay_x1 + e], [y - 1, y + 1], [-in_z - e, -motor_h / 2]);
+  box([bay_x0 - bay_rib, bay_x0], [motor_rear_y - stop_t, wall_y + e], [-in_z - e, -0.1]);
+  box([bay_x1, bay_x1 + bay_rib], [motor_rear_y - stop_t, wall_y + e], [-in_z - e, -0.1]);
+  for (y = saddles) box([bay_x0 - e, bay_x1 + e], y, [-in_z - e, -motor_h / 2]);
   motor_stop();
 }
 
-// behind the can; it stays low so the solder tabs and the wires pass over it
+// behind the end cap; it stays low so the solder tabs and the wires pass over it
 module motor_stop() {
   box([bay_x0 - e, bay_x1 + e], [motor_rear_y - stop_t, motor_rear_y], [-in_z - e, -3.2]);
 }
 
 // Lid half, drawn upside down. The fingers stand where the base has its walls. The saddles stop
-// short of the motor and carry a thin rib each that bites into it, which takes up the tolerance
-// of the motor without holding the lid off.
+// short of the motor and carry a thin rib each that bites into the can, which takes up the
+// tolerance of the motor without holding the lid off.
 module motor_cap() {
-  for (y = saddle_y) {
-    box([bay_x0 - e, bay_x1 + e], [y - 1, y + 1], [-in_z - e, -motor_h / 2 - 0.2]);
-    box([bay_x0 - e, bay_x1 + e], [y - 0.3, y + 0.3], [-in_z - e, -motor_h / 2 + motor_crush]);
-  }
+  for (y = saddles) box([bay_x0 - e, bay_x1 + e], y, [-in_z - e, -motor_h / 2 - 0.2]);
+  for (y = crush_y) box([bay_x0 - e, bay_x1 + e], [y - 0.3, y + 0.3], [-in_z - e, -motor_h / 2 + motor_crush]);
   motor_stop();
 }
 
@@ -390,16 +408,27 @@ module charger_seat() {
   box([-3, 3], [tp_y0 - fit - tp_stop, tp_y0 - fit], [-in_z - e, tp_z1 + 0.6]);
 }
 
-// seat for a small board beside the charger, long side along Y: a ledge under each short end,
-// a fence at each end and one towards the well
-module board_seat(size) {
+// Seat for a small board beside the charger, long side along Y. It rests on ledges under the
+// pair of edges that carries no pads: the short ends, or the long sides when pads_on_ends.
+// Posts and fences stand well above the board, since its keeper in the lid stays clear of the
+// parts on it.
+module board_seat(size, pads_on_ends = false) {
   x1 = pod_x0 + size[0];
   cx = (pod_x0 + x1) / 2;
   y1 = pod_y0 + size[1];
-  for (y = [pod_y0 - fit, y1 - 1]) box([cx - 5, cx + 5], [y, y + 1 + fit], [-in_z - e, board_z0]);
-  box([cx - 5, cx + 5], [pod_y0 - fit - rib, pod_y0 - fit], [-in_z - e, fence_z]);
-  box([cx - 5, cx + 5], [y1 + fit, y1 + fit + rib], [-in_z - e, fence_z]);
-  box([x1 + fit, mid_x + e], [pod_y0, y1], [-in_z - e, fence_z]);
+  cy = (pod_y0 + y1) / 2;
+  top = board_z0 + size[2] + 2.6;
+  if (pads_on_ends) {
+    for (x = [pod_x0 - fit, x1 - 1]) box([x, x + 1 + fit], [cy - 5, cy + 5], [-in_z - e, board_z0]);
+    // posts at the corners, beside the pad rows
+    for (x = [pod_x0 - fit, x1 - 1.2], y = [pod_y0 - fit - rib, y1 + fit])
+      box([x, x + 1.2 + fit], [y, y + rib], [-in_z - e, top]);
+  } else {
+    for (y = [pod_y0 - fit, y1 - 1]) box([cx - 5, cx + 5], [y, y + 1 + fit], [-in_z - e, board_z0]);
+    for (y = [pod_y0 - fit - rib, y1 + fit]) box([cx - 5, cx + 5], [y, y + rib], [-in_z - e, top]);
+  }
+  // towards the well
+  box([x1 + fit, mid_x + e], [pod_y0, y1], [-in_z - e, top]);
 }
 
 module esp_seat() {
@@ -425,7 +454,7 @@ module battery_seat() {
 
 module base_fittings() {
   charger_seat();
-  board_seat(drv);
+  board_seat(drv, pads_on_ends = true);
   mirror([1, 0, 0]) board_seat(imu);
   esp_seat();
   battery_seat();
@@ -458,11 +487,11 @@ module keeper(xr, yr, z) {
   box(xr, yr, [z, in_z + e]);
 }
 
-// Blades that reach over both short ends of a board lying with its long side along Y. They
-// start inside the board's edge, so a lid that sits a little off never lands on a fence.
-module end_keepers(cx, y0, y1, z) {
-  keeper([cx - 3, cx + 3], [y0 + 0.2, y0 + 1.1], z);
-  keeper([cx - 3, cx + 3], [y1 - 1.1, y1 - 0.2], z);
+// A post over the middle of a small board. It stops above the tallest part on the board, so it
+// only keeps the board from climbing out of its seat when the bot is on its back.
+module board_keeper(size, cx) {
+  cy = pod_y0 + size[1] / 2;
+  keeper([cx - 2, cx + 2], [cy - 2, cy + 2], board_z0 + size[2] + 2.4);
 }
 
 module lid_fittings() {
@@ -470,8 +499,8 @@ module lid_fittings() {
   keeper([-3, 3], [tp_y1 - 4.5, tp_y1 - 0.5], -tp_z1 + 0.2);
   keeper([-2, 2], [tp_y0 + 0.2, tp_y0 + 1.1], tp_z1 + 0.3);
   // driver and IMU
-  end_keepers(pod_x0 + drv[0] / 2, pod_y0, pod_y0 + drv[1], board_z0 + drv[2] + 0.3);
-  end_keepers(-pod_x0 - imu[0] / 2, pod_y0, pod_y0 + imu[1], board_z0 + imu[2] + 0.3);
+  board_keeper(drv, pod_x0 + drv[0] / 2);
+  board_keeper(imu, -pod_x0 - imu[0] / 2);
   // ESP32: on the micro-USB shell, and on the bare antenna end
   keeper([-3, 3], [esp_y0 + 0.3, esp_y0 + 4.3], -esp_z1 + 0.2);
   keeper([esp_cx - 5, esp_cx + 5], [esp_y1 - 1.1, esp_y1 - 0.2], esp_z1 + 0.3);
@@ -524,10 +553,13 @@ module col(c) {
       multmatrix([[0, 1, 0, 0], [0, 0, 1, 0], [1, 0, 0, -slice_x]]) children();
 }
 
+hub_plate = 4;          // stand-in only: thickness of the hub's solid end
+hub_cup_d = 17;         // stand-in only: inside of the hub's cup
+
 // front left motor
 module motor_brass() {
   translate([axle_x, 0, 0]) {
-    box([-motor_w / 2, motor_w / 2], [gear_y - 9, gear_y], [-motor_h / 2, motor_h / 2]);
+    box([-motor_w / 2, motor_w / 2], [gear_y - motor_gear_l, gear_y], [-motor_h / 2, motor_h / 2]);
     for (x = [-3.45, 3.45]) box([x - 0.75, x + 0.75], [gear_y - motor_l - motor_tab, gear_y - motor_l], [-0.2, 0.2]);
   }
 }
@@ -535,8 +567,8 @@ module motor_brass() {
 module motor_steel() {
   translate([axle_x, 0, 0]) {
     intersection() {
-      translate([0, gear_y - 9, 0]) rotate([90, 0, 0]) cylinder(d = motor_w, h = motor_l - 9);
-      box([-motor_w / 2, motor_w / 2], [gear_y - motor_l, gear_y - 9], [-motor_h / 2, motor_h / 2]);
+      translate([0, gear_y - motor_gear_l, 0]) rotate([90, 0, 0]) cylinder(d = motor_w, h = motor_l - motor_gear_l);
+      box([-motor_w / 2, motor_w / 2], [gear_y - motor_l, gear_y - motor_gear_l], [-motor_h / 2, motor_h / 2]);
     }
     translate([0, gear_y - e, 0]) rotate([-90, 0, 0]) {
       cylinder(d = motor_boss_d, h = 0.7);
@@ -547,19 +579,20 @@ module motor_steel() {
 
 module tyre() {
   translate([axle_x, wheel_y, 0]) rotate([90, 0, 0]) difference() {
-    cylinder(d = wheel_d, h = wheel_w - 4, center = true);
-    cylinder(d = wheel_d - 8, h = wheel_w, center = true);
+    cylinder(d = wheel_d, h = wheel_w - 2.4, center = true);
+    cylinder(d = wheel_d - 6, h = wheel_w, center = true);
   }
 }
 
+// the hub is a cup: open towards the motor, solid at its outer end, a flange on each rim
 module wheel_hub() {
-  translate([axle_x, wheel_y, 0]) rotate([90, 0, 0]) difference() {
+  translate([axle_x, wheel_y, 0]) rotate([-90, 0, 0]) difference() {
     union() {
-      cylinder(d = wheel_d - 8 + e, h = wheel_w - 4, center = true);
-      cylinder(d = wheel_d - 5, h = wheel_w, center = true);
+      cylinder(d = wheel_d - 6, h = wheel_w, center = true);
+      for (s = [-1, 1]) translate([0, 0, s * (wheel_w / 2 - 0.6)]) cylinder(d = wheel_d - 3, h = 1.2, center = true);
     }
+    translate([0, 0, -hub_plate]) cylinder(d = hub_cup_d, h = wheel_w, center = true);
     cylinder(d = shaft_d, h = wheel_w + 1, center = true);
-    for (s = [-1, 1]) translate([0, 0, s * wheel_w / 2]) cylinder(d = wheel_d - 11, h = 3, center = true);
   }
 }
 
@@ -632,9 +665,14 @@ module pod_chip(size) {
   translate([pod_x0 + size[0] / 2, pod_y0 + size[1] / 2, board_z0 + size[2]]) box([-2.5, 2.5], [-2.5, 2.5], [0, 1.1]);
 }
 
-module pod_gold(size) {
-  for (s = [-1, 1], i = [0:5]) translate([pod_x0 + size[0] / 2 + s * (size[0] / 2 - 1.4), pod_y0 + size[1] / 2 - 6.35 + i * 2.54, board_z0 + size[2] / 2])
-    cube([1.6, 1.6, size[2] + 0.1], center = true);
+// two rows of six pads: along the long sides, or along the short ends
+module pod_gold(size, on_ends = false) {
+  for (r = [-1, 1], i = [0:5]) {
+    along = -6.35 + i * 2.54;
+    across = r * ((on_ends ? size[1] : size[0]) / 2 - 1.4);
+    translate([pod_x0 + size[0] / 2 + (on_ends ? along : across), pod_y0 + size[1] / 2 + (on_ends ? across : along), board_z0 + size[2] / 2])
+      cube([1.6, 1.6, size[2] + 0.1], center = true);
+  }
 }
 
 module electronics() {
@@ -653,7 +691,7 @@ module electronics() {
   col(c_brass) charger_gold();
   col("#6a2c91") pod_pcb(drv);
   col(c_dark) pod_chip(drv);
-  col(c_brass) pod_gold(drv);
+  col(c_brass) pod_gold(drv, on_ends = true);
   mirror([1, 0, 0]) {
     col("#1f4f8f") pod_pcb(imu);
     col(c_dark) pod_chip(imu);
