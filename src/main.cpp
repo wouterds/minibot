@@ -7,10 +7,10 @@
 
 void setup()
 {
+  motors::begin(); // first, so the driver inputs are defined as early as possible
   Serial.begin(115200);
 
   status_led::begin();
-  motors::begin();
   imu::begin();
   battery::begin();
   controller::begin();

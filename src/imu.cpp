@@ -30,7 +30,7 @@ static bool readAccelZ(int16_t &z)
 {
   Wire.beginTransmission(ADDRESS);
   Wire.write(REG_ACCEL_ZOUT_H);
-  if (Wire.endTransmission(false) != 0) return false;
+  Wire.endTransmission(false); // only queues the address, errors show up in the read
   if (Wire.requestFrom(ADDRESS, 2) != 2) return false;
 
   const uint8_t high = Wire.read();
