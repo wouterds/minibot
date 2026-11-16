@@ -64,7 +64,7 @@ Marked `603048 3.7V 1000mAh`.
 | Micro-USB centre to the long edge beside pin `13` | | Model: 6 |
 | Board plus micro-USB socket | 3.77 | Model: 4.2. A micro-USB socket is about 2.6 high, so the board is about 1.2 and the socket's centre sits about 2.5 above the board's underside |
 | Board plus the white battery socket, the tallest part | 6.75 | Model: 7.1 |
-| How far the micro-USB sticks out past the board edge | | Model: 0 |
+| Length with a jaw on the sockets | 49.22 | Same as the length above, so that reading is over the sockets: they end flush with the board edge or stand proud of it, and 49.22 is what has to fit |
 
 Seen in the photos: two mounting holes, one in the corner beside `VP` at the antenna end and one beside pin `13` at the USB end. The micro-USB sits on the `3V … 13` side, the white battery socket on the `VP … G` side, the reset button between them.
 
