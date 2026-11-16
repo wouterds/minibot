@@ -172,7 +172,7 @@ def materials():
     mat.update(
         base=translucent("base", CLEAR),
         lid=translucent("lid", CLEAR),
-        tyres=plastic("tyres", (0.012, 0.012, 0.013), 0.75, bevel=0.0006),
+        tyres=plastic("tyres", (0.62, 0.035, 0.02), 0.6, bevel=0.0006),
         steel=plastic("steel", (0.60, 0.61, 0.63), 0.28, bevel=0.0001, metallic=1.0),
         brass=plastic("brass", (0.80, 0.58, 0.22), 0.3, bevel=0, metallic=1.0),
         pcb_dark=plastic("pcb_dark", (0.010, 0.022, 0.035), 0.4, bevel=0),
