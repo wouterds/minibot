@@ -7,6 +7,7 @@ enum Mode
 {
   WAITING,
   CONNECTED,
+  LOW_BATTERY,
 };
 
 void begin();

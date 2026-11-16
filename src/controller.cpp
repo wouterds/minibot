@@ -1,4 +1,5 @@
 #include "controller.h"
+#include "battery.h"
 #include "config.h"
 #include "imu.h"
 #include "motors.h"
@@ -36,13 +37,15 @@ static int16_t shape(int8_t raw)
   const int magnitude = abs((int)raw);
   if (magnitude <= config::STICK_DEAD_ZONE) return 0;
 
-  const float x = min(1.0f, (magnitude - config::STICK_DEAD_ZONE) / (127.0f - config::STICK_DEAD_ZONE));
+  const float x =
+      min(1.0f, (magnitude - config::STICK_DEAD_ZONE) / (127.0f - config::STICK_DEAD_ZONE));
   const int16_t speed = lroundf(x * x * 255.0f);
   return raw < 0 ? -speed : speed;
 }
 
 // The controller streams reports continuously, so a gap means the link is gone even though the
-// Bluetooth stack has not noticed yet. Without this the bot keeps driving on the last stick position.
+// Bluetooth stack has not noticed yet. Without this the bot keeps driving on the last stick
+// position.
 static bool linkAlive()
 {
   return Ps3.isConnected() && millis() - s_lastPacketAt < config::LINK_TIMEOUT_MS;
@@ -60,6 +63,13 @@ void begin()
 
 void update()
 {
+  if (battery::isLow())
+  {
+    status_led::set(status_led::LOW_BATTERY);
+    motors::stop();
+    return;
+  }
+
   if (!linkAlive())
   {
     motors::stop();

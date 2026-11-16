@@ -21,8 +21,15 @@ constexpr uint8_t MOTOR_PWM_RES_BITS = 8;
 // MPU-6050 on I2C. GPIO 21, the usual SDA, is not broken out on the LOLIN32 Lite.
 constexpr uint8_t IMU_SDA = 19;
 constexpr uint8_t IMU_SCL = 23;
-constexpr int8_t IMU_Z_SIGN = 1;        // -1 when the IMU board is mounted component side down
-constexpr uint32_t FLIP_HOLD_MS = 300;  // a new orientation has to last this long to count
+constexpr int8_t IMU_Z_SIGN = 1;       // -1 when the IMU board is mounted component side down
+constexpr uint32_t FLIP_HOLD_MS = 300; // a new orientation has to last this long to count
+
+// Battery voltage through a 100k/100k divider. Optional: left unwired, the cutoff switches off.
+constexpr uint8_t BATTERY_SENSE = 35;
+constexpr float BATTERY_DIVIDER = 2.0f;
+constexpr float BATTERY_PRESENT_MV = 2500; // below this at boot: no divider fitted
+constexpr float BATTERY_LOW_MV = 3300;     // the protection board only cuts at 2.4 V, too late
+constexpr uint32_t BATTERY_LOW_HOLD_MS = 3000;
 
 constexpr uint8_t STICK_DEAD_ZONE = 16;
 constexpr uint8_t STEER_PERCENT = 70;     // steering authority relative to throttle

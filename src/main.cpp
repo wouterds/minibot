@@ -1,3 +1,4 @@
+#include "battery.h"
 #include "controller.h"
 #include "imu.h"
 #include "motors.h"
@@ -11,12 +12,14 @@ void setup()
   status_led::begin();
   motors::begin();
   imu::begin();
+  battery::begin();
   controller::begin();
 }
 
 void loop()
 {
   imu::update();
+  battery::update();
   controller::update();
   status_led::update();
   delay(10);

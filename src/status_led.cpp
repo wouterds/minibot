@@ -32,6 +32,9 @@ void update()
     case CONNECTED:
       write(true);
       break;
+    case LOW_BATTERY:
+      write((millis() / 60) % 2);
+      break;
   }
 }
 
