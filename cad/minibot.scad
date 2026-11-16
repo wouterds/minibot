@@ -32,7 +32,7 @@ corridor = 11.4;        // between the cans of two motors that face each other
 hull_h = 16;
 wall = 2;
 skin = 2;
-chamfer = 2;            // outer edges of both faces
+chamfer = 1;            // outer edges of both faces
 well_lip = 1;           // straight rim of the wheel openings
 corner_r = 3;
 
@@ -41,39 +41,41 @@ esp = [25.5, 49.2, 1.6];    // LOLIN32 Lite, micro-USB on the -Y end
 esp_usb_off = 7;            // micro-USB centre from the board centreline, towards +X
 esp_usb_h = 2.6;            // micro-USB socket height above the board
 bat = [50, 30, 6];          // 603048 LiPo
+bat_pad = 1;                // foam tape that sticks the battery to the floor
 tp = [17.3, 28, 1.2];       // TP4056 USB-C charger, USB-C on the +Y end
 usbc_h = 3.2;               // USB-C socket height above the board
 drv = [16, 18.5, 1.6];      // DRV8833
 imu = [15.6, 20.3, 1.6];    // GY-521 (MPU-6050)
 sw = [8.5, 3.5, 3.5];       // SS12D00 slide switch: length, height, depth along the lever
+sw_lever = 3;               // how far the lever stands out of the body
 sw_slot = [4.4, 2];         // opening for the lever and its travel
 
 /* [Fit] */
 fit = 0.25;             // clearance around a board, per side
 motor_fit = 0.2;        // beside the motor, per side
-motor_z_fit = 0;        // between motor and each saddle
+motor_crush = 0.1;      // how far the lid's crush ribs bite into the motor
 motor_end_fit = 0.3;    // behind the motor
 lap_gap = 0.2;          // between the lips of the two shells
 lip_h = 2;              // height of the lip that centres the lid on the base
 
 /* [Snap fingers] */
-snap_w = 10;
-snap_t = 1.2;
-snap_gap = 0.3;         // between a finger and the wall it runs along
-snap_bump = 1;          // hook height; it reaches snap_bump - snap_gap into the wall
+snap_t = 1.1;
+snap_gap = 0.6;         // between a finger and the wall it runs along
+snap_bump = 1.2;        // hook height; it reaches snap_bump - snap_gap into the wall
 snap_lead = 35;         // closing flank, degrees from the push direction
 snap_ret = 55;          // holding flank
-snap_preload = 0.25;    // how far a finger stays bent once the lid is down
-snap_end_y = 16;        // fingers on the front and rear walls sit at +-snap_end_y
-snap_side_x = 17;       // one finger on each side wall
+snap_preload = 0.15;    // how far a finger stays bent once the lid is down
+snap_bay_w = 14;        // fingers beside the motors, two per motor
+snap_side_w = 10;       // fingers on the side walls
+snap_sides = [["+y", 17], ["+y", -17], ["-y", 17]];
 
 /* [Hidden] */
 e = 0.01;
 $fa = 3;
 $fs = 0.3;
 rib = 1.2;
+bay_rib = 2;            // walls of the motor bays; the lid's fingers hook into them
 stop_t = 1;
-in_chamfer = 0.8;
 lap_in = 0.9;
 
 axle_x = wheelbase / 2;
@@ -106,13 +108,16 @@ esp_y0 = -in_y + 0.3;
 esp_y1 = esp_y0 + esp[1];
 esp_z1 = -esp_usb_h / 2;                      // board top, puts the micro-USB socket on the seam
 esp_z0 = esp_z1 - esp[2];
-bat_half = bat[0] / 2 + fit;
-bat_y0 = esp_y1 + fit + rib + fit;
-bat_y1 = bat_y0 + bat[1] + 1;                 // 1 mm for a cell that has swollen a little
-bat_cy = (bat_y0 + bat_y1) / 2;
 tp_y1 = in_y - 0.2;
 tp_y0 = tp_y1 - tp[1];
 tp_half = tp[0] / 2 + fit;
+tp_stop = 2.4;                                // takes the push of a plug going in
+// the battery sits as far from the ESP32's antenna as the charger lets it
+bat_half = bat[0] / 2 + 0.75;
+bat_y1 = tp_y0 - fit - tp_stop;
+bat_y0 = bat_y1 - bat[1] - 1;                 // 1 mm for a cell that has swollen a little
+bat_cy = (bat_y0 + bat_y1) / 2;
+bat_z0 = -in_z + bat_pad;
 tp_z1 = -usbc_h / 2;                          // board top, puts the USB-C socket on the seam
 tp_z0 = tp_z1 - tp[2];
 pod_x0 = tp_half + 1 + fit;                   // inner edge of the driver and of the IMU
@@ -120,16 +125,19 @@ pod_y0 = gear_y + 1.5;                        // their end towards the middle
 board_z0 = -in_z + 1.5;                       // their underside
 fence_z = -in_z + 3.5;                        // top of the low fences
 sw_z = sw[1] / 2;
+sw_wall = sw_lever - wall;                    // pad that sets the switch back until its lever ends flush
+sw_recess = [14, 5];
+snap_bay_y = gear_y - 4 - snap_bay_w / 2;
 
-usbc_open = [13.2, 7.2];
-usb_open = [13, 7.6];
+usbc_open = [14, 8.5];
+usb_open = [13.5, 9];
 
 assert(protrusion >= 2, "wheels barely clear the hull");
 assert(wall + wheel_gap + 6 <= shaft_l, "shaft too short to hold the wheel");
 assert(esp_x0 - fit - rib >= -mid_x && esp_x1 + fit + rib <= mid_x, "ESP32 does not fit between the wells");
-assert(bat_y1 + rib <= tp_y0 - fit - rib, "battery runs into the charger");
-assert(bat_y1 + rib <= gear_y && bat_y0 - rib >= -gear_y, "battery sticks out of the middle band");
-assert(bat_half + rib <= bay_x0 - rib, "battery runs into the motor bays");
+assert(bat_y0 - fit - rib >= esp_y1 + fit + rib, "battery runs into the ESP32");
+assert(bat_half + rib <= bay_x0 - bay_rib - snap_gap - snap_t - 1, "battery runs into the snap fingers");
+assert(sw_wall >= 0, "switch lever is shorter than the wall is thick");
 assert(pod_x0 + max(drv[0], imu[0]) + fit <= mid_x, "driver or IMU does not fit beside the charger");
 
 echo(str("hull (l x w x h): ", hull_l, " x ", hull_w, " x ", hull_h));
@@ -206,8 +214,8 @@ module at_tail() {
 
 module cavity(grow = 0) {
   g = 2 * grow;
-  chamfer_box(2 * in_x + g, 2 * gear_y + g, 2 * in_z + g, 0.2, in_chamfer);
-  chamfer_box(2 * mid_x + g, 2 * in_y + g, 2 * in_z + g, 0.2, in_chamfer);
+  cube([2 * in_x + g, 2 * gear_y + g, 2 * in_z + g], center = true);
+  cube([2 * mid_x + g, 2 * in_y + g, 2 * in_z + g], center = true);
 }
 
 // A well is a cylinder around the axle, so its wall follows the tyre at the same distance all
@@ -236,17 +244,35 @@ module inner_outline(grow = 0) {
   }
 }
 
+module perimeter(grow = 0) {
+  offset(delta = grow) square([2 * in_x, 2 * in_y], center = true);
+}
+
 // The walls overlap at the seam: the base keeps the inner half and stands lip_h into the lid,
-// the lid keeps the outer half. That centres the lid and closes the seam to light and dust.
+// the lid keeps the outer half. That centres the lid, stops the shells shearing apart and closes
+// the seam to light and dust. The lip runs round the cavity and round the whole outer wall,
+// so the frames around the wells are tied together as well.
 module tongue() {
-  linear_extrude(lip_h) difference() {
-    inner_outline(lap_in);
-    inner_outline();
+  linear_extrude(lip_h) {
+    difference() {
+      inner_outline(lap_in);
+      inner_outline();
+    }
+    difference() {
+      perimeter(lap_in);
+      perimeter();
+    }
   }
 }
 
 module rebate() {
-  translate([0, 0, -e]) linear_extrude(lip_h + 0.3 + e) inner_outline(lap_in + lap_gap);
+  translate([0, 0, -e]) linear_extrude(lip_h + 0.3 + e) {
+    inner_outline(lap_in + lap_gap);
+    difference() {
+      perimeter(lap_in + lap_gap);
+      perimeter(-0.3);
+    }
+  }
 }
 
 // room for the base's lip where a rib of the lid runs up to a wall
@@ -266,10 +292,10 @@ module openings() {
   port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.5);
   // micro-USB for flashing, right side
   port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 1.5);
-  // power switch, in the tail: a recess with the lever slot in it. The recess is as deep as the
-  // lid's lip is thick, so its floor is one flat face across the seam.
-  port([-hull_l / 2, 0, 0], "x", usb_open[0], usb_open[1], 2 * (wall - lap_in), 1.5);
-  port([-hull_l / 2 + wall / 2, 0, 0], "x", sw_slot[0], sw_slot[1], wall + 1, 0.5);
+  // power switch, in the tail: a recess as deep as the wall, with the lever slot in its floor.
+  // The lever ends flush with the hull, so a crash cannot flick or shear it.
+  port([-hull_l / 2, 0, 0], "x", sw_recess[0], sw_recess[1], 2 * wall, 1.5);
+  port([-in_x, 0, 0], "x", sw_slot[0], sw_slot[1], 2 * sw_wall + 2, 0.5);
 }
 
 // The base's lip has to let the shafts, the plugs and the switch lever through.
@@ -278,7 +304,7 @@ module tongue_gaps() {
   quadrants() translate([axle_x, gear_y, 0]) box([-motor_boss_d / 2 - 0.8, motor_boss_d / 2 + 0.8], [-1, 2], h);
   translate([0, in_y, 0]) box([-usbc_open[0] / 2 - 0.5, usbc_open[0] / 2 + 0.5], [-1, 2], h);
   translate([0, -in_y, 0]) box([-usb_open[0] / 2 - 0.5, usb_open[0] / 2 + 0.5], [-2, 1], h);
-  translate([-in_x, 0, 0]) box([-2, 1], [-sw_slot[0] / 2 - 0.5, sw_slot[0] / 2 + 0.5], h);
+  translate([-in_x, 0, 0]) box([-2, 1], [-sw_recess[0] / 2 - 0.5, sw_recess[0] / 2 + 0.5], h);
 }
 
 // ---------- snap fit ----------
@@ -289,8 +315,9 @@ snap_apex_z1 = snap_apex_z0 + 0.3;
 snap_ret_h = snap_bump / tan(snap_ret);
 snap_slope = snap_ret_h / snap_bump;   // of the holding flank
 
-// A finger hangs from the lid's ceiling and runs down the inside of the base wall. Its hook
-// passes the base's lip bent inwards and springs out into a groove near the floor.
+// A finger hangs from the lid's ceiling and runs down beside a wall of the base. Its hook passes
+// the top of that wall bent away from it and springs into a groove near the floor. Drawn as
+// [distance from the wall, z].
 module finger_profile() {
   g = snap_gap;
   t = snap_t;
@@ -302,54 +329,69 @@ module finger_profile() {
 }
 
 // The groove's holding flank sits snap_preload lower than the hook's, so a seated finger stays
-// bent and keeps pulling the lid down onto the base. No rattle.
+// bent and keeps pulling the lid down onto the base. No rattle. Below the flank the groove runs
+// straight down to the floor.
 module groove_profile() {
   depth = snap_bump - snap_gap + 0.15;
   z0 = snap_apex_z1 + snap_slope * (snap_bump - snap_gap) - snap_preload * snap_slope;
-  polygon([
-    [0.05, z0 + 0.05 * snap_slope], [-depth, z0 - depth * snap_slope],
-    [-depth, snap_tip_z - 0.3], [0.05, snap_tip_z - 0.3 - depth - 0.05],
-  ]);
+  polygon([[0.05, z0 + 0.05 * snap_slope], [-depth, z0 - depth * snap_slope], [-depth, -in_z - e], [0.05, -in_z - e]]);
 }
 
-snaps = [
-  ["+x", snap_end_y], ["+x", -snap_end_y], ["-x", snap_end_y], ["-x", -snap_end_y],
-  ["+y", snap_side_x], ["-y", snap_side_x],
-];
+// Puts a profile at every snap: on both sides of each motor bay, where the wheels' loads come
+// in, and on the side walls. wider makes it that much longer than the finger.
+module snaps(wider = 0) {
+  quadrants() {
+    translate([bay_x0 - bay_rib, snap_bay_y, 0]) mirror([1, 0, 0])
+      rotate([90, 0, 0]) linear_extrude(snap_bay_w + wider, center = true) children();
+    translate([bay_x1 + bay_rib, snap_bay_y, 0])
+      rotate([90, 0, 0]) linear_extrude(snap_bay_w + wider, center = true) children();
+  }
+  for (s = snap_sides) at_wall(s[0], s[1], snap_side_w + wider) children();
+}
 
 module snap_fingers() {
-  for (s = snaps) at_wall(s[0], s[1], snap_w) finger_profile();
+  snaps() finger_profile();
 }
 
 module snap_grooves() {
-  for (s = snaps) at_wall(s[0], s[1], snap_w + 1) groove_profile();
+  snaps(1) groove_profile();
 }
 
-// A slot on the seam at every finger: twist a coin or a flat screwdriver in it to open.
-module pry_notches() {
-  for (s = snaps) {
-    if (s[0] == "+x" || s[0] == "-x") port([(s[0] == "+x" ? 1 : -1) * hull_l / 2, s[1], 0], "x", snap_w, 1.2, 2, 0.3);
-    else port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", snap_w, 1.2, 2, 0.3);
-  }
+// Slots on the seam, near the fingers: twist a coin in one to lift the lid there.
+module pry_slots() {
+  sym_x() sym_y() port([hull_l / 2, snap_bay_y, 0], "x", 12, 2.2, 2, 0.4);
+  for (s = snap_sides) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, 2, 0.4);
 }
 
-// ---------- motor bays (same in both shells) ----------
+// ---------- motor bays ----------
 
-// lower half of the front left bay; the motor lies along Y with its gearbox against the well wall
+// Front left bay, base half. The motor lies along Y with its gearbox against the well wall.
+// A wheel that hits the floor levers its motor against the saddles, so they sit as far apart
+// as the motor is long.
+saddle_y = [gear_y - 2.5, motor_rear_y + 1.5];
+
 module motor_bay() {
-  y0 = motor_rear_y - stop_t;
   // walls in front of and behind the motor
-  box([bay_x0 - rib, bay_x0], [y0, gear_y + e], [-in_z - e, -0.1]);
-  box([bay_x1, bay_x1 + rib], [y0, gear_y + e], [-in_z - e, -0.1]);
-  // saddles under the gearbox and under the can
-  for (dy = [4.5, 17])
-    box([bay_x0 - e, bay_x1 + e], [gear_y - dy - 1, gear_y - dy + 1], [-in_z - e, -motor_h / 2 - motor_z_fit]);
-  // stop behind the can; it stays low so the solder tabs and the wires pass over it
-  box([bay_x0 - e, bay_x1 + e], [y0, motor_rear_y], [-in_z - e, -3.2]);
+  box([bay_x0 - bay_rib, bay_x0], [motor_rear_y - stop_t, gear_y + e], [-in_z - e, -0.1]);
+  box([bay_x1, bay_x1 + bay_rib], [motor_rear_y - stop_t, gear_y + e], [-in_z - e, -0.1]);
+  for (y = saddle_y) box([bay_x0 - e, bay_x1 + e], [y - 1, y + 1], [-in_z - e, -motor_h / 2]);
+  motor_stop();
 }
 
-module motor_bays() {
-  quadrants() motor_bay();
+// behind the can; it stays low so the solder tabs and the wires pass over it
+module motor_stop() {
+  box([bay_x0 - e, bay_x1 + e], [motor_rear_y - stop_t, motor_rear_y], [-in_z - e, -3.2]);
+}
+
+// Lid half, drawn upside down. The fingers stand where the base has its walls. The saddles stop
+// short of the motor and carry a thin rib each that bites into it, which takes up the tolerance
+// of the motor without holding the lid off.
+module motor_cap() {
+  for (y = saddle_y) {
+    box([bay_x0 - e, bay_x1 + e], [y - 1, y + 1], [-in_z - e, -motor_h / 2 - 0.2]);
+    box([bay_x0 - e, bay_x1 + e], [y - 0.3, y + 0.3], [-in_z - e, -motor_h / 2 + motor_crush]);
+  }
+  motor_stop();
 }
 
 // ---------- base ----------
@@ -361,8 +403,8 @@ module charger_seat() {
     // fence beside the board
     box([tp_half, tp_half + 1], [tp_y0 - fit, in_y + e], [-in_z - e, tp_z1 + 0.6]);
   }
-  // end stop, between the battery pads
-  box([-3, 3], [tp_y0 - fit - rib, tp_y0 - fit], [-in_z - e, tp_z1 + 0.6]);
+  // end stop, between the battery pads; it takes the push of a plug going in
+  box([-3, 3], [tp_y0 - fit - tp_stop, tp_y0 - fit], [-in_z - e, tp_z1 + 0.6]);
 }
 
 // seat for a small board beside the charger, long side along Y: a ledge under each short end,
@@ -381,7 +423,7 @@ module esp_seat() {
   top = esp_z1 + 0.6;
   // antenna end: ledge and stop
   box([esp_x0 + 1, esp_x1 - 1], [esp_y1 - 1, esp_y1 + fit + rib], [-in_z - e, esp_z0]);
-  box([esp_x0 + 1, esp_x1 - 1], [esp_y1 + fit, esp_y1 + fit + rib], [-in_z - e, top]);
+  box([esp_x0 - fit - rib, esp_x1 + fit + rib], [esp_y1 + fit, esp_y1 + fit + rib], [-in_z - e, top]);
   // USB end: ledges under the long edges, where there are no header pads
   for (x = [esp_x0 - fit, esp_x1 - 1])
     box([x, x + 1 + fit], [-in_y - e, esp_y0 + 9], [-in_z - e, esp_z0]);
@@ -392,9 +434,9 @@ module esp_seat() {
 
 module battery_seat() {
   // towards the ESP32 and towards the charger
-  for (y = [bat_y0 - fit - rib, bat_y1]) box([-20, 20], [y, y + rib], [-in_z - e, fence_z]);
+  for (y = [bat_y0 - rib, bat_y1]) box([-20, 20], [y, y + rib], [-in_z - e, fence_z]);
   // ends, open in the middle for the leads
-  sym_x() for (y = [[bat_y0 - fit - rib, bat_cy - 5], [bat_cy + 5, bat_y1 + rib]])
+  sym_x() for (y = [[bat_y0 - rib, bat_cy - 5], [bat_cy + 5, bat_y1 + rib]])
     box([bat_half, bat_half + rib], y, [-in_z - e, fence_z]);
 }
 
@@ -417,7 +459,15 @@ module base_fittings() {
   mirror([1, 0, 0]) board_seat(imu);
   esp_seat();
   battery_seat();
-  at_tail() switch_seat(in_x);
+  at_tail() {
+    switch_seat(in_x - sw_wall);
+    switch_pad([-in_z - e, 0]);
+  }
+}
+
+// behind the switch recess the wall is a pad in each shell, with the lever slot in it
+module switch_pad(zr) {
+  box([-sw_recess[0] / 2 - 1, sw_recess[0] / 2 + 1], [in_x - sw_wall, in_x + e], zr);
 }
 
 module base() {
@@ -428,7 +478,7 @@ module base() {
       intersection() {
         cavity(0.05);
         union() {
-          motor_bays();
+          quadrants() motor_bay();
           base_fittings();
         }
       }
@@ -436,7 +486,7 @@ module base() {
     openings();
     tongue_gaps();
     snap_grooves();
-    pry_notches();
+    pry_slots();
   }
 }
 
@@ -447,26 +497,27 @@ module keeper(xr, yr, z) {
   box(xr, yr, [z, in_z + e]);
 }
 
-// blades that reach over both short ends of a board lying with its long side along Y
+// Blades that reach over both short ends of a board lying with its long side along Y. They
+// start inside the board's edge, so a lid that sits a little off never lands on a fence.
 module end_keepers(cx, y0, y1, z) {
-  keeper([cx - 3, cx + 3], [y0 - 0.15, y0 + 0.9], z);
-  keeper([cx - 3, cx + 3], [y1 - 0.9, y1 + 0.15], z);
+  keeper([cx - 3, cx + 3], [y0 + 0.2, y0 + 1.1], z);
+  keeper([cx - 3, cx + 3], [y1 - 1.1, y1 - 0.2], z);
 }
 
 module lid_fittings() {
   // charger: on the USB-C shell, and on the board edge between the battery pads
   keeper([-3, 3], [tp_y1 - 4.5, tp_y1 - 0.5], -tp_z1 + 0.2);
-  keeper([-2, 2], [tp_y0 - 0.15, tp_y0 + 0.9], tp_z1 + 0.3);
+  keeper([-2, 2], [tp_y0 + 0.2, tp_y0 + 1.1], tp_z1 + 0.3);
   // driver and IMU
   end_keepers(pod_x0 + drv[0] / 2, pod_y0, pod_y0 + drv[1], board_z0 + drv[2] + 0.3);
   end_keepers(-pod_x0 - imu[0] / 2, pod_y0, pod_y0 + imu[1], board_z0 + imu[2] + 0.3);
   // ESP32: on the micro-USB shell, and on the bare antenna end
   keeper([-3, 3], [esp_y0 + 0.3, esp_y0 + 4.3], -esp_z1 + 0.2);
-  keeper([esp_cx - 5, esp_cx + 5], [esp_y1 - 0.9, esp_y1 + 0.15], esp_z1 + 0.3);
-  // battery
-  for (y = [-8, 8]) keeper([-20, 20], [bat_cy + y - rib / 2, bat_cy + y + rib / 2], -in_z + bat[2] + 0.5);
+  keeper([esp_cx - 5, esp_cx + 5], [esp_y1 - 1.1, esp_y1 - 0.2], esp_z1 + 0.3);
+  // battery: a backstop, the foam tape under it does the holding
+  for (y = [-8, 8]) keeper([-20, 20], [bat_cy + y - rib / 2, bat_cy + y + rib / 2], bat_z0 + bat[2] + 0.7);
   // switch
-  at_tail() keeper([-sw[0] / 2 + 0.2, sw[0] / 2 - 0.2], [in_x - sw[2], in_x + e], sw_z + 0.15);
+  at_tail() keeper([-sw[0] / 2 + 0.2, sw[0] / 2 - 0.2], [in_x - sw_wall - sw[2], in_x - sw_wall + e], sw_z + 0.15);
 }
 
 module lid() {
@@ -480,16 +531,17 @@ module lid() {
         intersection() {
           cavity(0.05);
           union() {
-            mirror([0, 0, 1]) motor_bays();
+            mirror([0, 0, 1]) quadrants() motor_cap();
             lid_fittings();
           }
         }
         lip_relief();
       }
       snap_fingers();
+      at_tail() switch_pad([0, 4]);
     }
     openings();
-    pry_notches();
+    pry_slots();
   }
 }
 
@@ -583,12 +635,16 @@ module esp_led() {
 }
 
 module battery() {
-  translate([0, bat_cy, -in_z + bat[2] / 2]) hull()
+  translate([0, bat_cy, bat_z0 + bat[2] / 2]) hull()
     for (x = [-1, 1], y = [-1, 1]) translate([x * (bat[0] / 2 - 2), y * (bat[1] / 2 - 2), 0]) cylinder(r = 2, h = bat[2], center = true);
 }
 
 module battery_tape() {
-  translate([bat[0] / 2 - 3.1, bat_cy, -in_z + bat[2] / 2 + 0.05]) cube([6.2, bat[1] + 0.1, bat[2] + 0.1], center = true);
+  translate([bat[0] / 2 - 3.1, bat_cy, bat_z0 + bat[2] / 2 + 0.05]) cube([6.2, bat[1] + 0.1, bat[2] + 0.1], center = true);
+}
+
+module battery_foam() {
+  translate([0, bat_cy, -in_z + bat_pad / 2]) cube([bat[0] - 14, bat[1] - 10, bat_pad], center = true);
 }
 
 module charger_pcb() {
@@ -623,13 +679,13 @@ module pod_gold(size) {
 }
 
 module switch_body() {
-  at_tail() box([-sw[0] / 2, sw[0] / 2], [in_x - sw[2], in_x], [-sw_z, sw_z]);
+  at_tail() box([-sw[0] / 2, sw[0] / 2], [in_x - sw_wall - sw[2], in_x - sw_wall], [-sw_z, sw_z]);
 }
 
 module switch_metal() {
   at_tail() {
-    translate([1, in_x - e, 0]) box([-0.75, 0.75], [0, 3], [-0.75, 0.75]);
-    for (x = [-2.5, 0, 2.5]) translate([x, in_x - sw[2], 0]) box([-0.25, 0.25], [-3, 0], [-0.15, 0.15]);
+    translate([1, in_x - sw_wall - e, 0]) box([-0.75, 0.75], [0, sw_lever], [-0.75, 0.75]);
+    for (x = [-2.5, 0, 2.5]) translate([x, in_x - sw_wall - sw[2], 0]) box([-0.25, 0.25], [-3, 0], [-0.15, 0.15]);
   }
 }
 
@@ -642,6 +698,7 @@ module electronics() {
   col("#39a0ff") esp_led();
   col("#c7ccd1") battery();
   col("#d9a520") battery_tape();
+  col("#3a3d42") battery_foam();
   col("#1f4f8f") charger_pcb();
   col(c_metal) charger_metal();
   col(c_dark) charger_chips();
