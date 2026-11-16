@@ -32,6 +32,7 @@ constexpr float BATTERY_DIVIDER = 2.0f;       // correct this against a multimet
 constexpr float BATTERY_LOW_MV = 3300;        // the protection board only cuts at 2.4 V, too late
 constexpr float BATTERY_LOW_LOADED_MV = 3000; // the motors pull the voltage down while they run
 constexpr uint32_t BATTERY_LOW_HOLD_MS = 3000;
+constexpr uint32_t BATTERY_LOW_SLEEP_MS = 30000; // blink this long, then power down
 
 constexpr uint8_t STICK_DEAD_ZONE = 16;
 constexpr uint8_t STEER_PERCENT = 70;     // steering authority relative to throttle

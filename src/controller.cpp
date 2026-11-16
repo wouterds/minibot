@@ -6,11 +6,13 @@
 #include "status_led.h"
 #include <Arduino.h>
 #include <Ps3Controller.h>
+#include <esp_sleep.h>
 
 namespace controller
 {
 
 static volatile uint32_t s_lastPacketAt = 0;
+static uint32_t s_lowSince = 0;
 
 static void onConnect()
 {
@@ -61,6 +63,10 @@ void update()
   {
     status_led::set(status_led::LOW_BATTERY);
     motors::stop();
+
+    // Bluetooth alone would still run the cell down to the protection board's cutoff.
+    if (s_lowSince == 0) s_lowSince = millis() | 1;
+    if (millis() - s_lowSince >= config::BATTERY_LOW_SLEEP_MS) esp_deep_sleep_start();
     return;
   }
 
