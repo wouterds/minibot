@@ -33,9 +33,9 @@ shaft_l = 18.73;        // from the brass front face
 /* [Hull] */
 wheelbase = 91;
 corridor = 28;          // between the end caps of two motors that face each other
-hull_h = 17;
-wall = 2;
-skin = 2;
+hull_h = 16.2;
+wall = 1.6;
+skin = 1.6;
 chamfer = 1;            // outer edges of both faces
 well_lip = 1;           // straight rim of the wheel openings
 corner_r = 3;
@@ -77,7 +77,7 @@ $fs = 0.3;
 rib = 1.2;
 bay_rib = 2;            // walls of the motor bays; the lid's fingers hook into them
 stop_t = 1;
-lap_in = 0.9;
+lap_in = (wall - lap_gap) / 2;   // the two lips share the wall
 
 axle_x = wheelbase / 2;
 well_r = wheel_d / 2 + wheel_gap;
@@ -360,8 +360,8 @@ module snap_grooves() {
 
 // Slots on the seam, near the fingers: twist a coin in one to lift the lid there.
 module pry_slots() {
-  sym_x() sym_y() port([hull_l / 2, snap_bay_y, 0], "x", 12, 2.2, 2, 0.4);
-  for (s = snap_sides) if (s[2] >= 10) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, 2, 0.4);
+  sym_x() sym_y() port([hull_l / 2, snap_bay_y, 0], "x", 12, 2.2, wall, 0.4);
+  for (s = snap_sides) if (s[2] >= 10) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, wall, 0.4);
 }
 
 // ---------- motor bays ----------
