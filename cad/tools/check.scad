@@ -14,6 +14,7 @@ module thing(name) {
   if (name == "electronics") electronics();
   if (name == "motors") motors();
   if (name == "wheels") wheels();
+  if (name == "wires") wiring();
 }
 
 intersection() {

@@ -734,6 +734,7 @@ module electronics() {
   col(c_metal) led_legs();
   col(c_dark) buzzer_body();
   col(c_metal) buzzer_pins();
+  col("#d9c7a1") led_resistors();
   col(c_pcb) esp_pcb();
   col(c_metal) esp_metal();
   col("#e9e6dc") esp_white();
@@ -755,6 +756,112 @@ module electronics() {
     col(c_dark) pod_chip(imu);
     col(c_brass) pod_gold(imu);
   }
+}
+
+// ---------- wires ----------
+
+// Loose stand-ins for the wiring, pad to pad, in the colours of the wiring table. They show
+// where the wires run: past the ends of the battery, between the motors and over the small
+// boards, never over the battery.
+
+wire_d = 1.2;
+wire_colours = [["red", "#d6221c"], ["black", "#151515"], ["white", "#f2f2ee"], ["yellow", "#f0c000"], ["green", "#1f9a40"], ["blue", "#2468d8"]];
+
+// pads, on top of their boards
+function esp_pad(side, i) = [esp_cx + side * 11.43, esp_y0 + 11.5 + i * 2.54, esp_z1];   // side +1: 13 15 2 0 4 16 17 5 18 23 19 22 3V; side -1: G 12 14 27 26 25 33 32 35 34
+function esp_bat(i) = [esp_cx - 9.8 + i * 2.6, esp_y0 + 7, esp_z1];                       // legs of the battery socket: + then -
+function drv_pad(row, i) = [pod_x0 + drv[0] / 2 - 6.35 + i * 2.54, pod_y0 + drv[1] / 2 + row * (drv[1] / 2 - 1.4), board_z0 + drv[2]];   // row -1: IN1 IN2 VCC GND IN3 IN4; row +1: EEP OUT1 OUT2 OUT3 OUT4
+function imu_pad(i) = [-pod_x0 - imu[0] + 1.4, pod_y0 + imu[1] / 2 - 6.35 + i * 2.54, board_z0 + imu[2]];   // VCC GND SCL SDA - INT
+function tp_pad(x) = [x, tp_y0 + 1.5, tp_z1];                                             // OUT- B- B+ OUT+ at -7 -3 3 7
+function tab(sx, sy, t) = [sx * axle_x + t * 3.45, sy * (gear_y - motor_l - motor_tab / 2), 0];
+function led_leg(i) = [led_x0 - 6, -3.81 + i * 2.54, 0];                                  // red, common, green, blue
+function buzzer_pin(s) = [buzzer_x0 - 4, buzzer_y + s * 3.25, 0];
+
+wf = -in_z + 1;                               // lying on the floor
+function layer(n) = wf + 1.4 * n;             // stacked in a channel
+function slot(n) = -30 - 1.1 * n;             // side by side in the channel past the rear end of the battery
+function trunk(n) = -22.6 - 1.2 * n;          // and beside the ESP32
+
+// from a pad on the ESP32's rear edge to the rear channel
+function rear_run(pad, n, z) = [pad, [pad[0] - 2.5, pad[1], pad[2] - 1], [trunk(n), pad[1] + 3, z], [trunk(n), -14, z], [slot(n), -8, z], [slot(n), 14, z], [slot(n), 27, z]];
+// from a pad on its front edge over the board to the same channel
+function over_esp(pad, n, z) = [pad, [1, pad[1] + 1, 1.5], [-12, pad[1] + 1.5, 2.2], [-21.5, pad[1] + 2, 1], [trunk(n), pad[1] + 6, z], [trunk(n), -14, z], [slot(n), -8, z], [slot(n), 14, z], [slot(n), 27, z]];
+// from the rear channel over the IMU and the charger to the driver
+function to_drv(n) = [[-29, 31, 1], [-27.5, 33.2 + 0.3 * n, 1.8], [-18, 34.2 + 1.1 * n, 2.4], [-2, 34.2 + 1.1 * n, 2.4], [9, 34.6 + 0.6 * n, 2]];
+// from the rear channel along the edge of the IMU to one of its pads
+function to_imu(pad, n) = [[-29, 31.2, 0.2], [-26.9 - 0.45 * n, 33.5, 0.9], [-26.9 - 0.45 * n, pad[1] - 1.5, 0.9], [-26.2, pad[1], 0.7], [-24.5, pad[1], 0], pad];
+// from an output of the driver to the channel past the front end of the battery
+function drv_front(pad, n) = let(x = 26.9 + 1.2 * (n % 2), z = 0.5 + 1.4 * floor(n / 2))
+  [pad, [pad[0], 51.3, -3], [20, 53.4 + 0.6 * n, -3.5], [x, 52.6, z], [x, 47, z], [x, 35, z], [30.2, 31.2, z - 1], [30.9 + 1.2 * n, 26, wf + 0.6], [30.9 + 1.2 * n, 17, wf]];
+// and to the channel past its rear end
+function drv_rear(pad, m, n, z) = [pad, [pad[0] - 0.5, 51.6, -2], [11.5, 51, 0.8], [0, 49.8 - 1.2 * m, 1.5], [-12, 49.8 - 1.2 * m, 1], [-22, 49.8 - 1.2 * m, 1.2], [-27.2 - 0.3 * m, 45, 2.4], [-27.2 - 0.3 * m, 35, 2.4], [-28.8, 32, 2.2], [slot(n) + 0.6, 30, z + 1.5], [slot(n), 26, z], [slot(n), 16, z]];
+// the last bit to a motor's solder tab
+function to_tab(sx, sy, t) = [[sx * (axle_x - 2) + t * 3.45, sy * 11 - sy * 0.5 * t, -3], tab(sx, sy, t) - [0, sy, 0.5], tab(sx, sy, t)];
+// from the LED to the front edge of the ESP32
+function led_run(i) = [led_leg(i), led_leg(i) - [9, 0, 0], [30.6 - 0.7 * i, -7 - 0.8 * i, -1.5], [23.8 - 1.1 * i, -20 - 1.2 * i, -3], [13.5 - i, -28.5 - 1.5 * i, -2.5]];
+
+wires = [
+  // battery to the charger, the cell's own leads
+  ["red", [[bat[0] / 2 - 1, bat_cy + 2, 1], [28.8, bat_cy + 2, 0], [31, bat_cy + 5, -2], [31, 27, layer(2)], [29.5, 31.5, 0.8], [20, 31.6, 0.9], [6, 31.4, 0.9], [4.2, 32.2, 0.4], tp_pad(3)]],
+  ["black", [[bat[0] / 2 - 1, bat_cy - 2, 1], [28.8, bat_cy - 2, 0], [32.3, bat_cy + 4, -2], [32.4, 27, layer(2)], [30.5, 30.6, 0.8], [20, 30.4, 0.9], [2, 30.6, 0.9], [-4.6, 31.6, 0.4], tp_pad(-3)]],
+  // charger to the driver
+  ["red", [tp_pad(7), [9.3, 33.2, 0.6], [13, 32.6, 0], drv_pad(-1, 2)]],
+  ["black", [tp_pad(-7), [-5.5, 35.6, 0.6], [0, 36.2, 1], [9, 35.5, 1], [15, 35.5, -1], drv_pad(-1, 3)]],
+  // charger to the ESP32: plus to the + leg of its battery socket, minus to G
+  ["red", concat([tp_pad(7), [5.5, 36, 0.9], [-4, 37.5, 0.9], [-14, 37, 0.9], [-26.5, 34.6, 0.9], [-28.8, 31.6, 0.2], [slot(2), 26, wf], [slot(2), 14, wf], [slot(2), -6, wf], [-27.5, -14, wf], [-27.5, -40, wf], [-24, -50, -2], [-20.5, -52.5, 0.2]], [esp_bat(0)])],
+  ["black", concat([tp_pad(-7), [-8.5, 36.5, 0.9], [-15, 35.5, 0.9], [-26, 33.6, 0.9], [-28.6, 31, 0.2], [slot(1), 26, wf], [slot(1), 14, wf], [slot(1), -6, wf], [-26.2, -14, wf], [-26.2, -40, wf], [-24.5, -47, -3], [-22, -48.3, -2]], [esp_pad(-1, 0)])],
+  // ESP32 to the driver: 32 33 25 26 to IN1 IN2 IN3 IN4, 27 to EEP
+  ["yellow", concat(rear_run(esp_pad(-1, 7), 0, layer(1)), to_drv(0), [drv_pad(-1, 0)])],
+  ["green", concat(rear_run(esp_pad(-1, 6), 1, layer(1)), to_drv(1), [drv_pad(-1, 1)])],
+  ["blue", concat(rear_run(esp_pad(-1, 5), 2, layer(1)), to_drv(2), [[20, 36.5, 0], drv_pad(-1, 4)])],
+  ["white", concat(rear_run(esp_pad(-1, 4), 3, layer(1)), to_drv(3), [[23.5, 37, 0], drv_pad(-1, 5)])],
+  ["yellow", concat(rear_run(esp_pad(-1, 3), 4, layer(1)), to_drv(4), [[10.8, 42, 0.5], drv_pad(1, 0)])],
+  // ESP32 to the IMU: 3V, 19 (SCL), 23 (SDA), 34 (INT); its ground comes from the charger
+  ["red", concat(over_esp(esp_pad(1, 12), 0, layer(2)), to_imu(imu_pad(0), 0))],
+  ["yellow", concat(over_esp(esp_pad(1, 10), 1, layer(2)), to_imu(imu_pad(2), 1))],
+  ["blue", concat(over_esp(esp_pad(1, 9), 2, layer(2)), to_imu(imu_pad(3), 2))],
+  ["white", concat(rear_run(esp_pad(-1, 9), 3, layer(2)), to_imu(imu_pad(5), 3))],
+  ["black", [tp_pad(-7), [-8.6, 34.8, 0.6], [-12, 38.6, -0.5], [-20, 38.5, -2], imu_pad(1)]],
+  // driver to the motors: OUT1 and OUT2 to both left motors, OUT3 and OUT4 to both right ones
+  ["red", concat(drv_front(drv_pad(1, 1), 0), [[35, 12, wf]], to_tab(1, 1, -1))],
+  ["black", concat(drv_front(drv_pad(1, 2), 1), [[35, 10.5, wf]], to_tab(1, 1, 1))],
+  ["red", concat(drv_front(drv_pad(1, 3), 2), [[34.6, 0, wf], [34.6, -9.5, wf]], to_tab(1, -1, -1))],
+  ["black", concat(drv_front(drv_pad(1, 4), 3), [[35.8, 0, wf], [35.8, -8.5, wf]], to_tab(1, -1, 1))],
+  ["red", concat(drv_rear(drv_pad(1, 1), 0, 3, wf), [[-37, 11.5, wf]], to_tab(-1, 1, 1))],
+  ["black", concat(drv_rear(drv_pad(1, 2), 1, 0, wf), [[-36, 10, wf]], to_tab(-1, 1, -1))],
+  ["red", concat(drv_rear(drv_pad(1, 3), 2, 1, layer(3)), [[-36.5, 4, wf], [-37, -8, wf]], to_tab(-1, -1, 1))],
+  ["black", concat(drv_rear(drv_pad(1, 4), 3, 2, layer(3)), [[-38, 4, wf], [-38.4, -7, wf]], to_tab(-1, -1, -1))],
+  // ESP32 to the status LED: 4, 16, 17 to red, green, blue through a resistor each
+  ["yellow", concat(led_run(0), [[8, -38, -1.5], esp_pad(1, 4)])],
+  ["green", concat(led_run(2), [[8.5, -35.6, -1.5], esp_pad(1, 5)])],
+  ["blue", concat(led_run(3), [[9, -33, -1.5], esp_pad(1, 6)])],
+  ["black", concat(led_run(1), [[10, -39, -1.5], [7.5, -41.5, 0.5], [0, -46, 2.5], [-9, -51, 3], [-13, -51.8, 1], esp_bat(1)])],
+  // ESP32 to the buzzer
+  ["white", [buzzer_pin(1), [12, -44, -1], [8, -47.5, -1.5], esp_pad(1, 0)]],
+  ["black", [buzzer_pin(-1), [11, -50.5, 0.5], [6.5, -50.3, 1.5], [-3, -51.5, 2.6], [-10, -51.5, 2.4], [-13.6, -52.3, 0.5], esp_bat(1)]],
+];
+
+function bend(a, b, c, d, t) = 0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
+function smooth(p, steps = 4) = concat(
+  [for (i = [0:len(p) - 2], k = [0:steps - 1]) bend(p[max(i - 1, 0)], p[i], p[i + 1], p[min(i + 2, len(p) - 1)], k / steps)],
+  [p[len(p) - 1]]);
+
+module wire(points) {
+  path = smooth(points);
+  for (i = [0:len(path) - 2]) hull() {
+    translate(path[i]) sphere(d = wire_d, $fn = 8);
+    translate(path[i + 1]) sphere(d = wire_d, $fn = 8);
+  }
+}
+
+// every wire, or only those of one colour
+module wiring(only = undef) {
+  for (c = wire_colours) if (is_undef(only) || only == c[0]) color(c[1])
+    for (w = wires) if (w[0] == c[0]) wire(w[1]);
+}
+
+module led_resistors() {
+  for (i = [0, 2, 3]) translate(led_leg(i) - [4.5, 0, 0]) rotate([0, 90, 0]) cylinder(d = 2.2, h = 6, center = true);
 }
 
 module motors() {
@@ -807,6 +914,7 @@ if (part == "print") {
 
 if (part == "assembly") {
   electronics();
+  wiring();
   motors();
   wheels();
   color(c_hull) base();
@@ -817,6 +925,7 @@ if (part == "exploded") {
   color(c_shell) base();
   translate([0, 0, 22]) {
     electronics();
+    wiring();
     motors();
     wheels();
   }
@@ -826,6 +935,7 @@ if (part == "exploded") {
 if (part == "open" || part == "layout") {
   color(c_shell) base();
   electronics();
+  wiring();
   motors();
   wheels();
 }

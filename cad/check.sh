@@ -25,4 +25,7 @@ check lid wheels 0
 check electronics motors 0
 check electronics wheels 0
 check motors wheels 0
+# the wires are loose stand-ins, but they must not run through a shell
+check base wires 0
+check lid wires 0
 exit $status
