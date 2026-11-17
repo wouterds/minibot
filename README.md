@@ -46,7 +46,7 @@ No pin headers anywhere: every wire is soldered straight to a pad, so nothing st
 
 ![Every wire, pad to pad](docs/wiring.svg)
 
-The drawing shows what connects to what, in the wire colours below. It is not where the parts sit: for that see the [top view](cad/README.md#layout).
+The drawing shows what connects to what, in the wire colours below. It is not where the parts sit: the [top view](cad/README.md#layout) shows that, with the same wires laid loosely in the hull.
 
 | From | To | Wire | Purpose |
 |---|---|---|---|

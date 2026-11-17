@@ -18,6 +18,8 @@ Two printed shells that click together around everything, 123 × 123 × 16 mm, n
 
 The red arrow points forward. Both USB sockets sit on the seam, so the cuts for them are the same in both shells.
 
+The wires are drawn loose, in the colours of the [wiring table](../README.md#wiring), to show where they run: past the two ends of the battery, between the motors and over the small boards. None goes over the battery.
+
 ![Cut open across the middle](renders/section.png)
 
 Cut across the middle, seen from the front: micro-USB and ESP32 on the left of the picture, battery on its foam tape in the middle, charger and USB-C on the right. The ribs coming down from the lid stop just above each part and keep it in place when the bot is on its back.
@@ -105,6 +107,7 @@ Checked in the model:
 - Both shells export as closed solids.
 - With everything in place nothing overlaps, except where it is meant to: 9 mm³ where the snap fingers stay bent, and 3 mm³ where the crush ribs bite into the motors.
 - The lid's ribs clear the base with the lid 0.2 mm off-centre in any direction.
+- The wires as drawn clear both shells. They are stand-ins, real ones will lie where they fall.
 
 Seen on a first print of the base, without the lid:
 
