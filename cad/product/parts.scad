@@ -41,7 +41,9 @@ if (piece == "chips") {
 if (piece == "white") {
   esp_white();
   led_dome();
+  led_resistors();
 }
+for (c = wire_colours) if (piece == str("wire_", c[0])) wiring(c[0]);
 if (piece == "battery") battery();
 if (piece == "tape") battery_tape();
 if (piece == "foam") battery_foam();

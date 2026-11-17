@@ -164,7 +164,16 @@ def yaw(deg):
 
 FLIP = Matrix.Rotation(math.radians(180), 4, "X")
 CLEAR = (0.93, 0.96, 0.98)
+WIRES = {
+    "red": (0.55, 0.02, 0.015),
+    "black": (0.006, 0.006, 0.006),
+    "white": (0.82, 0.82, 0.78),
+    "yellow": (0.80, 0.52, 0.01),
+    "green": (0.02, 0.30, 0.06),
+    "blue": (0.02, 0.13, 0.62),
+}
 CONTENTS = ["tyres", "steel", "brass", "pcb_dark", "pcb_blue", "pcb_purple", "chips", "white", "battery", "tape", "foam", "led"]
+CONTENTS += ["wire_" + name for name in WIRES]
 mat = {}
 
 
@@ -185,6 +194,8 @@ def materials():
         foam=plastic("foam", (0.02, 0.02, 0.022), 0.9, bevel=0),
         led=emissive("led", (0.10, 0.40, 1.0), 90),
     )
+    for name, color in WIRES.items():
+        mat["wire_" + name] = plastic("wire_" + name, color, 0.55, bevel=0)
 
 
 # one bot: where the base, its contents and the lid go
