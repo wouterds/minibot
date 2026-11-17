@@ -57,4 +57,9 @@ bool isLow()
   return s_low;
 }
 
+float millivolts()
+{
+  return s_millivolts;
+}
+
 } // namespace battery

@@ -1,5 +1,6 @@
 #include "controller.h"
 #include "battery.h"
+#include "buzzer.h"
 #include "config.h"
 #include "imu.h"
 #include "motors.h"
@@ -14,6 +15,7 @@ namespace controller
 static volatile uint32_t s_lastPacketAt = 0;
 static uint32_t s_lowSince = 0;
 static uint32_t s_drivenAt = 0;
+static bool s_alive = false;
 static int s_left = 0;
 static int s_right = 0;
 
@@ -56,6 +58,8 @@ static void halt()
   s_left = 0;
   s_right = 0;
   motors::stop();
+  status_led::setLevel(0);
+  buzzer::horn(false);
 }
 
 static int approach(int current, int target)
@@ -80,7 +84,11 @@ void update()
     halt();
 
     // Bluetooth alone would still run the cell down to the protection board's cutoff.
-    if (s_lowSince == 0) s_lowSince = millis() | 1;
+    if (s_lowSince == 0)
+    {
+      s_lowSince = millis() | 1;
+      buzzer::beep(3);
+    }
     if (millis() - s_lowSince >= config::BATTERY_LOW_SLEEP_MS) power::sleep();
     return;
   }
@@ -89,7 +97,10 @@ void update()
   // sealed hull without a switch leaves no other way to do it.
   if (millis() - s_drivenAt >= config::IDLE_SLEEP_MS && imu::isPresent()) power::sleep();
 
+  // Two beeps when the controller connects, one when it drops out.
   const bool alive = linkAlive();
+  if (alive != s_alive) buzzer::beep(alive ? 2 : 1);
+  s_alive = alive;
   status_led::set(alive ? status_led::CONNECTED : status_led::WAITING);
   if (!alive)
   {
@@ -121,6 +132,9 @@ void update()
   s_right = approach(s_right, right);
   motors::drive(s_left, s_right);
   if (s_left != 0 || s_right != 0) s_drivenAt = millis();
+
+  status_led::setLevel(max(abs(s_left), abs(s_right)));
+  buzzer::horn(Ps3.data.button.cross);
 }
 
 } // namespace controller

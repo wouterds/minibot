@@ -8,6 +8,19 @@ namespace config
 // Onboard LED of the LOLIN32 Lite. It lights when the pin is LOW.
 constexpr uint8_t STATUS_LED = 22;
 
+// RGB status LED at the front of the hull, one pin per colour through a resistor. With a common
+// cathode the long leg goes to GND and a colour lights when its pin is HIGH. With a common anode
+// the long leg goes to plus and a colour lights when its pin is LOW.
+constexpr uint8_t RGB_RED = 4;
+constexpr uint8_t RGB_GREEN = 16;
+constexpr uint8_t RGB_BLUE = 17;
+constexpr bool RGB_COMMON_ANODE = false;
+
+// An active buzzer beeps on a steady voltage. A passive one only clicks, and gets a tone instead.
+constexpr uint8_t BUZZER = 18;
+constexpr bool BUZZER_ACTIVE = true;
+constexpr uint32_t BUZZER_TONE_HZ = 2300;
+
 // DRV8833 inputs. The A channel drives both left motors, the B channel both right motors.
 // None of these pins is driven during boot, so the motors stay still until the firmware runs.
 constexpr uint8_t MOTOR_LEFT_IN1 = 32;

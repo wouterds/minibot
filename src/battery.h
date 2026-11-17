@@ -13,4 +13,7 @@ void update(bool loaded);
 // Always false when no voltage divider is fitted.
 bool isLow();
 
+// Smoothed cell voltage. 0 when no voltage divider is fitted.
+float millivolts();
+
 } // namespace battery

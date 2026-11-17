@@ -1,4 +1,5 @@
 #include "battery.h"
+#include "buzzer.h"
 #include "controller.h"
 #include "imu.h"
 #include "motors.h"
@@ -11,6 +12,7 @@ void setup()
   Serial.begin(115200);
 
   status_led::begin();
+  buzzer::begin();
   imu::begin();
   battery::begin();
   controller::begin();
@@ -22,5 +24,6 @@ void loop()
   controller::update();
   battery::update(!motors::isStopped());
   status_led::update();
+  buzzer::update();
   delay(10);
 }
