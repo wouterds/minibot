@@ -7,8 +7,8 @@
 
 Plug the controller into USB first, then run:
 
-    scripts/pair-ps3.py                       # Show current paired host MAC
-    scripts/pair-ps3.py 24:6f:28:b1:f8:b6     # Write new host MAC
+    src/pairing/pair-ps3.py                       # Show current paired host MAC
+    src/pairing/pair-ps3.py 24:6f:28:b1:f8:b6     # Write new host MAC
 
 After pairing, unplug USB and press the PS button — the controller will
 auto-connect to the host with that MAC.

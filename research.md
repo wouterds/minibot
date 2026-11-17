@@ -86,7 +86,7 @@ PS3 pairing is not standard Bluetooth pairing. The controller stores one host ad
 2. Write the host address into the controller with HID feature report `0xF5`.
 3. Unplug, press the PS button: it connects to that address.
 
-`scripts/pair-ps3.py` does step 2. The firmware sets the ESP32's Bluetooth address to `HOST_MAC`, so any address works as long as both sides have the same one.
+`src/pairing/pair-ps3.py` does step 2. The firmware sets the ESP32's Bluetooth address to `HOST_MAC`, so any address works as long as both sides have the same one.
 
 ### Why the `hidapi` package and not `hid`
 

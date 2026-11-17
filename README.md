@@ -141,7 +141,7 @@ pio device monitor      # serial log
 The PS3 controller only talks to the one Bluetooth address stored in it. The firmware gives the ESP32 the address in `HOST_MAC` ([`src/firmware/config.h`](src/firmware/config.h)). Plug the controller in over USB once and write that same address to it:
 
 ```sh
-scripts/pair-ps3.py 24:6f:28:b1:f8:b6
+src/pairing/pair-ps3.py 24:6f:28:b1:f8:b6
 ```
 
 ## Hull
