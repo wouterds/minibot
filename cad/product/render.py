@@ -193,6 +193,7 @@ def materials():
         tape=plastic("tape", (0.72, 0.42, 0.03), 0.3, bevel=0),
         foam=plastic("foam", (0.02, 0.02, 0.022), 0.9, bevel=0),
         led=emissive("led", (0.10, 0.40, 1.0), 90),
+        screws=plastic("screws", (0.012, 0.012, 0.014), 0.35, bevel=0, metallic=1.0),
     )
     for name, color in WIRES.items():
         mat["wire_" + name] = plastic("wire_" + name, color, 0.55, bevel=0)
@@ -200,10 +201,15 @@ def materials():
 
 # one bot: where the base, its contents and the lid go
 def bot(base=Matrix.Identity(4), contents=None, lid=None):
+    lid = base if lid is None else lid
     load("base", mat["base"], base)
+    load("base_brass", mat["brass"], base)
+    load("base_screws", mat["screws"], base)
     for name in CONTENTS:
         load(name, mat[name], base if contents is None else contents)
-    load("lid", mat["lid"], base if lid is None else lid)
+    load("lid", mat["lid"], lid)
+    load("lid_brass", mat["brass"], lid)
+    load("lid_screws", mat["screws"], lid)
 
 
 materials()

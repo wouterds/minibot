@@ -24,7 +24,6 @@ if (piece == "brass") {
   charger_gold();
   pod_gold(drv, on_ends = true);
   mirror([1, 0, 0]) pod_gold(imu);
-  inserts();
 }
 if (piece == "pcb_dark") esp_pcb();
 if (piece == "pcb_blue") {
@@ -38,7 +37,6 @@ if (piece == "chips") {
   pod_chip(drv);
   mirror([1, 0, 0]) pod_chip(imu);
   buzzer_body();
-  screws();
 }
 if (piece == "white") {
   esp_white();
@@ -50,3 +48,8 @@ if (piece == "battery") battery();
 if (piece == "tape") battery_tape();
 if (piece == "foam") battery_foam();
 if (piece == "led") esp_led();
+// the inserts and the screws stay with the shell they sit in
+if (piece == "base_brass") base_inserts();
+if (piece == "lid_brass") lid_inserts();
+if (piece == "base_screws") base_screws();
+if (piece == "lid_screws") lid_screws();
