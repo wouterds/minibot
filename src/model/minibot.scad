@@ -11,12 +11,12 @@
 // reaches through the wall of its well, so the front of its gearbox stands inside the hollow
 // hub of its wheel.
 //
-// Dimensions of the bought parts come from docs/measurements.md.
+// Dimensions of the bought parts come from measurements.md.
 //
 // Coordinates: X forward, Y left, Z up. Origin in the middle of the hull, on the axle line.
 // The seam between the shells is the plane Z = 0.
 
-part = "assembly"; // assembly | exploded | open | layout | section | axle | print | base | lid | coupon-base | coupon-lid | none
+part = "assembly"; // assembly | layout | section | axle | print | base | lid | coupon-base | coupon-lid | none
 
 /* [Drivetrain] */
 wheel_d = 26;           // tyre diameter
@@ -726,8 +726,8 @@ module insert() {
 // what each shell carries: its own two inserts, and the two screws that go in through it
 module base_inserts() from_lid() insert();
 module lid_inserts() from_base() insert();
-module base_screws(out = 0) from_base() translate([0, 0, out]) screw();
-module lid_screws(out = 0) from_lid() translate([0, 0, out]) screw();
+module base_screws() from_base() screw();
+module lid_screws() from_lid() screw();
 
 module screws() {
   base_screws();
@@ -933,33 +933,14 @@ if (part == "assembly") {
   color(c_hull) lid();
 }
 
-if (part == "exploded") {
-  color(c_shell) base();
-  translate([0, 0, 22]) {
-    electronics();
-    wiring();
-    motors();
-    wheels();
-  }
-  translate([0, 0, 58]) {
-    color(c_shell) lid();
-    col(c_brass) lid_inserts();
-    col(c_dark) lid_screws(18);
-  }
-  col(c_brass) base_inserts();
-  col(c_dark) base_screws(18);
-}
-
-if (part == "open" || part == "layout") {
+if (part == "layout") {
   color(c_shell) base();
   col(c_brass) base_inserts();
   electronics();
   wiring();
   motors();
   wheels();
-}
 
-if (part == "layout") {
   label([esp_cx, esp_y0 + 22], "ESP32");
   label([-6, bat_cy], "LiPo");
   label([0, tp_y0 + 10], "TP4056", 2.4);

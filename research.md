@@ -243,7 +243,7 @@ The firmware talks to the chip directly over I²C: wake it, set the filter, read
 
 ## Hull
 
-The full description is in [`cad/README.md`](cad/README.md). The reasoning:
+The full description is in [`src/model/README.md`](src/model/README.md). The reasoning:
 
 ### Wheels inside
 

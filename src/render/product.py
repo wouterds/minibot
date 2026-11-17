@@ -1,11 +1,11 @@
-# Ray-traced product shot of the bot in translucent PETG. Run through product/render.sh, which exports the meshes first.
+# Ray-traced product shot of the bot in translucent PETG. Run through product.sh, which exports the meshes first.
 #   render.py <meshes dir> <out.jpg> <shot> <width> <samples>
 import bpy, bmesh, math, sys, os
 from mathutils import Matrix
 
 d, out, shot, res, samples = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5])
 
-# model dimensions, written by render.sh, in mm
+# model dimensions, written by product.sh, in mm
 HULL_H, WHEEL_D = [float(v) / 1000 for v in open(os.path.join(d, "dims.txt")).read().split(",")]
 STAND = WHEEL_D / 2  # height of the axle line when the bot stands on its wheels
 REST = HULL_H / 2    # and when a shell lies on its outer face

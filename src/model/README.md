@@ -2,7 +2,7 @@
 
 Two printed shells around everything, 123 × 123 × 16 mm, held together by four M2 screws.
 
-![The bot on its wheels and on its back](renders/product-pair.jpg)
+![The bot on its wheels and on its back](../../images/product-pair.jpg)
 
 - **Wheels inside.** Each wheel runs in its own well. The well is a cylinder around the axle, so its wall stays 1.5 mm from the tyre all the way round. The wells are open to both faces and the tyres stand 4.9 mm proud of each, so the bot drives the same on its back. Nothing sticks out sideways, in front or behind.
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
@@ -10,21 +10,23 @@ Two printed shells around everything, 123 × 123 × 16 mm, held together by four
 - **Light and sound.** A 10 mm RGB LED lies on the centreline with its dome against the front wall, so the front of the hull glows and shows which end leads. A buzzer lies beside the ESP32. Each sits in a round cradle, half in the base and half in the lid.
 - **Screwed shut.** Four M2 × 10 screws into brass heat-set inserts, one beside each wheel, where the wheel loads come in. The two at the front go in through the lid into inserts in the base, the two at the rear through the base into inserts in the lid, so each face shows two heads at one end and the bot looks the same on its back. Each sits in a post that fills the pocket between the motor bay and the end wall; the two halves of a post meet on the seam, so a screw clamps plastic on plastic. The heads sit in recesses, below the faces. A lip runs round the cavity and the whole outer wall and centres the lid.
 
+![The USB-C port, on the seam](../../images/product-detail.jpg)
+
 `minibot.scad` is the whole design. Every dimension is a parameter at the top of the file.
 
 ## Layout
 
-![Top view with the lid off](renders/layout.png)
+![Top view with the lid off](../../images/layout.png)
 
 The red arrow points forward. Both USB sockets sit on the seam, so the cuts for them are the same in both shells.
 
-The wires are drawn loose, in the colours of the [wiring table](../README.md#wiring), to show where they run: past the two ends of the battery, between the motors and over the small boards. None goes over the battery.
+The wires are drawn loose, in the colours of the [wiring table](../../README.md#wiring), to show where they run: past the two ends of the battery, between the motors and over the small boards. None goes over the battery.
 
-![Cut open across the middle](renders/section.png)
+![Cut open across the middle](../../images/section.png)
 
 Cut across the middle, seen from the front: micro-USB and ESP32 on the left of the picture, battery on its foam tape in the middle, charger and USB-C on the right. The ribs coming down from the lid stop just above each part and keep it in place when the bot is on its back.
 
-![Cut open through the front axle](renders/axle.png)
+![Cut open through the front axle](../../images/axle.png)
 
 Cut through the front axle: wheels in their wells, motors between them, each one on two saddles in the base and under two in the lid.
 
@@ -37,11 +39,11 @@ Cut through the front axle: wheels in their wells, motors between them, each one
 | `stl/coupon-base.stl` | 1   | test piece      |
 | `stl/coupon-lid.stl`  | 1   | test piece      |
 
-The STLs are already in print orientation. No supports: nothing overhangs more than 45°. The two recesses for screw heads in each shell print against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
+The STLs are in [`stl/`](../../stl), already in print orientation. No supports: nothing overhangs more than 45°. The two recesses for screw heads in each shell print against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
 
 **Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, one screw post. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the insert and the screw seat right, before 80 g goes into the full shells.
 
-![Shells in print orientation](renders/print.png)
+![Shells in print orientation](../../images/print.png)
 
 Settings for translucent PETG on a 0.4 mm nozzle, starting from a 0.20 mm standard profile:
 
@@ -63,7 +65,7 @@ The two outer faces print on the bed, so they take on its texture. A smooth plat
 ## Assembly
 
 1. Press the four brass inserts in with a soldering iron at about 230 °C: two into the front posts of the base, two into the rear posts of the lid. Those are the posts with the wider hole. Each insert goes in from the seam until it sits flush with the top of its post. Let it cool before touching it.
-2. Solder everything, outside the hull. See the wiring table in the [main README](../README.md#wiring).
+2. Solder everything, outside the hull. See the wiring table in the [main README](../../README.md#wiring).
 3. Push a hub onto each motor shaft, open end towards the motor, until the shaft tip is flush with the hub's solid face. Tighten the set screw, then roll the tyre on.
 4. Lower each motor into its bay with the wheel in the well. The gearbox drops into the notch in the well wall.
 5. Stick a strip of 1 mm foam tape on the floor between the battery fences and press the battery onto it.
@@ -93,13 +95,17 @@ The parameters most likely to need a change after the coupon:
 
 ## Commands
 
-- `./render.sh` regenerates the STLs and the preview images in `renders/`.
 - `./check.sh` intersects every pair of parts and prints the volume they share. OpenSCAD does not complain when parts collide, this does.
-- `./product/render.sh [shot ...]` ray-traces the product shots (`hero`, `pair`, `exploded`, `open`, `detail`).
+- `./export.sh` writes the STLs to [`stl/`](../../stl).
+- `../render/previews.sh` draws the views of the model.
+- `../render/product.sh [shot ...]` ray-traces the product shots (`hero`, `pair`, `exploded`, `open`, `detail`).
+- `../render/wiring.py` draws the wiring diagram.
+
+All pictures land in [`images/`](../../images).
 
 They need the OpenSCAD snapshot build (`brew install --cask openscad@snapshot`) and, for the product shots, `uv`. Blender's renderer comes in through `uv` as a Python package.
 
-After a change to the model, run all three and commit `stl/` and `renders/` with the source.
+After a change to the model, run them all and commit `stl/` and `images/` with the source.
 
 ## What is and is not verified
 
@@ -118,5 +124,5 @@ Not checked yet:
 
 - **The inserts.** Their hole is sized for inserts 3.5 mm wide, a size read off a photo, not measured.
 - **Drops.** A wheel that lands hard levers its motor against the lid with about twice the force on the wheel. The screws sit right beside the motors for that, but nothing has been dropped yet.
-- **A few dimensions.** Nearly everything is measured, see [`docs/measurements.md`](../docs/measurements.md). Still estimated: where the micro-USB sits across the ESP32 (taken from a video frame, good to about half a mm), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
+- **A few dimensions.** Nearly everything is measured, see [`measurements.md`](measurements.md). Still estimated: where the micro-USB sits across the ESP32 (taken from a video frame, good to about half a mm), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
 - **Radio range.** The ESP32's antenna ends 5.1 mm from the battery, which is close for a foil pouch.

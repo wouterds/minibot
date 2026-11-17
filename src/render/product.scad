@@ -1,5 +1,5 @@
-// One material of the assembly at a time, in place, for product/render.sh.
-include <../minibot.scad>
+// One material of the assembly at a time, in place, for product.sh.
+include <../model/minibot.scad>
 piece = "base";
 
 // what render.py needs to know to stand the bot on its wheels, in mm

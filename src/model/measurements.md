@@ -1,6 +1,6 @@
 # Measurements
 
-Caliper readings of the actual parts, taken by the owner. These outrank datasheets and anything measured off a photo. The model in [`cad/minibot.scad`](../cad/minibot.scad) follows this file.
+Caliper readings of the actual parts, taken by the owner. These outrank datasheets and anything measured off a photo. The model in [`minibot.scad`](minibot.scad) follows this file.
 
 Readings are in mm, as shown on the caliper.
 

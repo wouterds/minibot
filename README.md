@@ -5,7 +5,7 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 [![build](https://github.com/wouterds/minibot/actions/workflows/build.yml/badge.svg)](https://github.com/wouterds/minibot/actions/workflows/build.yml)
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-Arduino-orange.svg)](https://platformio.org)
 
-![minibot in its translucent hull](cad/renders/product-hero.jpg)
+![minibot in its translucent hull](images/product-hero.jpg)
 
 ## Overview
 
@@ -17,13 +17,13 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **Buzzer** for a beep on connect, on low battery and as a horn
 - **TP4056 USB-C charge board with DW01A protection**
 - **1S LiPo 3.7 V / 2000 mAh (103450)**, about two hours of cruising
-- **Translucent PETG hull**, 123 × 123 × 16 mm, two shells held by four M2 screws, with the wheels inside. See [`cad/`](cad/README.md)
+- **Translucent PETG hull**, 123 × 123 × 16 mm, two shells held by four M2 screws, with the wheels inside. See [`src/model/`](src/model/README.md)
 
-![Exploded view](cad/renders/product-exploded.jpg)
+![Exploded view](images/product-exploded.jpg)
 
 ## Status
 
-The firmware builds and the hull passes its fit checks in CAD. The drive code has not run on the bot yet. Both shells have been printed once: the parts drop in, but the snap fit that held the lid felt loose. The lid is now screwed down, and that version has not been printed yet. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
+The firmware builds and the hull passes its fit checks in CAD. The drive code has not run on the bot yet. Both shells have been printed once: the parts drop in, but the snap fit that held the lid felt loose. The lid is now screwed down, and that version has not been printed yet. [`src/model/README.md`](src/model/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
 
 ## System
 
@@ -44,11 +44,11 @@ flowchart LR
 
 No pin headers anywhere: every wire is soldered straight to a pad, so nothing stands taller than the 13 mm cavity.
 
-![Every wire, pad to pad](docs/wiring.svg)
+![Every wire, pad to pad](images/wiring.svg)
 
 The drawing shows what connects to what, in the wire colours below. It is not where the parts sit. The top view is: lid off, the same wires laid loosely in the hull, the red arrow pointing forward.
 
-![Top view with the lid off and the wiring in](cad/renders/layout.png)
+![Top view with the lid off and the wiring in](images/layout.png)
 
 | From | To | Wire | Purpose |
 |---|---|---|---|
@@ -107,7 +107,7 @@ flowchart LR
     VM --> MOT[4× N20 motors]
 ```
 
-The TP4056 board charges the cell from USB-C, and its DW01A cuts the output on overcharge, overdischarge, overcurrent and short circuit. That cutoff only comes at 2.4 V, so with the divider fitted the firmware stops the motors at 3.3 V, blinks the LED fast for half a minute and then powers the ESP32 down.
+The TP4056 board charges the cell from USB-C at 1 A, which takes a bit over two hours for a full charge, and its DW01A cuts the output on overcharge, overdischarge, overcurrent and short circuit. That cutoff only comes at 2.4 V, so with the divider fitted the firmware stops the motors at 3.3 V, blinks the LED fast for half a minute and then powers the ESP32 down.
 
 ## Driving
 
@@ -130,6 +130,18 @@ The buzzer beeps twice when the controller connects, once when it drops out and 
 
 The bot brakes when the controller stops sending for half a second. Speed changes are stepped, so a full reversal takes about 130 ms.
 
+## Repository
+
+| Where | What |
+|---|---|
+| [`src/firmware/`](src/firmware) | The firmware, a PlatformIO project |
+| [`src/pairing/`](src/pairing) | The script that pairs the PS3 controller |
+| [`src/model/`](src/model) | The hull in OpenSCAD, its fit check, the caliper measurements and how to print and assemble it |
+| [`src/render/`](src/render) | What draws the pictures: views of the model, ray-traced shots and the wiring diagram |
+| [`images/`](images) | Every picture used in the readmes |
+| [`stl/`](stl) | The files to print |
+| [`research.md`](research.md) | Why things are the way they are |
+
 ## Building
 
 ```sh
@@ -146,19 +158,19 @@ src/pairing/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ## Hull
 
-![Seen through the closed hull: every part, wire and screw](cad/renders/assembly.png)
+![Seen through the closed hull: every part, wire and screw](images/assembly.png)
 
 Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the shells together, one beside each wheel. Two go in through the lid and two through the base, so both faces look the same.
 
-![Lid off](cad/renders/product-open.jpg)
+![Lid off](images/product-open.jpg)
 
-![On its wheels and on its back](cad/renders/product-pair.jpg)
+![On its wheels and on its back](images/product-pair.jpg)
 
-Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
+Printing, assembly and tuning are in [`src/model/README.md`](src/model/README.md).
 
 ## Parts
 
-Everything that goes into one bot. [`docs/parts.md`](docs/parts.md) has the notes on each part and where to buy it.
+Everything that goes into one bot. Prices are rough AliExpress prices.
 
 ### Electronics
 
@@ -166,7 +178,7 @@ Everything that goes into one bot. [`docs/parts.md`](docs/parts.md) has the note
 |---|---|---|---:|
 | 1 | ESP32, WeMos LOLIN32 Lite | Without pin headers | €5–8 |
 | 1 | DRV8833 motor driver breakout | The `HW-627` board | €1.50 |
-| 4 | N20 gear motor, 6 V 400 RPM, long D-shaft | Shaft 18.7 mm | €10 |
+| 4 | N20 gear motor, 6 V 400 RPM, long D-shaft | From one listing, so all four match. Shaft 18.7 mm: one longer than the 22.2 mm hub would stick out of the wheel | €10 |
 | 4 | Wheel, ⌀26 × 22 mm, hollow hub, 3 mm bore | Silicone tyre, set screw | €7.20 |
 | 1 | MPU-6050 module, GY-521 | | €1.50 |
 | 1 | TP4056 USB-C charge board with DW01A protection | The one with `OUT+` and `OUT−` pads | €1–2 |
@@ -214,3 +226,20 @@ The lengths are measured along the wires as they are laid in the model, the long
 | | Heat shrink, solder | Over the motor tabs and the LED's resistors | |
 
 All of it comes to roughly €40–45, not counting the controller.
+
+### Where to buy
+
+| Vendor | Good | Bad |
+|---|---|---|
+| AliExpress | Cheapest by far, has everything | Two to four weeks, quality varies |
+| Amazon | A day or two | Two to three times the price |
+| TinyTronics, Reichelt, Mouser | Fast within the EU, reliable parts | Dearer than AliExpress |
+| Adafruit, Sparkfun, Pimoroni | Good breakouts and documentation | Dearest, few motors |
+
+### Later, maybe
+
+| Part | For | ~Cost |
+|---|---|---:|
+| WS2812B strip, 5–10 LEDs | More glow through the hull | €1–3 |
+| N20 motors with encoders | Speed control and odometry | €3 each |
+| 2S battery and a 5 V regulator | Nearly twice the speed. Needs a different charger | €10 |

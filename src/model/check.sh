@@ -9,8 +9,8 @@ status=0
 check() { # a b allowed-mm3 [shift of b]
   rm -f "$tmp/pair.stl"
   openscad -o "$tmp/pair.stl" -D 'part="none"' -D "a=\"$1\"" -D "b=\"$2\"" -D "shift=${4:-[0,0]}" \
-    --backend=manifold --export-format binstl tools/check.scad >/dev/null 2>&1
-  v=$(python3 tools/volume.py "$tmp/pair.stl")
+    --backend=manifold --export-format binstl check.scad >/dev/null 2>&1
+  v=$(python3 volume.py "$tmp/pair.stl")
   ok=$(python3 -c "print('ok' if $v <= $3 else 'COLLISION')")
   [ "$ok" = ok ] || status=1
   printf '%-12s %-12s %-12s %8s mm3  %s\n' "$1" "$2" "${4:-}" "$v" "$ok"

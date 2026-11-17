@@ -1,5 +1,5 @@
 // Overlap between two things in the assembly, for check.sh. An empty result means they clear.
-include <../minibot.scad>
+include <minibot.scad>
 a = "base";
 b = "lid";
 shift = [0, 0];   // moves b sideways, to try a lid that sits off-centre in the play of its lip

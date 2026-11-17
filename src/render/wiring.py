@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Draws docs/wiring.svg: every wire, pad to pad, in the colour it is soldered in.
+"""Draws images/wiring.svg: every wire, pad to pad, in the colour it is soldered in.
 
 The boards are spread out so the wires stay readable; it is not to scale and not where the parts
-sit in the hull. cad/renders/layout.png shows that.
+sit in the hull. images/layout.png shows that.
 """
 from pathlib import Path
 
@@ -206,4 +206,4 @@ svg.append(f'<text x="930" y="226" font-size="12" fill="#4a5059">Not to scale. F
 svg.append(f'<text x="930" y="242" font-size="12" fill="#4a5059">the order of the pads can differ from this drawing.</text>')
 svg.append("</svg>")
 
-Path(__file__).resolve().parent.parent.joinpath("docs/wiring.svg").write_text("\n".join(svg) + "\n")
+Path(__file__).resolve().parents[2].joinpath("images/wiring.svg").write_text("\n".join(svg) + "\n")
