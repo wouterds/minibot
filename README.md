@@ -46,7 +46,9 @@ No pin headers anywhere: every wire is soldered straight to a pad, so nothing st
 
 ![Every wire, pad to pad](docs/wiring.svg)
 
-The drawing shows what connects to what, in the wire colours below. It is not where the parts sit: the [top view](cad/README.md#layout) shows that, with the same wires laid loosely in the hull.
+The drawing shows what connects to what, in the wire colours below. It is not where the parts sit. The top view is: lid off, the same wires laid loosely in the hull, the red arrow pointing forward.
+
+![Top view with the lid off and the wiring in](cad/renders/layout.png)
 
 | From | To | Wire | Purpose |
 |---|---|---|---|
@@ -144,9 +146,13 @@ scripts/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ## Hull
 
-![Lid off](cad/renders/product-open.jpg)
+![Seen through the closed hull: every part, wire and screw](cad/renders/assembly.png)
 
 Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the shells together, one beside each wheel. Two go in through the lid and two through the base, so both faces look the same.
+
+![Lid off](cad/renders/product-open.jpg)
+
+![On its wheels and on its back](cad/renders/product-pair.jpg)
 
 Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
