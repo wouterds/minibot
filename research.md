@@ -258,18 +258,19 @@ The wheel hubs are cups, so the motor does not have to stop short of its wheel. 
 Each motor lies on two saddles in the base and under two in the lid: one under the end cap, one from the front of the can up to the well wall. The gearbox is an open frame of brass plates, so the front saddle is long enough to always carry one of them.
 
 - **Along its axis** the motor is held by a stop behind its end cap, and by a small stop on the outer wall of the well that faces the shaft tip. That one touches only at the centre of rotation, so it does not drag.
-- **A wheel that hits the floor levers its motor against the saddles.** The wheel hangs outside the front saddle, so the saddles see up to about twice the force on the wheel, one pushing on the lid and one on the base. That is why the lid's snap fingers stand right beside each motor.
+- **A wheel that hits the floor levers its motor against the saddles.** The wheel hangs outside the front saddle, so the saddles see up to about twice the force on the wheel, one pushing on the lid and one on the base. That is why the lid's screws stand right beside each motor.
 
 ### Split on the axle line
 
 Both shells end at the axle, so the motors with their wheels drop in from above and the shafts lie in half-round notches. Everything else that goes through a wall is also centred on the seam, which makes the hull look the same either way up.
 
-### Click fit
+### Screws
 
-- Snap fingers hang from the lid and hook into grooves in the base: two on the walls of every motor bay, three on the side walls.
-- The grooves sit a little lower than the hooks, so a closed finger stays bent by 0.15 mm and pulls the lid down. Without that preload a snapped lid rattles.
-- A lip on the base stands 1 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the fingers only have to hold the lid down.
-- The fingers print standing up, bending across the layers, which is the weak direction. They are sized to bend about 1.2 %.
+- The first lid clicked on with snap fingers. Printed, it felt loose and wonky, so the lid is screwed down instead.
+- Four M2 × 10 button head screws go through the lid into brass heat-set inserts in the base. One sits beside each wheel, in the pocket between the motor bay and the end wall: that is where a wheel that lands hard levers its motor against the lid.
+- Each screw runs through a post that is half in the lid and half in the base. The halves meet on the seam, so tightening clamps plastic on plastic and does not bend the lid.
+- The heads sit in recesses, below the face, so nothing new touches the floor when the bot is on its back.
+- A lip on the base stands 1 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the screws only have to hold the lid down.
 
 ### Layout
 

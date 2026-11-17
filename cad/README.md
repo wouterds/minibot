@@ -1,6 +1,6 @@
 # Hull
 
-Two printed shells that click together around everything, 123 × 123 × 16 mm, no hardware.
+Two printed shells around everything, 123 × 123 × 16 mm, held together by four M2 screws.
 
 ![The bot on its wheels and on its back](renders/product-pair.jpg)
 
@@ -8,7 +8,7 @@ Two printed shells that click together around everything, 123 × 123 × 16 mm, n
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
 - **Same either way up.** The shells split on the axle line and everything that goes through a wall is centred on that seam. USB-C for charging sits in the middle of the left side, micro-USB for flashing in the middle of the right side. Front and tail are plain walls, and there is no power switch: the firmware sleeps and the IMU wakes it.
 - **Light and sound.** A 10 mm RGB LED lies on the centreline with its dome against the front wall, so the front of the hull glows and shows which end leads. A buzzer lies beside the ESP32. Each sits in a round cradle, half in the base and half in the lid.
-- **Click fit.** Eleven snap fingers hang from the lid. Two grip the walls of every motor bay, right where the wheel loads come in, and three hold the side walls. A lip runs round the cavity and the whole outer wall and centres the lid.
+- **Screwed shut.** Four M2 × 10 screws go in through the lid into brass heat-set inserts in the base, one beside each wheel, where the wheel loads come in. Each sits in a post that fills the pocket between the motor bay and the end wall; the two halves of a post meet on the seam, so a screw clamps plastic on plastic. The heads sit in recesses, below the face of the lid. A lip runs round the cavity and the whole outer wall and centres the lid.
 
 `minibot.scad` is the whole design. Every dimension is a parameter at the top of the file.
 
@@ -37,9 +37,9 @@ Cut through the front axle: wheels in their wells, motors between them, each one
 | `stl/coupon-base.stl` | 1   | test piece      |
 | `stl/coupon-lid.stl`  | 1   | test piece      |
 
-The STLs are already in print orientation. No supports: nothing overhangs more than 45° except the hooks of the snap fingers and their grooves, which are 55° and under 1 mm deep.
+The STLs are already in print orientation. No supports: nothing overhangs more than 45°. The recess for each screw head prints against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
 
-**Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, two snap fingers. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the click feels right, before 80 g goes into the full shells.
+**Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, one screw post. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the insert and the screw seat right, before 80 g goes into the full shells.
 
 ![Shells in print orientation](renders/print.png)
 
@@ -56,22 +56,23 @@ Settings for translucent PETG on a 0.4 mm nozzle, starting from a 0.20 mm standa
 | Sparse infill   | 15 % gyroid, hardly any is used    |
 | Supports, brim  | off                                |
 
-Dry the filament first. Wet PETG strings, and strings between a snap finger and the wall next to it glue the finger down.
+Dry the filament first: wet PETG strings.
 
 The two outer faces print on the bed, so they take on its texture. A smooth plate gives clear faces.
 
 ## Assembly
 
-1. Solder everything first, outside the hull. See the wiring table in the [main README](../README.md#wiring).
-2. Push a hub onto each motor shaft, open end towards the motor, until the shaft tip is flush with the hub's solid face. Tighten the set screw, then roll the tyre on.
-3. Lower each motor into its bay with the wheel in the well. The gearbox drops into the notch in the well wall.
-4. Stick a strip of 1 mm foam tape on the floor between the battery fences and press the battery onto it.
-5. Lay the boards in their seats: charger with its USB-C in the left wall, driver and IMU on either side of it, ESP32 with its micro-USB in the right wall.
-6. Lay the LED in its cradle at the front, dome against the wall, and the buzzer in its cradle beside the ESP32, face against the wall of the wheel well. Turn each so its legs lie flat on the seam: they pass over the low stop behind it.
-7. Tuck the wires down. They run past the ends of the battery and between the motors, not over the battery. Keep them off the walls of the motor bays and off the three places on the side walls where the fingers come down.
-8. Set the lid on and press down beside each wheel until it clicks, then along the sides.
+1. Press a brass insert into each of the four posts of the base with a soldering iron at about 230 °C, until it sits flush with the top of the post. Let it cool before touching it.
+2. Solder everything, outside the hull. See the wiring table in the [main README](../README.md#wiring).
+3. Push a hub onto each motor shaft, open end towards the motor, until the shaft tip is flush with the hub's solid face. Tighten the set screw, then roll the tyre on.
+4. Lower each motor into its bay with the wheel in the well. The gearbox drops into the notch in the well wall.
+5. Stick a strip of 1 mm foam tape on the floor between the battery fences and press the battery onto it.
+6. Lay the boards in their seats: charger with its USB-C in the left wall, driver and IMU on either side of it, ESP32 with its micro-USB in the right wall.
+7. Lay the LED in its cradle at the front, dome against the wall, and the buzzer in its cradle beside the ESP32, face against the wall of the wheel well. Turn each so its legs lie flat on the seam: they pass over the low stop behind it.
+8. Tuck the wires down. They run past the ends of the battery and between the motors, not over the battery. Keep them clear of the four screw posts.
+9. Set the lid on and put in the four M2 × 10 screws. Snug is enough: the inserts hold, the plastic around them does not like force.
 
-To open it, twist a coin in one of the slots on the seam. There are four at the ends, next to the wheels, and three on the sides.
+To open it, take the screws out and twist a coin in one of the four slots on the seam, at the ends next to the wheels.
 
 ## Tuning
 
@@ -81,8 +82,8 @@ The parameters most likely to need a change after the coupon:
 - `motor_fit`, `motor_end_fit`, `motor_crush`: room beside and behind the motor, and how far the lid's crush ribs bite into it.
 - `wheel_d`, `wheel_w`, `wheel_gap`: the wheel and the room around it. The hull's width follows from these.
 - `shaft_l`, `wheel_w`: together they set how far the gearbox stands inside the hub.
-- `snap_bump`, `snap_gap`, `snap_t`: how hard the lid clicks. A lid that pops off wants a bigger `snap_bump`; fingers that crack want a thinner `snap_t`.
-- `snap_preload`: how firmly a closed lid is pulled down. Raise it if the lid rattles.
+- `insert_d`, `insert_l`: the brass insert. Its hole is 0.3 mm narrower than `insert_d`, which is the width over the knurls. This is the one to check with a caliper before printing.
+- `screw_l`, `screw_head_d`, `screw_head_h`: the screw. A longer or shorter one than 10 mm does not reach or bottoms out, the model says so.
 - `lip_h`: how far the base's lip stands into the lid, 1 mm. Through translucent plastic the overlap shows as a band along the seam, so it is kept low. Raise it if the shells shear apart in a drop.
 - `wall`, `skin`: the outer walls and the two faces, both 1.6 mm. The two lips on the seam share the wall, so they are 0.7 mm each; a thinner wall leaves them too thin to print.
 - `led_d`, `led_l`, `buzzer_d`, `buzzer_h`: the LED and the buzzer. Their cradles follow.
@@ -105,7 +106,7 @@ After a change to the model, run all three and commit `stl/` and `renders/` with
 Checked in the model:
 
 - Both shells export as closed solids.
-- With everything in place nothing overlaps, except where it is meant to: 9 mm³ where the snap fingers stay bent, and 3 mm³ where the crush ribs bite into the motors.
+- With everything in place nothing overlaps, except where it is meant to: 3 mm³ where the crush ribs bite into the motors.
 - The lid's ribs clear the base with the lid 0.2 mm off-centre in any direction.
 - The wires as drawn clear both shells. They are stand-ins, real ones will lie where they fall.
 
@@ -115,7 +116,7 @@ Seen on a first print of the base, without the lid:
 
 Not checked yet:
 
-- **The click.** Its strength depends on the printer and the filament.
-- **Drops.** The fingers are printed standing up, which is the weak direction of a print. By calculation they hold roughly 190 N together. A wheel that lands hard levers its motor against the lid with about twice the force on the wheel, so a hard, flat landing on all four wheels may still pop the lid. Drop the coupon before trusting it.
+- **The inserts.** Their hole is sized for inserts 3.5 mm wide, a size read off a photo, not measured.
+- **Drops.** A wheel that lands hard levers its motor against the lid with about twice the force on the wheel. The screws sit right beside the motors for that, but nothing has been dropped yet.
 - **A few dimensions.** Nearly everything is measured, see [`docs/measurements.md`](../docs/measurements.md). Still estimated: where the micro-USB sits across the ESP32 (taken from a video frame, good to about half a mm), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
 - **Radio range.** The ESP32's antenna ends 5.1 mm from the battery, which is close for a foil pouch.

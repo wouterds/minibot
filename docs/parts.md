@@ -36,10 +36,12 @@ The charge board ships set to 1 A, which is half the cell's capacity per hour an
 | Qty | Component | Notes | Cost |
 |---|---|---|---:|
 | ~80 g | **Translucent PETG** | Both shells. | €2 |
+| 4 | **M2 × 10 screw, button head** | Hold the lid. The heads sit below its face. | €0.20 |
+| 4 | **M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long** | Pressed into the base with a soldering iron. | €0.30 |
 | 1 strip | **Double-sided foam tape, 1 mm** | Sticks the battery to the floor. | — |
 | | **Silicone wire 26–28 AWG, heat shrink, solder** | About 1 m of wire. Heat shrink over the motor tabs. | €3–5 |
 
-No screws, no inserts and no power switch: the shells click together, and the bot sleeps when left alone.
+No power switch: the bot sleeps when left alone.
 
 ## Later, maybe
 

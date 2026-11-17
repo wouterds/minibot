@@ -17,13 +17,13 @@ A small invertible 4WD ESP32 robot driven by a PS3 controller over Bluetooth.
 - **Buzzer** for a beep on connect, on low battery and as a horn
 - **TP4056 USB-C charge board with DW01A protection**
 - **1S LiPo 3.7 V / 2000 mAh (103450)**, about two hours of cruising
-- **Translucent PETG hull**, 123 × 123 × 16 mm, two shells that click together with the wheels inside. See [`cad/`](cad/README.md)
+- **Translucent PETG hull**, 123 × 123 × 16 mm, two shells held by four M2 screws, with the wheels inside. See [`cad/`](cad/README.md)
 
 ![Exploded view](cad/renders/product-exploded.jpg)
 
 ## Status
 
-The firmware builds and the hull passes its fit checks in CAD. The drive code has not run on the bot yet. The base has been test-printed once and the parts drop in; the lid has not been printed, so the click is untested. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
+The firmware builds and the hull passes its fit checks in CAD. The drive code has not run on the bot yet. Both shells have been printed once: the parts drop in, but the snap fit that held the lid felt loose. The lid is now screwed down, and that version has not been printed yet. [`cad/README.md`](cad/README.md#what-is-and-is-not-verified) lists what the model does and does not prove.
 
 ## System
 
@@ -146,7 +146,7 @@ scripts/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ![Lid off](cad/renders/product-open.jpg)
 
-Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Eleven snap fingers hold the lid, no screws.
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the lid, one beside each wheel.
 
 Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
@@ -164,6 +164,7 @@ See [`docs/parts.md`](docs/parts.md) for the full list.
 | TP4056 USB-C board with protection | 1 | €1–2 |
 | RGB LED 10 mm, buzzer 12 mm | 1 each | €0.50 |
 | 1S LiPo 2000 mAh (103450) | 1 | €8 |
+| M2 × 10 screws and M2 heat-set inserts | 4 each | €0.50 |
 | Capacitor, resistors, wire, foam tape | | €3–5 |
 | Translucent PETG, ~80 g | | €2 |
 | PS3 controller (reuse) | 1 | €0–20 |
