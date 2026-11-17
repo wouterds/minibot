@@ -15,6 +15,8 @@ if (piece == "steel") {
   }
   esp_metal();
   charger_metal();
+  led_legs();
+  buzzer_pins();
 }
 if (piece == "brass") {
   quadrants() motor_brass();
@@ -34,8 +36,12 @@ if (piece == "chips") {
   charger_chips();
   pod_chip(drv);
   mirror([1, 0, 0]) pod_chip(imu);
+  buzzer_body();
 }
-if (piece == "white") esp_white();
+if (piece == "white") {
+  esp_white();
+  led_dome();
+}
 if (piece == "battery") battery();
 if (piece == "tape") battery_tape();
 if (piece == "foam") battery_foam();

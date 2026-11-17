@@ -51,6 +51,11 @@ usbc_h = 3.2;               // USB-C socket height above the board
 usbc_over = 0.35;           // how far that socket sticks out past the board
 drv = [15.95, 18.4, 1.6];   // DRV8833, its pads run along both short edges
 imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
+led_d = 9.92;               // 10 mm RGB LED, across the dome
+led_flange_d = 10.86;       // across the collar at its base
+led_l = 13.7;               // tip of the dome to the base
+buzzer_d = 11.7;
+buzzer_h = 9.47;            // without its pins
 
 /* [Fit] */
 fit = 0.1;              // clearance around a board, per side
@@ -129,6 +134,14 @@ pod_y0 = bat_y1 + 2 * rib + fit + 0.3;        // their end towards the middle
 board_z0 = -in_z + 1.5;                       // their underside
 fence_z = -in_z + 3.5;                        // top of the low fences
 snap_bay_y = wall_y - 4 - snap_bay_w / 2;
+// The status LED lies on the centreline with its dome against the front wall, so the front of
+// the hull lights up. The buzzer lies in the corner beside the ESP32, its face against the wall
+// of the front right well.
+led_x1 = in_x - 0.3;
+led_x0 = led_x1 - led_l;
+buzzer_x1 = mid_x - 0.3;
+buzzer_x0 = buzzer_x1 - buzzer_h;
+buzzer_y = -(wall_y + in_y) / 2;
 
 // Both sockets sit behind the wall, so the grip of a plug has to pass through it.
 usbc_open = [13, 7];
@@ -138,6 +151,7 @@ assert(protrusion >= 2, "wheels barely clear the hull");
 assert(motor_nest >= 0, "shaft longer than the wheel is wide: it would stick out of the hub");
 assert(esp_x0 - fit - rib >= -mid_x && esp_x1 + fit + rib <= mid_x, "ESP32 does not fit between the wells");
 assert(bat_y0 - fit - rib >= esp_y1 + fit + rib, "battery runs into the ESP32");
+assert(buzzer_x0 - 0.3 - rib >= esp_x1 + fit + rib + 4, "buzzer runs into the ESP32");
 assert(bat_half + rib <= bay_x0 - bay_rib - snap_gap - snap_t - 1, "battery runs into the snap fingers");
 
 echo(str("hull (l x w x h): ", hull_l, " x ", hull_w, " x ", hull_h));
@@ -453,7 +467,24 @@ module battery_seat() {
     box([bat_half, bat_half + rib], y, [-in_z - e, fence_z]);
 }
 
+// Half a cradle for a round part that lies along X on the seam: a saddle under its body and a
+// stop behind its back end. The stop ends below the seam, so the part's legs pass over it. The
+// lid carries the other half.
+module round_seat(x0, y, d, play = 0) {
+  difference() {
+    box([x0 + 3, x0 + 7.5], [y - d / 2 - rib, y + d / 2 + rib], [-in_z - e, -0.1]);
+    translate([x0, y, 0]) rotate([0, 90, 0]) cylinder(d = d + 0.3 + 2 * play, h = 10);
+  }
+  box([x0 - 0.3 - rib, x0 - 0.3], [y - d / 2, y + d / 2], [-in_z - e, -1]);
+}
+
+module round_seats(play = 0) {
+  round_seat(led_x0, 0, led_d, play);
+  round_seat(buzzer_x0, buzzer_y, buzzer_d, play);
+}
+
 module base_fittings() {
+  round_seats();
   charger_seat();
   board_seat(drv, pads_on_ends = true);
   mirror([1, 0, 0]) board_seat(imu);
@@ -507,6 +538,8 @@ module lid_fittings() {
   keeper([esp_cx - 5, esp_cx + 5], [esp_y1 - 1.1, esp_y1 - 0.2], esp_z1 + 0.3);
   // battery: a backstop, the foam tape under it does the holding
   for (y = [-8, 8]) keeper([-20, 20], [bat_cy + y - rib / 2, bat_cy + y + rib / 2], bat_z0 + bat[2] + 0.7);
+  // status LED and buzzer: the other half of their cradles
+  mirror([0, 0, 1]) round_seats(0.1);
 }
 
 module lid() {
@@ -676,7 +709,31 @@ module pod_gold(size, on_ends = false) {
   }
 }
 
+module led_dome() {
+  translate([led_x0, 0, 0]) rotate([0, 90, 0]) {
+    cylinder(d = led_flange_d, h = 1.2);
+    cylinder(d = led_d, h = led_l - led_d / 2);
+    translate([0, 0, led_l - led_d / 2]) sphere(d = led_d);
+  }
+}
+
+module led_legs() {
+  for (y = [-3.81, -1.27, 1.27, 3.81]) translate([led_x0 - 3, y, 0]) cube([6, 0.5, 0.5], center = true);
+}
+
+module buzzer_body() {
+  translate([buzzer_x0, buzzer_y, 0]) rotate([0, 90, 0]) cylinder(d = buzzer_d, h = buzzer_h);
+}
+
+module buzzer_pins() {
+  for (y = [-3.25, 3.25]) translate([buzzer_x0 - 2, buzzer_y + y, 0]) cube([4, 0.6, 0.6], center = true);
+}
+
 module electronics() {
+  col("#f1eef0") led_dome();
+  col(c_metal) led_legs();
+  col(c_dark) buzzer_body();
+  col(c_metal) buzzer_pins();
   col(c_pcb) esp_pcb();
   col(c_metal) esp_metal();
   col("#e9e6dc") esp_white();
@@ -779,6 +836,8 @@ if (part == "layout") {
   label([0, tp_y0 + 10], "TP4056", 2.4);
   label([pod_x0 + drv[0] / 2, pod_y0 + drv[1] / 2], "DRV", 2.4);
   label([-pod_x0 - imu[0] / 2, pod_y0 + imu[1] / 2], "IMU", 2.4);
+  label([led_x0 - 9, 0], "LED", 2.4);
+  label([buzzer_x0 + buzzer_h / 2, buzzer_y + buzzer_d / 2 + 4], "buzzer", 2.4);
   label([0, hull_w / 2 + 5], "USB-C: charge", 2.6);
   label([0, -hull_w / 2 - 5], "micro-USB: flash", 2.6);
   for (sx = [-1, 1], sy = [-1, 1]) label([sx * axle_x, sy * (gear_y - 12)], "N20", 2.4);
