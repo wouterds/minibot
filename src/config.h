@@ -17,7 +17,7 @@ constexpr uint8_t RGB_BLUE = 17;
 constexpr bool RGB_COMMON_ANODE = false;
 
 // An active buzzer beeps on a steady voltage. A passive one only clicks, and gets a tone instead.
-constexpr uint8_t BUZZER = 18;
+constexpr uint8_t BUZZER = 13;
 constexpr bool BUZZER_ACTIVE = true;
 constexpr uint32_t BUZZER_TONE_HZ = 2300;
 
@@ -35,8 +35,8 @@ constexpr uint32_t MOTOR_PWM_FREQ = 20000; // above hearing range
 constexpr uint8_t MOTOR_PWM_RES_BITS = 8;
 
 // MPU-6050 on I2C. GPIO 21, the usual SDA, is not broken out on the LOLIN32 Lite.
-constexpr uint8_t IMU_SDA = 19;
-constexpr uint8_t IMU_SCL = 23;
+constexpr uint8_t IMU_SDA = 23;
+constexpr uint8_t IMU_SCL = 19;
 constexpr uint8_t IMU_INT = 34;        // goes HIGH on motion and wakes the ESP32 from sleep
 constexpr int8_t IMU_Z_SIGN = 1;       // -1 when the IMU board is mounted component side down
 constexpr uint32_t FLIP_HOLD_MS = 300; // a new orientation has to last this long to count
