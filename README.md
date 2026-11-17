@@ -82,17 +82,17 @@ Notes:
 - **There is no power switch.** After three minutes without driving, the firmware puts the motor driver and the ESP32 to sleep and sets the IMU to watch for movement. Pick the bot up or nudge it and it wakes. Asleep it should draw around 1 mA, which is weeks on a full cell; that figure is an estimate, not a measurement.
 - **Without the IMU the bot never sleeps**, because nothing could wake it again inside a sealed hull. The battery is then empty in a few hours.
 - **`GPIO 21` is not on this board**, which is why I²C sits on 19 and 23. They are next to `3V`, in the order the IMU's pads want them.
-- **The LED's long leg is its common leg.** The table is for a common cathode: long leg to minus. With a common anode the long leg goes to TP4056 `OUT+` instead, the resistors become 220 Ω for red and 100 Ω for green and blue, and `RGB_COMMON_ANODE` in [`src/config.h`](src/config.h) becomes `true`. To find out which one it is, hold the long leg and one other leg to the battery through a resistor: it lights one way round only.
+- **The LED's long leg is its common leg.** The table is for a common cathode: long leg to minus. With a common anode the long leg goes to TP4056 `OUT+` instead, the resistors become 220 Ω for red and 100 Ω for green and blue, and `RGB_COMMON_ANODE` in [`src/firmware/config.h`](src/firmware/config.h) becomes `true`. To find out which one it is, hold the long leg and one other leg to the battery through a resistor: it lights one way round only.
 - **The buzzer is taken to be an active one**, which beeps on a steady voltage. If it only clicks when held to the battery it is passive: set `BUZZER_ACTIVE` to `false` and the firmware makes the tone.
 - **The onboard LED on `GPIO 22`** follows the status light, for when the lid is off.
 - **The four motor pins are quiet during boot.** Several other pins pulse at reset and would twitch the motors.
 - **A 220–470 µF capacitor** across the driver's `VCC` and `GND` keeps motor starts from browning out the ESP32.
-- **The divider on `GPIO 35` is optional.** Once it is soldered in, set `BATTERY_SENSE_FITTED` to `true` in [`src/config.h`](src/config.h), put 100 nF from the pin to `GND`, and correct `BATTERY_DIVIDER` until the voltage in the serial log matches a multimeter.
+- **The divider on `GPIO 35` is optional.** Once it is soldered in, set `BATTERY_SENSE_FITTED` to `true` in [`src/firmware/config.h`](src/firmware/config.h), put 100 nF from the pin to `GND`, and correct `BATTERY_DIVIDER` until the voltage in the serial log matches a multimeter.
 - **If a side runs backwards**, swap the two motor leads of that side at the driver.
-- **Mount the IMU component side up.** If the bot drives backwards the right way up, set `IMU_Z_SIGN` to `-1` in [`src/config.h`](src/config.h).
+- **Mount the IMU component side up.** If the bot drives backwards the right way up, set `IMU_Z_SIGN` to `-1` in [`src/firmware/config.h`](src/firmware/config.h).
 - **Never plug in both USB ports at once.** The LOLIN32 has its own charger; with both connected, two chargers feed one cell.
 
-All pins are constants in [`src/config.h`](src/config.h). [`research.md`](research.md) has the reasoning.
+All pins are constants in [`src/firmware/config.h`](src/firmware/config.h). [`research.md`](research.md) has the reasoning.
 
 ## Power
 
@@ -138,7 +138,7 @@ pio run -t upload       # flash over micro-USB
 pio device monitor      # serial log
 ```
 
-The PS3 controller only talks to the one Bluetooth address stored in it. The firmware gives the ESP32 the address in `HOST_MAC` ([`src/config.h`](src/config.h)). Plug the controller in over USB once and write that same address to it:
+The PS3 controller only talks to the one Bluetooth address stored in it. The firmware gives the ESP32 the address in `HOST_MAC` ([`src/firmware/config.h`](src/firmware/config.h)). Plug the controller in over USB once and write that same address to it:
 
 ```sh
 scripts/pair-ps3.py 24:6f:28:b1:f8:b6
