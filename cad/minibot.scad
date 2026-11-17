@@ -1,8 +1,8 @@
 // minibot hull: a sealed, invertible body for a 4WD skid-steer bot.
 //
-// Two printed shells that click together, no hardware:
-//   base - carries the motors and all electronics, print outer face down
-//   lid  - holds everything in place and carries the snap fingers, print outer face down
+// Two printed shells, held together by four M2 screws into brass heat-set inserts:
+//   base - carries the motors, all electronics and the inserts, print outer face down
+//   lid  - holds everything in place, the screws go in through it, print outer face down
 //
 // The wheels live inside the hull, each in its own well that is open to both faces. They stand
 // equally proud of the top and the bottom, so the bot drives the same on either face, and
@@ -65,22 +65,20 @@ motor_end_fit = 0.15;   // behind the motor
 lap_gap = 0.2;          // between the lips of the two shells
 lip_h = 1;              // height of the lip that centres the lid on the base
 
-/* [Snap fingers] */
-snap_t = 1.1;
-snap_gap = 0.6;         // between a finger and the wall it runs along
-snap_bump = 1.2;        // hook height; it reaches snap_bump - snap_gap into the wall
-snap_lead = 35;         // closing flank, degrees from the push direction
-snap_ret = 55;          // holding flank
-snap_preload = 0.15;    // how far a finger stays bent once the lid is down
-snap_bay_w = 14;        // fingers beside the motors, two per motor
-snap_sides = [["+y", 17, 10], ["+y", -17, 10], ["-y", 17, 10]];   // side walls: wall, x, width
+/* [Screws] */
+screw_d = 2;            // M2 button head
+screw_l = 10;
+screw_head_d = 3.8;
+screw_head_h = 1.5;
+insert_d = 3.5;         // brass heat-set insert, across its knurls
+insert_l = 4;
 
 /* [Hidden] */
 e = 0.01;
 $fa = 3;
 $fs = 0.3;
 rib = 1.2;
-bay_rib = 2;            // walls of the motor bays; the lid's fingers hook into them
+bay_rib = 2;            // walls of the motor bays
 stop_t = 1;
 lap_in = (wall - lap_gap) / 2;   // the two lips share the wall
 
@@ -133,7 +131,13 @@ pod_x0 = tp_half + 1 + fit;                   // inner edge of the driver and of
 pod_y0 = bat_y1 + 2 * rib + fit + 0.3;        // their end towards the middle
 board_z0 = -in_z + 1.5;                       // their underside
 fence_z = -in_z + 3.5;                        // top of the low fences
-snap_bay_y = wall_y - 4 - snap_bay_w / 2;
+// One screw beside each wheel, in the pocket between the motor bay and the end wall. That is
+// where a wheel that lands hard levers its motor against the lid.
+post_w = in_x - bay_x1 - bay_rib;             // the pocket's width, the post fills it
+post_x = in_x - post_w / 2;
+post_y = (motor_rear_y + wall_y) / 2;
+screw_seat_z = hull_h / 2 - screw_head_h;     // underside of the screw's head
+insert_hole_l = insert_l + 2;                 // room under the insert for a screw that is a little long
 // The status LED lies on the centreline with its dome against the front wall, so the front of
 // the hull lights up. The buzzer lies in the corner beside the ESP32, its face against the wall
 // of the front right well.
@@ -152,7 +156,8 @@ assert(motor_nest >= 0, "shaft longer than the wheel is wide: it would stick out
 assert(esp_x0 - fit - rib >= -mid_x && esp_x1 + fit + rib <= mid_x, "ESP32 does not fit between the wells");
 assert(bat_y0 - fit - rib >= esp_y1 + fit + rib, "battery runs into the ESP32");
 assert(buzzer_x0 - 0.3 - rib >= esp_x1 + fit + rib + 4, "buzzer runs into the ESP32");
-assert(bat_half + rib <= bay_x0 - bay_rib - snap_gap - snap_t - 1, "battery runs into the snap fingers");
+assert(post_w >= insert_d + 2.4, "no room for the insert beside the motor bay");
+assert(screw_seat_z - screw_l > -insert_hole_l && screw_seat_z - screw_l < -1.5, "screw too long or too short for its insert");
 
 echo(str("hull (l x w x h): ", hull_l, " x ", hull_w, " x ", hull_h));
 echo(str("tyres stand ", protrusion, " mm proud of both faces, ", wheel_gap, " mm clear of their wells"));
@@ -207,16 +212,6 @@ module above() {
 module port(pos, dir, w, h, depth, r = 1) {
   translate(pos) rotate(dir == "x" ? [90, 0, 90] : [90, 0, 0])
     linear_extrude(depth, center = true) rrect(w, h, r);
-}
-
-// places a profile drawn as [distance into the cavity, z] against an outer wall and extrudes it along that wall
-module at_wall(side, along, w) {
-  if (side == "+y" || side == "-y")
-    translate([along, (side == "+y" ? 1 : -1) * in_y, 0]) mirror([0, side == "+y" ? 1 : 0, 0])
-      rotate([90, 0, 90]) linear_extrude(w, center = true) children();
-  else
-    translate([(side == "+x" ? 1 : -1) * in_x, along, 0]) mirror([side == "+x" ? 1 : 0, 0, 0])
-      rotate([90, 0, 0]) linear_extrude(w, center = true) children();
 }
 
 // ---------- shell ----------
@@ -323,60 +318,30 @@ module tongue_gaps() {
   translate([0, -in_y, 0]) box([-usb_open[0] / 2 - 0.5, usb_open[0] / 2 + 0.5], [-2, 1], h);
 }
 
-// ---------- snap fit ----------
+// ---------- screws ----------
 
-snap_tip_z = -in_z + 1.2;
-snap_apex_z0 = snap_tip_z + (snap_bump - 0.3) / tan(snap_lead);
-snap_apex_z1 = snap_apex_z0 + 0.3;
-snap_ret_h = snap_bump / tan(snap_ret);
-snap_slope = snap_ret_h / snap_bump;   // of the holding flank
-
-// A finger hangs from the lid's ceiling and runs down beside a wall of the base. Its hook passes
-// the top of that wall bent away from it and springs into a groove near the floor. Drawn as
-// [distance from the wall, z].
-module finger_profile() {
-  g = snap_gap;
-  t = snap_t;
-  polygon([
-    [g - 0.3, snap_tip_z], [g + t - 0.4, snap_tip_z], [g + t, snap_tip_z + 0.4],
-    [g + t, in_z - 1], [g + t + 1, in_z + 0.05], [g, in_z + 0.05],
-    [g, snap_apex_z1 + snap_ret_h], [g - snap_bump, snap_apex_z1], [g - snap_bump, snap_apex_z0],
-  ]);
+// A post in each of the four pockets, half in the base and half in the lid. The halves meet on
+// the seam, so a screw clamps plastic on plastic and does not bend the lid.
+module post_half() {
+  quadrants() box([post_x - post_w / 2 - e, in_x + e], [post_y - post_w / 2, post_y + post_w / 2], [-in_z - e, 0]);
 }
 
-// The groove's holding flank sits snap_preload lower than the hook's, so a seated finger stays
-// bent and keeps pulling the lid down onto the base. No rattle. Below the flank the groove runs
-// straight down to the floor.
-module groove_profile() {
-  depth = snap_bump - snap_gap + 0.15;
-  z0 = snap_apex_z1 + snap_slope * (snap_bump - snap_gap) - snap_preload * snap_slope;
-  polygon([[0.05, z0 + 0.05 * snap_slope], [-depth, z0 - depth * snap_slope], [-depth, -in_z - e], [0.05, -in_z - e]]);
+// in the base: the insert is pressed in hot from the seam
+module insert_holes() {
+  quadrants() translate([post_x, post_y, -insert_hole_l]) cylinder(d = insert_d - 0.3, h = insert_hole_l + e);
 }
 
-// Puts a profile at every snap: on both sides of each motor bay, where the wheels' loads come
-// in, and on the side walls. wider makes it that much longer than the finger.
-module snaps(wider = 0) {
-  quadrants() {
-    translate([bay_x0 - bay_rib, snap_bay_y, 0]) mirror([1, 0, 0])
-      rotate([90, 0, 0]) linear_extrude(snap_bay_w + wider, center = true) children();
-    translate([bay_x1 + bay_rib, snap_bay_y, 0])
-      rotate([90, 0, 0]) linear_extrude(snap_bay_w + wider, center = true) children();
+// in the lid: the screw's shank, and a recess that takes its head below the face
+module screw_holes() {
+  quadrants() translate([post_x, post_y, 0]) {
+    translate([0, 0, -e]) cylinder(d = screw_d + 0.4, h = hull_h);
+    translate([0, 0, screw_seat_z]) cylinder(d = screw_head_d + 0.6, h = hull_h);
   }
-  for (s = snap_sides) at_wall(s[0], s[1], s[2] + wider) children();
 }
 
-module snap_fingers() {
-  snaps() finger_profile();
-}
-
-module snap_grooves() {
-  snaps(1) groove_profile();
-}
-
-// Slots on the seam, near the fingers: twist a coin in one to lift the lid there.
+// Slots on the seam at both ends: twist a coin in one to lift the lid once the screws are out.
 module pry_slots() {
-  sym_x() sym_y() port([hull_l / 2, snap_bay_y, 0], "x", 12, 2.2, wall, 0.4);
-  for (s = snap_sides) if (s[2] >= 10) port([s[1], (s[0] == "+y" ? 1 : -1) * hull_w / 2, 0], "y", 12, 2.2, wall, 0.4);
+  quadrants() port([hull_l / 2, post_y, 0], "x", 12, 2.2, wall, 0.4);
 }
 
 // ---------- motor bays ----------
@@ -401,7 +366,7 @@ module motor_stop() {
   box([bay_x0 - e, bay_x1 + e], [motor_rear_y - stop_t, motor_rear_y], [-in_z - e, -3.2]);
 }
 
-// Lid half, drawn upside down. The fingers stand where the base has its walls. The saddles stop
+// Lid half, drawn upside down. The saddles stop
 // short of the motor and carry a thin rib each that bites into the can, which takes up the
 // tolerance of the motor without holding the lid off.
 module motor_cap() {
@@ -484,6 +449,7 @@ module round_seats(play = 0) {
 }
 
 module base_fittings() {
+  post_half();
   round_seats();
   charger_seat();
   board_seat(drv, pads_on_ends = true);
@@ -507,7 +473,7 @@ module base() {
     }
     openings();
     tongue_gaps();
-    snap_grooves();
+    insert_holes();
     pry_slots();
   }
 }
@@ -540,6 +506,7 @@ module lid_fittings() {
   for (y = [-8, 8]) keeper([-20, 20], [bat_cy + y - rib / 2, bat_cy + y + rib / 2], bat_z0 + bat[2] + 0.7);
   // status LED and buzzer: the other half of their cradles
   mirror([0, 0, 1]) round_seats(0.1);
+  mirror([0, 0, 1]) post_half();
 }
 
 module lid() {
@@ -559,9 +526,9 @@ module lid() {
         }
         lip_relief();
       }
-      snap_fingers();
     }
     openings();
+    screw_holes();
     pry_slots();
   }
 }
@@ -729,6 +696,25 @@ module buzzer_pins() {
   for (y = [-3.25, 3.25]) translate([buzzer_x0 - 2, buzzer_y + y, 0]) cube([4, 0.6, 0.6], center = true);
 }
 
+module screws() {
+  quadrants() translate([post_x, post_y, screw_seat_z]) {
+    cylinder(d = screw_head_d, h = screw_head_h - 0.2);
+    translate([0, 0, -screw_l]) cylinder(d = screw_d, h = screw_l);
+  }
+}
+
+module inserts() {
+  quadrants() translate([post_x, post_y, -insert_l]) difference() {
+    cylinder(d = insert_d, h = insert_l);
+    translate([0, 0, -e]) cylinder(d = screw_d, h = insert_l + 2 * e);
+  }
+}
+
+module hardware() {
+  col(c_dark) screws();
+  col(c_brass) inserts();
+}
+
 module electronics() {
   col("#f1eef0") led_dome();
   col(c_metal) led_legs();
@@ -884,8 +870,8 @@ module wheels() {
 module print_base() translate([0, 0, hull_h / 2]) base();
 module print_lid() translate([0, 0, hull_h / 2]) rotate([180, 0, 0]) lid();
 
-// The front right corner of each shell: one wheel well, one motor bay, one snap finger. A short
-// print to check how the motor, the wheel and the click fit before printing the full shells.
+// The front right corner of each shell: one wheel well, one motor bay, one screw post. A short
+// print to check how the motor, the wheel and the screw fit before printing the full shells.
 module coupon() {
   intersection() {
     children();
@@ -914,6 +900,7 @@ if (part == "print") {
 
 if (part == "assembly") {
   electronics();
+  hardware();
   wiring();
   motors();
   wheels();
@@ -930,10 +917,13 @@ if (part == "exploded") {
     wheels();
   }
   translate([0, 0, 58]) color(c_shell) lid();
+  translate([0, 0, 76]) col(c_dark) screws();
+  col(c_brass) inserts();
 }
 
 if (part == "open" || part == "layout") {
   color(c_shell) base();
+  col(c_brass) inserts();
   electronics();
   wiring();
   motors();
@@ -959,6 +949,7 @@ if (part == "layout") {
 if (part == "section" || part == "axle") {
   col("#7fb2d9") base();
   col("#f0a35e") lid();
+  hardware();
   electronics();
   motors();
   wheels();

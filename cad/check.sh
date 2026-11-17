@@ -1,7 +1,7 @@
 #!/bin/sh
 # Fit check: the volume every pair of parts shares once assembled.
-# Two overlaps are meant to be there: the bend the snap fingers keep, and the bite of the lid's
-# crush ribs into the motors. Everything else must be 0.
+# One overlap is meant to be there: the bite of the lid's crush ribs into the motors.
+# Everything else must be 0.
 cd "$(dirname "$0")" || exit 1
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
@@ -15,7 +15,7 @@ check() { # a b allowed-mm3 [shift of b]
   [ "$ok" = ok ] || status=1
   printf '%-12s %-12s %-12s %8s mm3  %s\n' "$1" "$2" "${4:-}" "$v" "$ok"
 }
-check base lid 14
+check base lid 0
 # the lid's lip leaves it 0.2 mm of play; its ribs must clear the base wherever it ends up
 for shift in "[0.2,0]" "[-0.2,0]" "[0,0.2]" "[0,-0.2]"; do check base keepers 0 "$shift"; done
 for other in electronics motors wheels; do check base $other 0; done
@@ -25,6 +25,7 @@ check lid wheels 0
 check electronics motors 0
 check electronics wheels 0
 check motors wheels 0
+for shell in base lid; do check $shell screws 0; done
 # the wires are loose stand-ins, but they must not run through a shell
 check base wires 0
 check lid wires 0

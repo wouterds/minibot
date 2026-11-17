@@ -7,14 +7,18 @@ shift = [0, 0];   // moves b sideways, to try a lid that sits off-centre in the 
 module thing(name) {
   if (name == "base") base();
   if (name == "lid") lid();
-  if (name == "keepers") intersection() {
-    cavity(0.05);
-    lid_fittings();
+  if (name == "keepers") difference() {
+    intersection() {
+      cavity(0.05);
+      lid_fittings();
+    }
+    lip_relief();
   }
   if (name == "electronics") electronics();
   if (name == "motors") motors();
   if (name == "wheels") wheels();
   if (name == "wires") wiring();
+  if (name == "screws") screws();
 }
 
 intersection() {
