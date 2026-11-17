@@ -13,7 +13,10 @@ Everything needed to build a minibot from scratch. Prices are rough AliExpress p
 | 1 | **MPU-6050 module (GY-521)** | Tells the firmware which way is up. | €1.50 | €1.50 |
 | 1 | **TP4056 USB-C charge board with DW01A protection** | 27.8 × 17.4 mm. The version with six pads, including `OUT+` and `OUT−`. | €1–2 | €1.50 |
 | 1 | **1S LiPo 3.7 V 2000 mAh, 103450** | 52.6 × 34 × 10.4 mm with its protection board. Wires go straight to the charge board. | €8 | €8 |
-| 1 | **Electrolytic capacitor, 220–470 µF, 6.3 V or more** | Across the driver's supply. Up to 8 mm thick fits in the free corner beside the ESP32. | €0.10 | €0.10 |
+| 1 | **RGB LED, 10 mm, diffused, four legs** | Status light at the front of the hull. Common cathode or common anode, the firmware has a setting for either. | €0.20 | €0.20 |
+| 3 | **Resistor** for the LED | 150 Ω for red, 47 Ω for green and blue. With a common anode: 220 Ω and 100 Ω. | — | — |
+| 1 | **Buzzer, 12 mm, two pins** | ⌀11.7 × 9.5 mm. Active (beeps on a steady voltage) or passive, the firmware has a setting for either. | €0.30 | €0.30 |
+| 1 | **Electrolytic capacitor, 220–470 µF, 6.3 V or more** | Across the driver's supply. Up to 8 mm thick fits beside the ESP32, next to the buzzer. | €0.10 | €0.10 |
 | 2 | **Resistor 100 kΩ**, 1 | **capacitor 100 nF** | Divider for the battery voltage. Optional. | — | — |
 | 1 | **PS3 controller** | DualShock 3 or a clone. | €0–20 | €0 |
 | | | | **electronics** | **~€33–36** |

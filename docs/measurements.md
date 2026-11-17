@@ -83,3 +83,15 @@ Seen in the photos: two mounting holes, one in the corner beside `VP` at the ant
 | DRV8833 total thickness | | Not measured, about 3. Its keeper in the lid stays 2.4 above the board |
 | MPU-6050 board | 20 × 15.5 | From the earlier CAD |
 | MPU-6050 total thickness | | Not measured, about 3. Its keeper in the lid stays 2.4 above the board |
+
+## Status LED and buzzer
+
+| What | Reading | Notes |
+|---|---:|---|
+| RGB LED, across the dome | 9.92 | Milky white, four legs |
+| RGB LED, across the collar at its base | 10.86 | |
+| RGB LED, tip of the dome to the base | 13.70 | Without the legs |
+| Buzzer, diameter | 11.70 | Black, two pins, `+` marked on top |
+| Buzzer, height | 9.47 | Without the pins |
+
+Not known: whether the LED is common cathode or common anode, and whether the buzzer is active or passive. Neither changes the hull.

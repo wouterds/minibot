@@ -7,6 +7,7 @@ Two printed shells that click together around everything, 123 × 123 × 16 mm, n
 - **Wheels inside.** Each wheel runs in its own well. The well is a cylinder around the axle, so its wall stays 1.5 mm from the tyre all the way round. The wells are open to both faces and the tyres stand 4.9 mm proud of each, so the bot drives the same on its back. Nothing sticks out sideways, in front or behind.
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
 - **Same either way up.** The shells split on the axle line and everything that goes through a wall is centred on that seam. USB-C for charging sits in the middle of the left side, micro-USB for flashing in the middle of the right side. Front and tail are plain walls, and there is no power switch: the firmware sleeps and the IMU wakes it.
+- **Light and sound.** A 10 mm RGB LED lies on the centreline with its dome against the front wall, so the front of the hull glows and shows which end leads. A buzzer lies beside the ESP32. Each sits in a round cradle, half in the base and half in the lid.
 - **Click fit.** Eleven snap fingers hang from the lid. Two grip the walls of every motor bay, right where the wheel loads come in, and three hold the side walls. A lip runs round the cavity and the whole outer wall and centres the lid.
 
 `minibot.scad` is the whole design. Every dimension is a parameter at the top of the file.
@@ -64,8 +65,9 @@ The two outer faces print on the bed, so they take on its texture. A smooth plat
 3. Lower each motor into its bay with the wheel in the well. The gearbox drops into the notch in the well wall.
 4. Stick a strip of 1 mm foam tape on the floor between the battery fences and press the battery onto it.
 5. Lay the boards in their seats: charger with its USB-C in the left wall, driver and IMU on either side of it, ESP32 with its micro-USB in the right wall.
-6. Tuck the wires down. Keep them off the walls of the motor bays and off the three places on the side walls where the fingers come down.
-7. Set the lid on and press down beside each wheel until it clicks, then along the sides.
+6. Lay the LED in its cradle at the front, dome against the wall, and the buzzer in its cradle beside the ESP32, face against the wall of the wheel well. Turn each so its legs lie flat on the seam: they pass over the low stop behind it.
+7. Tuck the wires down. They run past the ends of the battery and between the motors, not over the battery. Keep them off the walls of the motor bays and off the three places on the side walls where the fingers come down.
+8. Set the lid on and press down beside each wheel until it clicks, then along the sides.
 
 To open it, twist a coin in one of the slots on the seam. There are four at the ends, next to the wheels, and three on the sides.
 
@@ -81,6 +83,7 @@ The parameters most likely to need a change after the coupon:
 - `snap_preload`: how firmly a closed lid is pulled down. Raise it if the lid rattles.
 - `lip_h`: how far the base's lip stands into the lid, 1 mm. Through translucent plastic the overlap shows as a band along the seam, so it is kept low. Raise it if the shells shear apart in a drop.
 - `wall`, `skin`: the outer walls and the two faces, both 1.6 mm. The two lips on the seam share the wall, so they are 0.7 mm each; a thinner wall leaves them too thin to print.
+- `led_d`, `led_l`, `buzzer_d`, `buzzer_h`: the LED and the buzzer. Their cradles follow.
 - `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
 - `usbc_open`, `usb_open`: the openings for the plugs, 13 × 7 mm and 12.5 × 7.5 mm. Both sockets sit behind the wall, so the grip of the plug has to pass through it, not just its metal tip. Widen one if a cable with a fat grip does not go in.
