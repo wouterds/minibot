@@ -2,7 +2,7 @@
 
 Two printed shells around everything, 123 × 123 × 16 mm, held together by four M2 screws.
 
-![The bot on its wheels and on its back](../../images/product-pair.jpg)
+![The hull, closed](../../images/product-hero.jpg)
 
 - **Wheels inside.** Each wheel runs in its own well. The well is a cylinder around the axle, so its wall stays 1.5 mm from the tyre all the way round. The wells are open to both faces and the tyres stand 4.9 mm proud of each, so the bot drives the same on its back. Nothing sticks out sideways, in front or behind.
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
@@ -94,7 +94,7 @@ The parameters most likely to need a change after a first print:
 - `./check.sh` intersects every pair of parts and prints the volume they share. OpenSCAD does not complain when parts collide, this does.
 - `./export.sh` writes the STLs to [`stl/`](../../stl).
 - `../render/previews.sh` draws the views of the model.
-- `../render/product.sh [shot ...]` ray-traces the product shots (`hero`, `pair`, `exploded`, `open`, `detail`).
+- `../render/product.sh [shot ...]` ray-traces the product shots (`hero`, `exploded`, `open`, `detail`).
 - `../render/wiring.py` draws the wiring diagram.
 
 All pictures land in [`images/`](../../images).

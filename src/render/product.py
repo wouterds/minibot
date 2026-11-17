@@ -216,7 +216,6 @@ materials()
 SHOTS = {
     # name: (camera, target, lens, f-stop or None)
     "hero": ((-0.20, 0.40, 0.19), (0.0, 0.0, 0.012), 85, None),
-    "pair": ((0.0, 0.62, 0.34), (0.0, 0.0, 0.012), 70, None),
     "exploded": ((-0.27, 0.52, 0.28), (0.0, 0.0, 0.040), 92, None),
     "open": ((0.0, 0.62, 0.33), (0.0, 0.0, 0.006), 70, None),
     "detail": ((0.10, 0.27, 0.075), (0.028, 0.053, 0.010), 68, None),
@@ -224,11 +223,7 @@ SHOTS = {
 cam_loc, cam_at, lens, fstop = SHOTS[shot]
 
 stand = T(0, 0, STAND)
-if shot == "pair":
-    # the same bot twice: on its wheels, and on its back
-    bot(T(-0.084, 0, STAND) @ yaw(-20))
-    bot(T(0.084, 0, STAND) @ yaw(20) @ FLIP)
-elif shot == "exploded":
+if shot == "exploded":
     turn = yaw(-28)
     bot(stand @ turn, contents=T(0, 0, STAND + 0.024) @ turn, lid=T(0, 0, STAND + 0.058) @ turn)
 elif shot == "open":

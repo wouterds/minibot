@@ -1,9 +1,9 @@
 #!/bin/sh
 # Ray-traced product shots in translucent PETG, written to ../../images/product-*.jpg.
-#   ./product.sh [shot ...]     shots: hero pair exploded open detail
+#   ./product.sh [shot ...]     shots: hero exploded open detail
 # Needs openscad and uv; Blender's renderer comes in through uv as the bpy package, nothing to install.
 cd "$(dirname "$0")" || exit 1
-[ $# -eq 0 ] && set -- hero pair exploded open detail
+[ $# -eq 0 ] && set -- hero exploded open detail
 meshes=$(mktemp -d)
 trap 'rm -rf "$meshes"' EXIT
 for p in base lid tyres steel brass pcb_dark pcb_blue pcb_purple chips white battery tape foam led \

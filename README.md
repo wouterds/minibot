@@ -164,8 +164,6 @@ Two shells split on the axle line. The wheels run in wells inside the hull and s
 
 ![Lid off](images/product-open.jpg)
 
-![On its wheels and on its back](images/product-pair.jpg)
-
 Printing, assembly and tuning are in [`src/model/README.md`](src/model/README.md).
 
 ## Parts
