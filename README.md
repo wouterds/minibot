@@ -158,20 +158,59 @@ Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 
 ## Parts
 
-See [`docs/parts.md`](docs/parts.md) for the full list.
+Everything that goes into one bot. [`docs/parts.md`](docs/parts.md) has the notes on each part and where to buy it.
 
-| Component | Qty | ~Cost |
-|---|---|---:|
-| ESP32 LOLIN32 Lite | 1 | €5–8 |
-| DRV8833 breakout | 1 | €1.50 |
-| N20 6 V 400 RPM motor, long D-shaft | 4 | €10 |
-| Wheel, ⌀26 × 22 mm, hollow hub | 4 | €7.20 |
-| MPU-6050 module | 1 | €1.50 |
-| TP4056 USB-C board with protection | 1 | €1–2 |
-| RGB LED 10 mm, buzzer 12 mm | 1 each | €0.50 |
-| 1S LiPo 2000 mAh (103450) | 1 | €8 |
-| M2 × 10 screws and M2 heat-set inserts | 4 each | €0.50 |
-| Capacitor, resistors, wire, foam tape | | €3–5 |
-| Translucent PETG, ~80 g | | €2 |
-| PS3 controller (reuse) | 1 | €0–20 |
-| **Total** | | **~€37–43** |
+### Electronics
+
+| Qty | Part | Notes | ~Cost |
+|---|---|---|---:|
+| 1 | ESP32, WeMos LOLIN32 Lite | Without pin headers | €5–8 |
+| 1 | DRV8833 motor driver breakout | The `HW-627` board | €1.50 |
+| 4 | N20 gear motor, 6 V 400 RPM, long D-shaft | Shaft 18.7 mm | €10 |
+| 4 | Wheel, ⌀26 × 22 mm, hollow hub, 3 mm bore | Silicone tyre, set screw | €7.20 |
+| 1 | MPU-6050 module, GY-521 | | €1.50 |
+| 1 | TP4056 USB-C charge board with DW01A protection | The one with `OUT+` and `OUT−` pads | €1–2 |
+| 1 | 1S LiPo, 3.7 V 2000 mAh, 103450 | With its own protection board and leads | €8 |
+| 1 | RGB LED, 10 mm, diffused, four legs | Status light | €0.20 |
+| 1 | Buzzer, 12 mm, two pins | Horn and beeps | €0.30 |
+| 1 | PS3 controller | DualShock 3 or a clone | reuse |
+
+### Small parts
+
+| Qty | Part | For |
+|---|---|---|
+| 1 | Resistor 150 Ω | LED, red leg |
+| 2 | Resistor 47 Ω | LED, green and blue legs |
+| 1 | Electrolytic capacitor, 220–470 µF, 6.3 V or more | Across the driver's `VCC` and `GND` |
+| 2 | Resistor 100 kΩ | Battery voltage divider, optional |
+| 1 | Capacitor 100 nF | Steadies the divider's reading, optional |
+
+With a common anode LED the three resistors are 220 Ω for red and 100 Ω for green and blue instead.
+
+### Wire
+
+Flexible stranded wire, 26–28 AWG, 28 pieces in six colours. The battery brings its own two leads.
+
+| Colour | Pieces | Length in the model | Cut from | Carries |
+|---|---:|---:|---:|---|
+| Red | 7 | 63 cm | 90 cm | Plus to the driver, the ESP32 and the IMU; one lead of each motor |
+| Black | 9 | 70 cm | 100 cm | Minus to the driver, the ESP32, the IMU, the LED and the buzzer; the other lead of each motor |
+| Yellow | 4 | 42 cm | 60 cm | `IN1`, `EEP`, `SCL`, LED red |
+| Green | 2 | 18 cm | 30 cm | `IN2`, LED green |
+| Blue | 3 | 31 cm | 45 cm | `IN3`, `SDA`, LED blue |
+| White | 3 | 25 cm | 40 cm | `IN4`, `INT`, buzzer |
+| **Total** | **28** | **2.5 m** | **3.7 m** | |
+
+The lengths are measured along the wires as they are laid in the model, the longest single piece being 15 cm. "Cut from" adds about 40 % for slack and stripped ends. Both are estimates: nothing has been wired yet.
+
+### Hull
+
+| Qty | Part | Notes | ~Cost |
+|---|---|---|---:|
+| ~80 g | Translucent PETG | Both shells | €2 |
+| 4 | M2 × 10 screw, button head | Two through the lid, two through the base | €0.20 |
+| 4 | M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long | Two in the base, two in the lid | €0.30 |
+| 1 strip | Double-sided foam tape, 1 mm | Under the battery | |
+| | Heat shrink, solder | Over the motor tabs and the LED's resistors | |
+
+All of it comes to roughly €40–45, not counting the controller.

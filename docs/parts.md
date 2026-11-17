@@ -1,6 +1,6 @@
 # Parts
 
-Everything needed to build a minibot from scratch. Prices are rough AliExpress prices in euro; Amazon, Adafruit and Sparkfun cost two to three times as much and ship faster.
+Notes on everything needed to build a minibot from scratch. The [README](../README.md#parts) has the short list with every quantity. Prices are rough AliExpress prices in euro; Amazon, Adafruit and Sparkfun cost two to three times as much and ship faster.
 
 ## Electronics
 
@@ -19,7 +19,7 @@ Everything needed to build a minibot from scratch. Prices are rough AliExpress p
 | 1 | **Electrolytic capacitor, 220–470 µF, 6.3 V or more** | Across the driver's supply. Up to 8 mm thick fits beside the ESP32, next to the buzzer. | €0.10 | €0.10 |
 | 2 | **Resistor 100 kΩ**, 1 | **capacitor 100 nF** | Divider for the battery voltage. Optional. | — | — |
 | 1 | **PS3 controller** | DualShock 3 or a clone. | €0–20 | €0 |
-| | | | **electronics** | **~€33–36** |
+| | | | **electronics** | **~€35–38** |
 
 ### Shaft length
 
@@ -39,7 +39,7 @@ The charge board ships set to 1 A, which is half the cell's capacity per hour an
 | 4 | **M2 × 10 screw, button head** | Hold the shells together: two go in through the lid, two through the base. The heads sit below the faces. | €0.20 |
 | 4 | **M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long** | Two pressed into the base and two into the lid, with a soldering iron. | €0.30 |
 | 1 strip | **Double-sided foam tape, 1 mm** | Sticks the battery to the floor. | — |
-| | **Silicone wire 26–28 AWG, heat shrink, solder** | About 1 m of wire. Heat shrink over the motor tabs. | €3–5 |
+| | **Silicone wire 26–28 AWG, heat shrink, solder** | 28 pieces in six colours, about 3.7 m in all. The [README](../README.md#wire) lists them by colour. Heat shrink over the motor tabs and the LED's resistors. | €3–5 |
 
 No power switch: the bot sleeps when left alone.
 
