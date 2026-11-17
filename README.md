@@ -146,7 +146,7 @@ scripts/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ![Lid off](cad/renders/product-open.jpg)
 
-Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the lid, one beside each wheel.
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the shells together, one beside each wheel. Two go in through the lid and two through the base, so both faces look the same.
 
 Printing, assembly and tuning are in [`cad/README.md`](cad/README.md).
 

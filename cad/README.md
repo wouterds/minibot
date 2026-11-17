@@ -8,7 +8,7 @@ Two printed shells around everything, 123 × 123 × 16 mm, held together by four
 - **Sealed middle.** The motors and the electronics sit in a closed cavity between the wells. The wheel hubs are hollow, and each motor reaches through the wall of its well so that the front of its gearbox stands 3.4 mm inside its hub. At that depth the tip of the shaft ends flush with the hub's outer face. A small stop on the outer wall of the well faces the shaft tip and keeps the motor and its wheel from sliding outwards.
 - **Same either way up.** The shells split on the axle line and everything that goes through a wall is centred on that seam. USB-C for charging sits in the middle of the left side, micro-USB for flashing in the middle of the right side. Front and tail are plain walls, and there is no power switch: the firmware sleeps and the IMU wakes it.
 - **Light and sound.** A 10 mm RGB LED lies on the centreline with its dome against the front wall, so the front of the hull glows and shows which end leads. A buzzer lies beside the ESP32. Each sits in a round cradle, half in the base and half in the lid.
-- **Screwed shut.** Four M2 × 10 screws go in through the lid into brass heat-set inserts in the base, one beside each wheel, where the wheel loads come in. Each sits in a post that fills the pocket between the motor bay and the end wall; the two halves of a post meet on the seam, so a screw clamps plastic on plastic. The heads sit in recesses, below the face of the lid. A lip runs round the cavity and the whole outer wall and centres the lid.
+- **Screwed shut.** Four M2 × 10 screws into brass heat-set inserts, one beside each wheel, where the wheel loads come in. The two on the left go in through the lid into inserts in the base, the two on the right through the base into inserts in the lid, so each face shows two heads along one side and the bot looks the same on its back. Each sits in a post that fills the pocket between the motor bay and the end wall; the two halves of a post meet on the seam, so a screw clamps plastic on plastic. The heads sit in recesses, below the faces. A lip runs round the cavity and the whole outer wall and centres the lid.
 
 `minibot.scad` is the whole design. Every dimension is a parameter at the top of the file.
 
@@ -37,7 +37,7 @@ Cut through the front axle: wheels in their wells, motors between them, each one
 | `stl/coupon-base.stl` | 1   | test piece      |
 | `stl/coupon-lid.stl`  | 1   | test piece      |
 
-The STLs are already in print orientation. No supports: nothing overhangs more than 45°. The recess for each screw head prints against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
+The STLs are already in print orientation. No supports: nothing overhangs more than 45°. The two recesses for screw heads in each shell print against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
 
 **Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, one screw post. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the insert and the screw seat right, before 80 g goes into the full shells.
 
@@ -62,7 +62,7 @@ The two outer faces print on the bed, so they take on its texture. A smooth plat
 
 ## Assembly
 
-1. Press a brass insert into each of the four posts of the base with a soldering iron at about 230 °C, until it sits flush with the top of the post. Let it cool before touching it.
+1. Press the four brass inserts in with a soldering iron at about 230 °C: two into the posts on the left of the base, two into the posts on the right of the lid. Those are the posts with the wider hole. Each insert goes in from the seam until it sits flush with the top of its post. Let it cool before touching it.
 2. Solder everything, outside the hull. See the wiring table in the [main README](../README.md#wiring).
 3. Push a hub onto each motor shaft, open end towards the motor, until the shaft tip is flush with the hub's solid face. Tighten the set screw, then roll the tyre on.
 4. Lower each motor into its bay with the wheel in the well. The gearbox drops into the notch in the well wall.
@@ -70,7 +70,7 @@ The two outer faces print on the bed, so they take on its texture. A smooth plat
 6. Lay the boards in their seats: charger with its USB-C in the left wall, driver and IMU on either side of it, ESP32 with its micro-USB in the right wall.
 7. Lay the LED in its cradle at the front, dome against the wall, and the buzzer in its cradle beside the ESP32, face against the wall of the wheel well. Turn each so its legs lie flat on the seam: they pass over the low stop behind it.
 8. Tuck the wires down. They run past the ends of the battery and between the motors, not over the battery. Keep them clear of the four screw posts.
-9. Set the lid on and put in the four M2 × 10 screws. Snug is enough: the inserts hold, the plastic around them does not like force.
+9. Set the lid on and put in the four M2 × 10 screws, two from above and two from below. Snug is enough: the inserts hold, the plastic around them does not like force.
 
 To open it, take the screws out and twist a coin in one of the four slots on the seam, at the ends next to the wheels.
 

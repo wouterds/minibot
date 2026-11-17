@@ -267,9 +267,10 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 ### Screws
 
 - The first lid clicked on with snap fingers. Printed, it felt loose and wonky, so the lid is screwed down instead.
-- Four M2 × 10 button head screws go through the lid into brass heat-set inserts in the base. One sits beside each wheel, in the pocket between the motor bay and the end wall: that is where a wheel that lands hard levers its motor against the lid.
+- Four M2 × 10 button head screws go into brass heat-set inserts. One sits beside each wheel, in the pocket between the motor bay and the end wall: that is where a wheel that lands hard levers its motor against the lid.
 - Each screw runs through a post that is half in the lid and half in the base. The halves meet on the seam, so tightening clamps plastic on plastic and does not bend the lid.
-- The heads sit in recesses, below the face, so nothing new touches the floor when the bot is on its back.
+- The two screws on the left go in through the lid, the two on the right through the base. Each face then shows two heads along one side, so the bot still looks the same on its back.
+- The heads sit in recesses, below the faces, so nothing new touches the floor.
 - A lip on the base stands 1 mm into the lid, round the cavity and round the outer wall. It centres the lid and takes sideways loads, so the screws only have to hold the lid down.
 
 ### Layout
