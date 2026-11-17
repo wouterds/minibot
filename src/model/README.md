@@ -36,12 +36,8 @@ Cut through the front axle: wheels in their wells, motors between them, each one
 | --------------------- | --- | --------------- |
 | `stl/base.stl`        | 1   | outer face down |
 | `stl/lid.stl`         | 1   | outer face down |
-| `stl/coupon-base.stl` | 1   | test piece      |
-| `stl/coupon-lid.stl`  | 1   | test piece      |
 
 The STLs are in [`stl/`](../../stl), already in print orientation. No supports: nothing overhangs more than 45°. The two recesses for screw heads in each shell print against the bed with a 1 mm ledge around the screw hole; clean it with the screw if it sags.
-
-**Print the coupon first.** It is the front right corner of both shells: one wheel well, one motor bay, one screw post. It takes about 12 g and shows whether the motor drops in, the wheel clears its well and the insert and the screw seat right, before 80 g goes into the full shells.
 
 ![Shells in print orientation](../../images/print.png)
 
@@ -78,7 +74,7 @@ To open it, take the screws out and twist a coin in one of the four slots on the
 
 ## Tuning
 
-The parameters most likely to need a change after the coupon:
+The parameters most likely to need a change after a first print:
 
 - `motor_w`, `motor_h`, `motor_l`: the motor. `motor_l` runs from the brass front face to the black end cap, without the solder tabs.
 - `motor_fit`, `motor_end_fit`, `motor_crush`: room beside and behind the motor, and how far the lid's crush ribs bite into it.

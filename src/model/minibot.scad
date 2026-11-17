@@ -16,7 +16,7 @@
 // Coordinates: X forward, Y left, Z up. Origin in the middle of the hull, on the axle line.
 // The seam between the shells is the plane Z = 0.
 
-part = "assembly"; // assembly | layout | section | axle | print | base | lid | coupon-base | coupon-lid | none
+part = "assembly"; // assembly | layout | section | axle | print | base | lid | none
 
 /* [Drivetrain] */
 wheel_d = 26;           // tyre diameter
@@ -895,15 +895,6 @@ module wheels() {
 module print_base() translate([0, 0, hull_h / 2]) base();
 module print_lid() translate([0, 0, hull_h / 2]) rotate([180, 0, 0]) lid();
 
-// The front right corner of each shell: one wheel well, one motor bay, one screw post. A short
-// print to check how the motor, the wheel and the screw fit before printing the full shells.
-module coupon() {
-  intersection() {
-    children();
-    translate([mid_x - 2, -hull_w, -hull_h]) cube([hull_l, hull_w + 2, 2 * hull_h]);
-  }
-}
-
 module label(pos, s, size = 3) {
   translate([pos[0], pos[1], hull_h]) {
     color("#111") linear_extrude(0.2) text(s, size = size, halign = "center", valign = "center", font = "Helvetica:style=Bold");
@@ -913,8 +904,6 @@ module label(pos, s, size = 3) {
 
 if (part == "base") print_base();
 if (part == "lid") print_lid();
-if (part == "coupon-base") translate([0, 0, hull_h / 2]) coupon() base();
-if (part == "coupon-lid") translate([0, 0, hull_h / 2]) rotate([180, 0, 0]) coupon() lid();
 
 if (part == "print") {
   color(c_shell) {
