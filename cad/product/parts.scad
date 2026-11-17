@@ -24,6 +24,7 @@ if (piece == "brass") {
   charger_gold();
   pod_gold(drv, on_ends = true);
   mirror([1, 0, 0]) pod_gold(imu);
+  inserts();
 }
 if (piece == "pcb_dark") esp_pcb();
 if (piece == "pcb_blue") {
@@ -37,6 +38,7 @@ if (piece == "chips") {
   pod_chip(drv);
   mirror([1, 0, 0]) pod_chip(imu);
   buzzer_body();
+  screws();
 }
 if (piece == "white") {
   esp_white();

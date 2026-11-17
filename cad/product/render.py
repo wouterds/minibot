@@ -226,7 +226,7 @@ elif shot == "exploded":
     turn = yaw(-28)
     bot(stand @ turn, contents=T(0, 0, STAND + 0.024) @ turn, lid=T(0, 0, STAND + 0.058) @ turn)
 elif shot == "open":
-    # lid off and turned over beside the base, so its fingers and keepers show
+    # lid off and turned over beside the base, so its posts and keepers show
     bot(T(-0.072, 0, STAND) @ yaw(-12), lid=T(0.072, 0, REST) @ yaw(12) @ FLIP)
 else:
     bot(stand @ yaw(-28))
