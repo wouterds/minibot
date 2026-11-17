@@ -1,8 +1,9 @@
 // minibot hull: a sealed, invertible body for a 4WD skid-steer bot.
 //
 // Two printed shells, held together by four M2 screws into brass heat-set inserts:
-//   base - carries the motors, all electronics and the inserts, print outer face down
-//   lid  - holds everything in place, the screws go in through it, print outer face down
+//   base - carries the motors and all electronics, print outer face down
+//   lid  - holds everything in place, print outer face down
+// Two screws go in through each shell, so both faces look the same.
 //
 // The wheels live inside the hull, each in its own well that is open to both faces. They stand
 // equally proud of the top and the bottom, so the bot drives the same on either face, and
@@ -326,17 +327,27 @@ module post_half() {
   quadrants() box([post_x - post_w / 2 - e, in_x + e], [post_y - post_w / 2, post_y + post_w / 2], [-in_z - e, 0]);
 }
 
-// in the base: the insert is pressed in hot from the seam
-module insert_holes() {
-  quadrants() translate([post_x, post_y, -insert_hole_l]) cylinder(d = insert_d - 0.3, h = insert_hole_l + e);
+// The two screws on the left go in through the lid into inserts in the base, the two on the right
+// through the base into inserts in the lid. Each face then shows two heads along one side, and
+// the bot looks the same on its back.
+module from_lid() {
+  sym_x() translate([post_x, post_y, 0]) children();
 }
 
-// in the lid: the screw's shank, and a recess that takes its head below the face
-module screw_holes() {
-  quadrants() translate([post_x, post_y, 0]) {
-    translate([0, 0, -e]) cylinder(d = screw_d + 0.4, h = hull_h);
-    translate([0, 0, screw_seat_z]) cylinder(d = screw_head_d + 0.6, h = hull_h);
-  }
+module from_base() {
+  sym_x() translate([post_x, -post_y, 0]) mirror([0, 0, 1]) children();
+}
+
+// Both are drawn for a screw that comes down through the lid.
+// the insert is pressed in hot from the seam
+module insert_hole() {
+  translate([0, 0, -insert_hole_l]) cylinder(d = insert_d - 0.3, h = insert_hole_l + e);
+}
+
+// the screw's shank, and a recess that takes its head below the face
+module screw_hole() {
+  translate([0, 0, -e]) cylinder(d = screw_d + 0.4, h = hull_h);
+  translate([0, 0, screw_seat_z]) cylinder(d = screw_head_d + 0.6, h = hull_h);
 }
 
 // Slots on the seam at both ends: twist a coin in one to lift the lid once the screws are out.
@@ -473,7 +484,8 @@ module base() {
     }
     openings();
     tongue_gaps();
-    insert_holes();
+    from_lid() insert_hole();
+    from_base() screw_hole();
     pry_slots();
   }
 }
@@ -528,7 +540,8 @@ module lid() {
       }
     }
     openings();
-    screw_holes();
+    from_lid() screw_hole();
+    from_base() insert_hole();
     pry_slots();
   }
 }
@@ -696,23 +709,35 @@ module buzzer_pins() {
   for (y = [-3.25, 3.25]) translate([buzzer_x0 - 2, buzzer_y + y, 0]) cube([4, 0.6, 0.6], center = true);
 }
 
-module screws() {
-  quadrants() translate([post_x, post_y, screw_seat_z]) {
+module screw() {
+  translate([0, 0, screw_seat_z]) {
     cylinder(d = screw_head_d, h = screw_head_h - 0.2);
     translate([0, 0, -screw_l]) cylinder(d = screw_d, h = screw_l);
   }
 }
 
-module inserts() {
-  quadrants() translate([post_x, post_y, -insert_l]) difference() {
+module insert() {
+  translate([0, 0, -insert_l]) difference() {
     cylinder(d = insert_d, h = insert_l);
     translate([0, 0, -e]) cylinder(d = screw_d, h = insert_l + 2 * e);
   }
 }
 
+// what each shell carries: its own two inserts, and the two screws that go in through it
+module base_inserts() from_lid() insert();
+module lid_inserts() from_base() insert();
+module base_screws(out = 0) from_base() translate([0, 0, out]) screw();
+module lid_screws(out = 0) from_lid() translate([0, 0, out]) screw();
+
+module screws() {
+  base_screws();
+  lid_screws();
+}
+
 module hardware() {
   col(c_dark) screws();
-  col(c_brass) inserts();
+  col(c_brass) base_inserts();
+  col(c_brass) lid_inserts();
 }
 
 module electronics() {
@@ -916,14 +941,18 @@ if (part == "exploded") {
     motors();
     wheels();
   }
-  translate([0, 0, 58]) color(c_shell) lid();
-  translate([0, 0, 76]) col(c_dark) screws();
-  col(c_brass) inserts();
+  translate([0, 0, 58]) {
+    color(c_shell) lid();
+    col(c_brass) lid_inserts();
+    col(c_dark) lid_screws(18);
+  }
+  col(c_brass) base_inserts();
+  col(c_dark) base_screws(18);
 }
 
 if (part == "open" || part == "layout") {
   color(c_shell) base();
-  col(c_brass) inserts();
+  col(c_brass) base_inserts();
   electronics();
   wiring();
   motors();
