@@ -327,15 +327,15 @@ module post_half() {
   quadrants() box([post_x - post_w / 2 - e, in_x + e], [post_y - post_w / 2, post_y + post_w / 2], [-in_z - e, 0]);
 }
 
-// The two screws on the left go in through the lid into inserts in the base, the two on the right
-// through the base into inserts in the lid. Each face then shows two heads along one side, and
-// the bot looks the same on its back.
+// The two screws at the front go in through the lid into inserts in the base, the two at the rear
+// through the base into inserts in the lid. Each face then shows two heads at one end, and the
+// bot looks the same on its back.
 module from_lid() {
-  sym_x() translate([post_x, post_y, 0]) children();
+  sym_y() translate([post_x, post_y, 0]) children();
 }
 
 module from_base() {
-  sym_x() translate([post_x, -post_y, 0]) mirror([0, 0, 1]) children();
+  sym_y() translate([-post_x, post_y, 0]) mirror([0, 0, 1]) children();
 }
 
 // Both are drawn for a screw that comes down through the lid.
