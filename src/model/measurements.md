@@ -73,6 +73,7 @@ Seen in the photos: two mounting holes, one in the corner beside `VP` at the ant
 | Length over the USB-C socket | 28.87 | Measured again after the board sat loose in a print. The first reading, 28.13, was wrong |
 | Board length, without the socket | 27.16 | Measured again. The first reading, 27.78, was wrong, and left the board 0.6 mm of room to slide |
 | USB-C socket past the board edge | 1.71 | 28.87 minus 27.16. By eye about 1.8. The socket reaches through the 1.6 mm wall to just inside the outer face |
+| Notch in the rear edge, between the corners | about 11.5 × 1.8 | Read off a photo, not measured. Only the two corners, about 2 mm wide each, reach the full 27.16 |
 | Board plus USB-C socket | 4.19 | A USB-C socket is about 3.2 high, so the board is about 1.0 and the socket's centre sits about 2.6 above the board's underside |
 
 ## Driver and IMU

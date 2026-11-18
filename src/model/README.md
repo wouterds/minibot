@@ -86,6 +86,7 @@ The parameters most likely to need a change after a first print:
 - `wall`, `skin`: the outer walls and the two faces, both 1.6 mm. The two lips on the seam share the wall, so they are 0.7 mm each; a thinner wall leaves them too thin to print.
 - `led_d`, `led_l`, `buzzer_d`, `buzzer_h`: the LED and the buzzer. Their cradles follow.
 - `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
+- `tp_crush`: how far the crush ribs beside the charger bite into its board. Lower it if the board will not press in, raise it if it still shifts.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
 - `usbc_open`, `usb_open`: the openings for the sockets, 9.8 × 4 mm and 12.5 × 7.5 mm. The USB-C socket reaches through the wall to just inside the outer face, so its opening only has to pass the socket. The micro-USB socket sits behind the wall, so the grip of its plug has to pass through: widen that one if a cable with a fat grip does not go in.
 
@@ -116,6 +117,7 @@ Seen on a first print of the base, without the lid:
 
 - The boards and the motors drop into their seats. With 0.25 mm of room per side they rattled, so the room around them is now 0.1 mm per side. With the lid off they still lift straight out: the base only locates the parts sideways, the lid holds them down.
 - On a second print the charger still slid in its seat. Its board is 27.16 mm long, not the 27.78 first measured, and its socket sticks out 1.71 mm, not 0.35. The seat now fits that board, with a stop in front of it and one behind.
+- On a third print it still slid and twisted. The board's rear edge is notched between its two corners, and the stop behind it stood inside that notch. The stops now stand behind the two corners, the lid holds those corners down, and two crush ribs on each fence grip the board's long edges.
 
 Not checked yet:
 
