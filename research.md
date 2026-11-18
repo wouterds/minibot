@@ -130,7 +130,7 @@ A motor driver input on one of these twitches the motors every time the board re
 | 4, 16, 17 | RGB status LED: red, green, blue |
 | 13 | Buzzer |
 | 34 | MPU-6050 `INT`: wakes the ESP32 from sleep |
-| 35 | Battery voltage through a divider (optional) |
+| 35 | Battery voltage through a divider |
 
 32, 33, 25 and 26 sit next to each other on the header, are quiet at boot and are outputs. 19 and 23 sit next to `3V3`, which the IMU needs anyway, in the order of the IMU's own pads. 4, 16 and 17 sit next to each other and are quiet at boot, as is 13.
 

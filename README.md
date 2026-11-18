@@ -73,7 +73,8 @@ The drawing shows what connects to what, in the wire colours below. It is not wh
 | LED long leg | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
 | `GPIO 13` | Buzzer `+` | red | |
 | Buzzer `−` | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
-| `GPIO 35` | middle of a 100 kΩ / 100 kΩ divider from battery `+` to `GND` | | Battery voltage, optional |
+| `GPIO 35` | LOLIN32 battery `+`, through 100 kΩ | red | Battery voltage. The `+` leg of the JST socket |
+| `GPIO 35` | LOLIN32 `G`, through 100 kΩ | black | With 100 nF across this resistor |
 | DRV8833 `OUT1` / `OUT2` | both left motors, in parallel | red / black | |
 | DRV8833 `OUT3` / `OUT4` | both right motors, in parallel | red / black | |
 
@@ -87,7 +88,7 @@ Notes:
 - **The onboard LED on `GPIO 22`** follows the status light, for when the lid is off.
 - **The four motor pins are quiet during boot.** Several other pins pulse at reset and would twitch the motors.
 - **A 220–470 µF capacitor** across the driver's `VCC` and `GND` keeps motor starts from browning out the ESP32.
-- **The divider on `GPIO 35` is optional.** Once it is soldered in, set `BATTERY_SENSE_FITTED` to `true` in [`src/firmware/config.h`](src/firmware/config.h), put 100 nF from the pin to `GND`, and correct `BATTERY_DIVIDER` until the voltage in the serial log matches a multimeter.
+- **The two 100 kΩ resistors on `GPIO 35` halve the battery voltage** so the ESP32 can read it. They lie on the ESP32 itself, each in a short wire, with the 100 nF capacitor soldered across the legs of the one to `G`. Correct `BATTERY_DIVIDER` in [`src/firmware/config.h`](src/firmware/config.h) until the voltage in the serial log matches a multimeter. Left out, set `BATTERY_SENSE_FITTED` to `false`: the LED is then plain green and nothing stops the motors on a low cell.
 - **If a side runs backwards**, swap the two motor leads of that side at the driver.
 - **Mount the IMU component side up.** If the bot drives backwards the right way up, set `IMU_Z_SIGN` to `-1` in [`src/firmware/config.h`](src/firmware/config.h).
 - **Never plug in both USB ports at once.** The LOLIN32 has its own charger; with both connected, two chargers feed one cell.
@@ -107,7 +108,7 @@ flowchart LR
     VM --> MOT[4× N20 motors]
 ```
 
-The TP4056 board charges the cell from USB-C at 1 A, which takes a bit over two hours for a full charge, and its DW01A cuts the output on overcharge, overdischarge, overcurrent and short circuit. That cutoff only comes at 2.4 V, so with the divider fitted the firmware stops the motors at 3.3 V, blinks the LED fast for half a minute and then powers the ESP32 down.
+The TP4056 board charges the cell from USB-C at 1 A, which takes a bit over two hours for a full charge, and its DW01A cuts the output on overcharge, overdischarge, overcurrent and short circuit. That cutoff only comes at 2.4 V, so the firmware reads the cell through a divider and stops the motors at 3.3 V, blinks the LED fast for half a minute and then powers the ESP32 down.
 
 ## Driving
 
@@ -120,8 +121,7 @@ The TP4056 board charges the cell from USB-C at 1 A, which takes a bit over two 
 | Status light | Means |
 |---|---|
 | Blue, breathing | Waiting for the controller |
-| Green | Connected. Brighter the harder it drives |
-| Green through yellow to red | The same, with the battery divider fitted: the colour is the charge |
+| Green through yellow to red | Connected. The colour is the charge, brighter the harder it drives |
 | Purple | Connected and on its back |
 | Red, fast blink | Battery low, motors off, going to sleep in 30 s |
 | Off | Asleep. Move the bot to wake it |
@@ -192,23 +192,23 @@ Everything that goes into one bot. Prices are rough AliExpress prices.
 | 1 | Resistor 150 Ω | LED, red leg |
 | 2 | Resistor 47 Ω | LED, green and blue legs |
 | 1 | Electrolytic capacitor, 220–470 µF, 6.3 V or more | Across the driver's `VCC` and `GND` |
-| 2 | Resistor 100 kΩ | Battery voltage divider, optional |
-| 1 | Capacitor 100 nF | Steadies the divider's reading, optional |
+| 2 | Resistor 100 kΩ | Battery voltage divider on `GPIO 35` |
+| 1 | Ceramic capacitor 100 nF | Steadies the divider's reading |
 
 With a common anode LED the three resistors are 220 Ω for red and 100 Ω for green and blue instead.
 
 ### Wire
 
-Flexible stranded wire, 26–28 AWG, 28 pieces in five colours. The battery brings its own two leads.
+Flexible stranded wire, 26–28 AWG, 30 pieces in five colours. The battery brings its own two leads.
 
 | Colour | Pieces | Length in the model | Cut from | Carries |
 |---|---:|---:|---:|---|
-| Red | 8 | 64 cm | 90 cm | Plus to the driver, the ESP32, the IMU and the buzzer; one lead of each motor |
-| Black | 9 | 70 cm | 100 cm | Minus to the driver, the ESP32, the IMU, the LED and the buzzer; the other lead of each motor |
+| Red | 9 | 67 cm | 95 cm | Plus to the driver, the ESP32, the IMU, the buzzer and the battery divider; one lead of each motor |
+| Black | 10 | 72 cm | 100 cm | Minus to the driver, the ESP32, the IMU, the LED, the buzzer and the battery divider; the other lead of each motor |
 | Yellow | 4 | 42 cm | 60 cm | `IN1`, `EEP`, `SCL`, LED red |
 | Green | 4 | 42 cm | 60 cm | `IN2`, `IN4`, `INT`, LED green |
 | Blue | 3 | 31 cm | 45 cm | `IN3`, `SDA`, LED blue |
-| **Total** | **28** | **2.5 m** | **3.6 m** | |
+| **Total** | **30** | **2.5 m** | **3.6 m** | |
 
 The lengths are measured along the wires as they are laid in the model, the longest single piece being 15 cm. "Cut from" adds about 40 % for slack and stripped ends. Both are estimates: nothing has been wired yet.
 
@@ -220,7 +220,7 @@ The lengths are measured along the wires as they are laid in the model, the long
 | 4 | M2 × 10 screw, button head | All four through the lid | €0.20 |
 | 4 | M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long | All four in the base | €0.30 |
 | 1 strip | Double-sided foam tape, 1 mm | Under the battery | |
-| | Heat shrink, solder | Over the motor tabs and the LED's resistors | |
+| | Heat shrink, solder | Over the motor tabs and all five resistors | |
 
 All of it comes to roughly €40–45, not counting the controller.
 

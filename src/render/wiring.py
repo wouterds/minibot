@@ -77,21 +77,24 @@ for y, name in [(440, "front left"), (540, "rear left"), (640, "front right"), (
 board(640, 320, 860, 950, "#1d2b36", "ESP32", "LOLIN32 Lite")
 left = ["VP", "VN", "EN", "34", "35", "32", "33", "25", "26", "27", "14", "12", "G"]
 right = ["3V", "22", "19", "23", "18", "5", "17", "16", "4", "0", "2", "15", "13"]
-used = {"34", "32", "33", "25", "26", "27", "G", "3V", "19", "23", "17", "16", "4", "13"}
+used = {"34", "35", "32", "33", "25", "26", "27", "G", "3V", "19", "23", "17", "16", "4", "13"}
 esp_y = {}
 for i, (a, b) in enumerate(zip(left, right)):
     y = 370 + 44 * i
     esp_y[a] = esp_y[b] = y
     pad(640, y, a, "right", a in used)
     pad(860, y, b, "left", b in used)
-text(700, 550, "35: battery sense,", 11, fill="#9aa3ad")
-text(700, 564, "optional, see README", 11, fill="#9aa3ad")
+text(746, 690, "battery sense:", 11, fill="#9aa3ad")
+text(746, 704, "2 × 100 kΩ,", 11, fill="#9aa3ad")
+text(746, 718, "100 nF, 35 to G", 11, fill="#9aa3ad")
 text(800, 419, "onboard LED", 11, "end", fill="#9aa3ad")
 text(804, 916, "micro-USB", 11, "middle", fill="#9aa3ad")
 out.append('<rect x="672" y="905" width="76" height="45" rx="4" fill="#e9e6dc" stroke="#14161a" stroke-width="2"/>')
-text(710, 922, "battery", 11, "middle")
-pad(690, 950, "+", "above", ink="#1b1d21")
-pad(730, 950, "−", "above", ink="#1b1d21")
+text(718, 922, "battery", 11, "middle")
+pad(690, 950, "", "above")
+pad(730, 950, "", "above")
+text(677, 945, "+", 13, "middle", "bold")
+text(743, 945, "−", 13, "middle", "bold")
 out.append('<rect x="776" y="925" width="56" height="34" rx="5" fill="#b9bcc2" stroke="#14161a" stroke-width="2"/>')
 
 # IMU, pads on its left edge
@@ -173,6 +176,12 @@ text(1050, 772, "3 resistors", 12, "middle")
 # ESP32 to the buzzer
 wire(RED, (860, esp_y["13"]), (930, esp_y["13"]), (930, 925), (965, 925))
 wire(BLACK, (965, 955), (930, 955), (930, 975), (736, 975), (736, 950))
+
+# battery sense: the socket's + leg and G to 35, a resistor in each
+wire(RED, (640, esp_y["35"]), (654, 558), (730, 558), (730, 898), (690, 898), (690, 950))
+wire(BLACK, (640, esp_y["35"]), (654, 572), (700, 572), (700, 876), (654, 876), (640, 898))
+for x in (700, 730):
+    parts.append(f'<rect x="{x - 8}" y="682" width="16" height="36" rx="3" fill="#d9c7a1" stroke="#14161a" stroke-width="1.5"/>')
 
 # ---------- page ----------
 
