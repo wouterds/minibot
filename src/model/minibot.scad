@@ -328,18 +328,11 @@ module post_half() {
   quadrants() box([post_x - post_w / 2 - e, in_x + e], [post_y - post_w / 2, post_y + post_w / 2], [-in_z - e, 0]);
 }
 
-// The two screws at the front go in through the lid into inserts in the base, the two at the rear
-// through the base into inserts in the lid. Each face then shows two heads at one end, and the
-// bot looks the same on its back.
-module from_lid() {
-  sym_y() translate([post_x, post_y, 0]) children();
+// All four screws go in through the lid, all four inserts sit in the base.
+module at_posts() {
+  quadrants() translate([post_x, post_y, 0]) children();
 }
 
-module from_base() {
-  sym_y() translate([-post_x, post_y, 0]) mirror([0, 0, 1]) children();
-}
-
-// Both are drawn for a screw that comes down through the lid.
 // the insert is pressed in hot from the seam
 module insert_hole() {
   translate([0, 0, -insert_hole_l]) cylinder(d = insert_d - 0.3, h = insert_hole_l + e);
@@ -487,8 +480,7 @@ module base() {
     }
     openings();
     tongue_gaps();
-    from_lid() insert_hole();
-    from_base() screw_hole();
+    at_posts() insert_hole();
     pry_slots();
   }
 }
@@ -543,8 +535,7 @@ module lid() {
       }
     }
     openings();
-    from_lid() screw_hole();
-    from_base() insert_hole();
+    at_posts() screw_hole();
     pry_slots();
   }
 }
@@ -726,21 +717,12 @@ module insert() {
   }
 }
 
-// what each shell carries: its own two inserts, and the two screws that go in through it
-module base_inserts() from_lid() insert();
-module lid_inserts() from_base() insert();
-module base_screws() from_base() screw();
-module lid_screws() from_lid() screw();
-
-module screws() {
-  base_screws();
-  lid_screws();
-}
+module inserts() at_posts() insert();
+module screws() at_posts() screw();
 
 module hardware() {
   col(c_dark) screws();
-  col(c_brass) base_inserts();
-  col(c_brass) lid_inserts();
+  col(c_brass) inserts();
 }
 
 module electronics() {
@@ -927,7 +909,7 @@ if (part == "assembly") {
 
 if (part == "layout") {
   color(c_shell) base();
-  col(c_brass) base_inserts();
+  col(c_brass) inserts();
   electronics();
   wiring();
   motors();

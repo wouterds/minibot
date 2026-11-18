@@ -48,8 +48,6 @@ if (piece == "battery") battery();
 if (piece == "tape") battery_tape();
 if (piece == "foam") battery_foam();
 if (piece == "led") esp_led();
-// the inserts and the screws stay with the shell they sit in
-if (piece == "base_brass") base_inserts();
-if (piece == "lid_brass") lid_inserts();
-if (piece == "base_screws") base_screws();
-if (piece == "lid_screws") lid_screws();
+// the inserts stay with the base, the screws with the lid
+if (piece == "inserts") inserts();
+if (piece == "screws") screws();

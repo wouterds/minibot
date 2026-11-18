@@ -8,7 +8,7 @@ meshes=$(mktemp -d)
 trap 'rm -rf "$meshes"' EXIT
 for p in base lid tyres steel brass pcb_dark pcb_blue pcb_purple chips white battery tape foam led \
   wire_red wire_black wire_white wire_yellow wire_green wire_blue \
-  base_brass lid_brass base_screws lid_screws; do
+  inserts screws; do
   openscad -o "$meshes/$p.stl" -D 'part="none"' -D "piece=\"$p\"" --backend=manifold --export-format binstl \
     product.scad 2>&1 | grep -E "WARNING|ERROR" &
 done

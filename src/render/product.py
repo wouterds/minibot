@@ -203,13 +203,11 @@ def materials():
 def bot(base=Matrix.Identity(4), contents=None, lid=None):
     lid = base if lid is None else lid
     load("base", mat["base"], base)
-    load("base_brass", mat["brass"], base)
-    load("base_screws", mat["screws"], base)
+    load("inserts", mat["brass"], base)
     for name in CONTENTS:
         load(name, mat[name], base if contents is None else contents)
     load("lid", mat["lid"], lid)
-    load("lid_brass", mat["brass"], lid)
-    load("lid_screws", mat["screws"], lid)
+    load("screws", mat["screws"], lid)
 
 
 materials()
