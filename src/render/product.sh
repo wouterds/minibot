@@ -7,7 +7,7 @@ cd "$(dirname "$0")" || exit 1
 meshes=$(mktemp -d)
 trap 'rm -rf "$meshes"' EXIT
 for p in base lid tyres steel brass pcb_dark pcb_blue pcb_purple chips white battery tape foam led \
-  wire_red wire_black wire_yellow wire_green wire_blue \
+  wire_red wire_black wire_yellow wire_green wire_blue wire_white wire_orange \
   inserts screws; do
   openscad -o "$meshes/$p.stl" -D 'part="none"' -D "piece=\"$p\"" --backend=manifold --export-format binstl \
     product.scad 2>&1 | grep -E "WARNING|ERROR" &

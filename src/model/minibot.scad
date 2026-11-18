@@ -762,7 +762,7 @@ module electronics() {
 // boards, never over the battery.
 
 wire_d = 1.2;
-wire_colours = [["red", "#d6221c"], ["black", "#151515"], ["yellow", "#f0c000"], ["green", "#1f9a40"], ["blue", "#2468d8"]];
+wire_colours = [["red", "#d6221c"], ["black", "#151515"], ["yellow", "#f0c000"], ["green", "#1f9a40"], ["blue", "#2468d8"], ["white", "#f2f2ee"], ["orange", "#f07a10"]];
 
 // pads, on top of their boards
 function esp_pad(side, i) = [esp_cx + side * 11.43, esp_y0 + 11.5 + i * 2.54, esp_z1];   // side +1: 13 15 2 0 4 16 17 5 18 23 19 22 3V; side -1: G 12 14 27 26 25 33 32 35 34
@@ -812,13 +812,13 @@ wires = [
   ["yellow", concat(rear_run(esp_pad(-1, 7), 0, layer(1)), to_drv(0), [drv_pad(-1, 0)])],
   ["green", concat(rear_run(esp_pad(-1, 6), 1, layer(1)), to_drv(1), [drv_pad(-1, 1)])],
   ["blue", concat(rear_run(esp_pad(-1, 5), 2, layer(1)), to_drv(2), [[20, 36.5, 0], drv_pad(-1, 4)])],
-  ["green", concat(rear_run(esp_pad(-1, 4), 3, layer(1)), to_drv(3), [[23.5, 37, 0], drv_pad(-1, 5)])],
-  ["yellow", concat(rear_run(esp_pad(-1, 3), 4, layer(1)), to_drv(4), [[10.8, 42, 0.5], drv_pad(1, 0)])],
+  ["white", concat(rear_run(esp_pad(-1, 4), 3, layer(1)), to_drv(3), [[23.5, 37, 0], drv_pad(-1, 5)])],
+  ["orange", concat(rear_run(esp_pad(-1, 3), 4, layer(1)), to_drv(4), [[10.8, 42, 0.5], drv_pad(1, 0)])],
   // ESP32 to the IMU: 3V, 19 (SCL), 23 (SDA), 34 (INT); its ground comes from the charger
   ["red", concat(over_esp(esp_pad(1, 12), 0, layer(2)), to_imu(imu_pad(0), 0))],
   ["yellow", concat(over_esp(esp_pad(1, 10), 1, layer(2)), to_imu(imu_pad(2), 1))],
   ["blue", concat(over_esp(esp_pad(1, 9), 2, layer(2)), to_imu(imu_pad(3), 2))],
-  ["green", concat(rear_run(esp_pad(-1, 9), 3, layer(2)), to_imu(imu_pad(5), 3))],
+  ["white", concat(rear_run(esp_pad(-1, 9), 3, layer(2)), to_imu(imu_pad(5), 3))],
   ["black", [tp_pad(-7), [-8.6, 34.8, 0.6], [-12, 38.6, -0.5], [-20, 38.5, -2], imu_pad(1)]],
   // driver to the motors: OUT1 and OUT2 to both left motors, OUT3 and OUT4 to both right ones
   ["red", concat(drv_front(drv_pad(1, 1), 0), [[35, 12, wf]], to_tab(1, 1, -1))],
@@ -830,12 +830,12 @@ wires = [
   ["red", concat(drv_rear(drv_pad(1, 3), 2, 1, layer(3)), [[-36.5, 4, wf], [-37, -8, wf]], to_tab(-1, -1, 1))],
   ["black", concat(drv_rear(drv_pad(1, 4), 3, 2, layer(3)), [[-38, 4, wf], [-38.4, -7, wf]], to_tab(-1, -1, -1))],
   // ESP32 to the status LED: 4, 16, 17 to red, green, blue through a resistor each
-  ["yellow", concat(led_run(0), [[8, -38, -1.5], esp_pad(1, 4)])],
+  ["orange", concat(led_run(0), [[8, -38, -1.5], esp_pad(1, 4)])],
   ["green", concat(led_run(2), [[8.5, -35.6, -1.5], esp_pad(1, 5)])],
   ["blue", concat(led_run(3), [[9, -33, -1.5], esp_pad(1, 6)])],
   ["black", concat(led_run(1), [[10, -39, -1.5], [7.5, -41.5, 0.5], [0, -46, 2.5], [-9, -51, 3], [-13, -51.8, 1], esp_bat(1)])],
   // ESP32 to the buzzer
-  ["red", [buzzer_pin(1), [12, -44, -1], [8, -47.5, -1.5], esp_pad(1, 0)]],
+  ["white", [buzzer_pin(1), [12, -44, -1], [8, -47.5, -1.5], esp_pad(1, 0)]],
   ["black", [buzzer_pin(-1), [11, -50.5, 0.5], [6.5, -50.3, 1.5], [-3, -51.5, 2.6], [-10, -51.5, 2.4], [-13.6, -52.3, 0.5], esp_bat(1)]],
   // battery sense: the socket's + leg and G to 35, through a resistor each
   ["red", [esp_bat(0), [sense_x(1), -49, 0.2], [sense_x(1), -32, 0.2], [-15, -29.6, 0.2], esp_pad(-1, 8)]],

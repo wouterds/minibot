@@ -170,6 +170,8 @@ WIRES = {
     "yellow": (0.80, 0.52, 0.01),
     "green": (0.02, 0.30, 0.06),
     "blue": (0.02, 0.13, 0.62),
+    "white": (0.82, 0.82, 0.78),
+    "orange": (0.80, 0.17, 0.01),
 }
 CONTENTS = ["tyres", "steel", "brass", "pcb_dark", "pcb_blue", "pcb_purple", "chips", "white", "battery", "tape", "foam", "led"]
 CONTENTS += ["wire_" + name for name in WIRES]
