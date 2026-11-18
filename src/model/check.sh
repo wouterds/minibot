@@ -1,7 +1,7 @@
 #!/bin/sh
 # Fit check: the volume every pair of parts shares once assembled.
-# One overlap is meant to be there: the bite of the lid's crush ribs into the motors.
-# Everything else must be 0.
+# Two overlaps are meant to be there: the bite of the lid's crush ribs into the motors and of
+# the charger seat's crush ribs into its board. Everything else must be 0.
 cd "$(dirname "$0")" || exit 1
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
@@ -18,7 +18,8 @@ check() { # a b allowed-mm3 [shift of b]
 check base lid 0
 # the lid's lip leaves it 0.2 mm of play; its ribs must clear the base wherever it ends up
 for shift in "[0.2,0]" "[-0.2,0]" "[0,0.2]" "[0,-0.2]"; do check base keepers 0 "$shift"; done
-for other in electronics motors wheels; do check base $other 0; done
+check base electronics 1
+for other in motors wheels; do check base $other 0; done
 check lid electronics 0
 check lid motors 8
 check lid wheels 0

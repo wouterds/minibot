@@ -120,6 +120,8 @@ tp_y1 = min(in_y - fit, in_y + wall - usbc_over - 0.3);   // the socket reaches 
 tp_y0 = tp_y1 - tp[1];
 tp_half = tp[0] / 2 + fit;
 tp_stop = 2.4;                                // takes the push of a plug going in
+tp_crush = 0.1;                               // how far the seat's crush ribs bite into the board
+tp_notch = [11.5, 1.8];                       // cut out of the board's rear edge, read off a photo
 // the battery sits as far from the ESP32's antenna as the charger lets it
 bat_half = bat[0] / 2 + 0.75;
 bat_y1 = tp_y0 - fit - tp_stop;
@@ -389,8 +391,12 @@ module charger_seat() {
     // fence beside the board
     box([tp_half, tp_half + 1], [tp_y0 - fit, in_y + e], [-in_z - e, tp_z1 + 0.6]);
   }
-  // end stop, between the battery pads; it takes the push of a plug going in
-  box([-3, 3], [tp_y0 - fit - tp_stop, tp_y0 - fit], [-in_z - e, tp_z1 + 0.6]);
+  // end stops behind the two rear corners, since the edge between them is notched; they take
+  // the push of a plug going in
+  sym_x() box([tp[0] / 2 - 2, tp_half + 1], [tp_y0 - tp_stop, tp_y0], [-in_z - e, tp_z1 + 0.6]);
+  // crush ribs on the fences: the board presses in between them and cannot shift or twist
+  sym_x() for (y = [tp_y0 + 4, tp_y1 - 5])
+    box([tp[0] / 2 - tp_crush, tp_half + e], [y - 0.3, y + 0.3], [-in_z - e, tp_z1 + 0.6]);
   // front stops, beside the socket; they take the pull of a plug coming out
   sym_x() box([usbc_open[0] / 2 + 0.6, tp_half], [tp_y1 + fit, in_y + e], [-in_z - e, tp_z1 + 0.6]);
 }
@@ -500,9 +506,9 @@ module board_keeper(size, cx) {
 }
 
 module lid_fittings() {
-  // charger: on the USB-C shell, and on the board edge between the battery pads
+  // charger: on the USB-C shell, and on the board's two rear corners
   keeper([-3, 3], [tp_y1 - 4.5, tp_y1 - 0.5], -tp_z1 + 0.2);
-  keeper([-2, 2], [tp_y0 + 0.2, tp_y0 + 1.1], tp_z1 + 0.3);
+  sym_x() keeper([tp[0] / 2 - 2, tp[0] / 2 - 0.4], [tp_y0 + 0.4, tp_y0 + 2], tp_z1 + 0.3);
   // driver and IMU
   board_keeper(drv, pod_x0 + drv[0] / 2);
   board_keeper(imu, -pod_x0 - imu[0] / 2);
@@ -648,7 +654,10 @@ module battery_foam() {
 }
 
 module charger_pcb() {
-  box([-tp[0] / 2, tp[0] / 2], [tp_y0, tp_y1], [tp_z0, tp_z1]);
+  difference() {
+    box([-tp[0] / 2, tp[0] / 2], [tp_y0, tp_y1], [tp_z0, tp_z1]);
+    box([-tp_notch[0] / 2, tp_notch[0] / 2], [tp_y0 - e, tp_y0 + tp_notch[1]], [tp_z0 - e, tp_z1 + e]);
+  }
 }
 
 module charger_metal() {
@@ -661,7 +670,7 @@ module charger_chips() {
 }
 
 module charger_gold() {
-  for (x = [-7, -3, 3, 7]) translate([x, tp_y0 + 1.5, (tp_z0 + tp_z1) / 2]) cube([1.8, 1.8, tp[2] + 0.1], center = true);
+  for (x = [-7, -4, 4, 7]) translate([x, tp_y0 + 3.8, (tp_z0 + tp_z1) / 2]) cube([1.8, 1.8, tp[2] + 0.1], center = true);
 }
 
 // driver on the +X side of the charger; mirror it for the IMU
@@ -769,7 +778,7 @@ function esp_pad(side, i) = [esp_cx + side * 11.43, esp_y0 + 11.5 + i * 2.54, es
 function esp_bat(i) = [esp_cx - 9.8 + i * 2.6, esp_y0 + 7, esp_z1];                       // legs of the battery socket: + then -
 function drv_pad(row, i) = [pod_x0 + drv[0] / 2 - 6.35 + i * 2.54, pod_y0 + drv[1] / 2 + row * (drv[1] / 2 - 1.4), board_z0 + drv[2]];   // row -1: IN1 IN2 VCC GND IN3 IN4; row +1: EEP OUT1 OUT2 OUT3 OUT4
 function imu_pad(i) = [-pod_x0 - imu[0] + 1.4, pod_y0 + imu[1] / 2 - 6.35 + i * 2.54, board_z0 + imu[2]];   // VCC GND SCL SDA - INT
-function tp_pad(x) = [x, tp_y0 + 1.5, tp_z1];                                             // OUT- B- B+ OUT+ at -7 -3 3 7
+function tp_pad(x) = [x, tp_y0 + 3.8, tp_z1];                                             // OUT- B- B+ OUT+ at -7 -4 4 7
 function tab(sx, sy, t) = [sx * axle_x + t * 3.45, sy * (gear_y - motor_l - motor_tab / 2), 0];
 function led_leg(i) = [led_x0 - 6, -3.81 + i * 2.54, 0];                                  // red, common, green, blue
 function buzzer_pin(s) = [buzzer_x0 - 4, buzzer_y + s * 3.25, 0];
@@ -785,7 +794,7 @@ function rear_run(pad, n, z) = [pad, [pad[0] - 2.5, pad[1], pad[2] - 1], [trunk(
 // from a pad on its front edge over the board to the same channel
 function over_esp(pad, n, z) = [pad, [1, pad[1] + 1, 1.5], [-12, pad[1] + 1.5, 2.2], [-21.5, pad[1] + 2, 1], [trunk(n), pad[1] + 6, z], [trunk(n), -14, z], [slot(n), -8, z], [slot(n), 14, z], [slot(n), 27, z]];
 // from the rear channel over the IMU and the charger to the driver
-function to_drv(n) = [[-29, 31, 1], [-27.5, 33.2 + 0.3 * n, 1.8], [-18, 34.2 + 1.1 * n, 2.4], [-2, 34.2 + 1.1 * n, 2.4], [9, 34.6 + 0.6 * n, 2]];
+function to_drv(n) = [[-29, 31, 1], [-27.5, 33.2 + 0.3 * n, 1.8], [-18, 35.4 + 1.1 * n, 2.4], [-2, 35.4 + 1.1 * n, 2.4], [9, 35.6 + 0.6 * n, 2]];
 // from the rear channel along the edge of the IMU to one of its pads
 function to_imu(pad, n) = [[-29, 31.2, 0.2], [-26.9 - 0.45 * n, 33.5, 0.9], [-26.9 - 0.45 * n, pad[1] - 1.5, 0.9], [-26.2, pad[1], 0.7], [-24.5, pad[1], 0], pad];
 // from an output of the driver to the channel past the front end of the battery
@@ -800,10 +809,10 @@ function led_run(i) = [led_leg(i), led_leg(i) - [9, 0, 0], [30.6 - 0.7 * i, -7 -
 
 wires = [
   // battery to the charger, the cell's own leads
-  ["red", [[bat[0] / 2 - 1, bat_cy + 2, 1], [28.8, bat_cy + 2, 0], [31, bat_cy + 5, -2], [31, 27, layer(2)], [29.5, 31.5, 0.8], [20, 31.6, 0.9], [6, 31.4, 0.9], [4.2, 32.2, 0.4], tp_pad(3)]],
-  ["black", [[bat[0] / 2 - 1, bat_cy - 2, 1], [28.8, bat_cy - 2, 0], [32.3, bat_cy + 4, -2], [32.4, 27, layer(2)], [30.5, 30.6, 0.8], [20, 30.4, 0.9], [2, 30.6, 0.9], [-4.6, 31.6, 0.4], tp_pad(-3)]],
+  ["red", [[bat[0] / 2 - 1, bat_cy + 2, 1], [28.8, bat_cy + 2, 0], [31, bat_cy + 5, -2], [31, 27, layer(2)], [29.5, 31.5, 0.8], [20, 31.6, 0.9], [6, 31.4, 0.9], [4.2, 32.2, 0.4], tp_pad(4)]],
+  ["black", [[bat[0] / 2 - 1, bat_cy - 2, 1], [28.8, bat_cy - 2, 0], [32.3, bat_cy + 4, -2], [32.4, 27, layer(2)], [30.5, 30.6, 0.8], [20, 30.4, 0.9], [2, 30.6, 0.9], [-4.6, 31.6, 0.4], tp_pad(-4)]],
   // charger to the driver
-  ["red", [tp_pad(7), [9.3, 33.2, 0.6], [13, 32.6, 0], drv_pad(-1, 2)]],
+  ["red", [tp_pad(7), [9.6, 35.6, 0.6], [13, 33, 0], drv_pad(-1, 2)]],
   ["black", [tp_pad(-7), [-5.5, 35.6, 0.6], [0, 36.2, 1], [9, 35.5, 1], [15, 35.5, -1], drv_pad(-1, 3)]],
   // charger to the ESP32: plus to the + leg of its battery socket, minus to G
   ["red", concat([tp_pad(7), [5.5, 36, 0.9], [-4, 37.5, 0.9], [-14, 37, 0.9], [-26.5, 34.6, 0.9], [-28.8, 31.6, 0.2], [slot(2), 26, wf], [slot(2), 14, wf], [slot(2), -6, wf], [-27.5, -14, wf], [-27.5, -40, wf], [-24, -50, -2], [-20.5, -52.5, 0.2]], [esp_bat(0)])],
@@ -819,7 +828,7 @@ wires = [
   ["yellow", concat(over_esp(esp_pad(1, 10), 1, layer(2)), to_imu(imu_pad(2), 1))],
   ["blue", concat(over_esp(esp_pad(1, 9), 2, layer(2)), to_imu(imu_pad(3), 2))],
   ["white", concat(rear_run(esp_pad(-1, 9), 3, layer(2)), to_imu(imu_pad(5), 3))],
-  ["black", [tp_pad(-7), [-8.6, 34.8, 0.6], [-12, 38.6, -0.5], [-20, 38.5, -2], imu_pad(1)]],
+  ["black", [tp_pad(-7), [-9.6, 36.4, 0.6], [-12, 38.6, -0.5], [-20, 38.5, -2], imu_pad(1)]],
   // driver to the motors: OUT1 and OUT2 to both left motors, OUT3 and OUT4 to both right ones
   ["red", concat(drv_front(drv_pad(1, 1), 0), [[35, 12, wf]], to_tab(1, 1, -1))],
   ["black", concat(drv_front(drv_pad(1, 2), 1), [[35, 10.5, wf]], to_tab(1, 1, 1))],
