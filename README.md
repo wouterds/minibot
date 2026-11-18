@@ -67,14 +67,14 @@ The drawing shows what connects to what, in the wire colours below. It is not wh
 | `GPIO 19` | MPU-6050 `SCL` | yellow | |
 | `GPIO 23` | MPU-6050 `SDA` | blue | |
 | `GPIO 34` | MPU-6050 `INT` | white | Wakes the ESP32 when the bot is moved |
-| `GPIO 4` | LED red leg, through 150 Ω | orange | |
-| `GPIO 16` | LED green leg, through 47 Ω | green | |
-| `GPIO 17` | LED blue leg, through 47 Ω | blue | |
+| `GPIO 4` | LED red leg, through 270 Ω | orange | |
+| `GPIO 16` | LED green leg, through 100 Ω | green | |
+| `GPIO 17` | LED blue leg, through 100 Ω | blue | |
 | LED long leg | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
 | `GPIO 13` | Buzzer `+` | white | |
 | Buzzer `−` | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
-| `GPIO 35` | LOLIN32 battery `+`, through 100 kΩ | red | Battery voltage. The `+` leg of the JST socket |
-| `GPIO 35` | LOLIN32 `G`, through 100 kΩ | black | With 100 nF across this resistor |
+| `GPIO 35` | LOLIN32 battery `+`, through 10 kΩ | red | Battery voltage. The `+` leg of the JST socket |
+| `GPIO 35` | LOLIN32 `G`, through 10 kΩ | black | With 100 nF across this resistor |
 | DRV8833 `OUT1` / `OUT2` | both left motors, in parallel | red / black | |
 | DRV8833 `OUT3` / `OUT4` | both right motors, in parallel | red / black | |
 
@@ -83,12 +83,12 @@ Notes:
 - **There is no power switch.** After three minutes without driving, the firmware puts the motor driver and the ESP32 to sleep and sets the IMU to watch for movement. Pick the bot up or nudge it and it wakes. Asleep it should draw around 1 mA, which is weeks on a full cell; that figure is an estimate, not a measurement.
 - **Without the IMU the bot never sleeps**, because nothing could wake it again inside a sealed hull. The battery is then empty in a few hours.
 - **`GPIO 21` is not on this board**, which is why I²C sits on 19 and 23. They are next to `3V`, in the order the IMU's pads want them.
-- **The LED's long leg is its common leg.** The table is for a common cathode: long leg to minus. With a common anode the long leg goes to TP4056 `OUT+` instead, the resistors become 220 Ω for red and 100 Ω for green and blue, and `RGB_COMMON_ANODE` in [`src/firmware/config.h`](src/firmware/config.h) becomes `true`. To find out which one it is, hold the long leg and one other leg to the battery through a resistor: it lights one way round only.
+- **The LED's long leg is its common leg.** The table is for a common cathode: long leg to minus. With a common anode the long leg goes to TP4056 `OUT+` instead, the resistors stay as they are, and `RGB_COMMON_ANODE` in [`src/firmware/config.h`](src/firmware/config.h) becomes `true`. To find out which one it is, hold the long leg and one other leg to the battery through a resistor: it lights one way round only.
 - **The buzzer is taken to be an active one**, which beeps on a steady voltage. If it only clicks when held to the battery it is passive: set `BUZZER_ACTIVE` to `false` and the firmware makes the tone.
 - **The onboard LED on `GPIO 22`** follows the status light, for when the lid is off.
 - **The four motor pins are quiet during boot.** Several other pins pulse at reset and would twitch the motors.
 - **A 220–470 µF capacitor** across the driver's `VCC` and `GND` keeps motor starts from browning out the ESP32.
-- **The two 100 kΩ resistors on `GPIO 35` halve the battery voltage** so the ESP32 can read it. They lie on the ESP32 itself, each in a short wire, with the 100 nF capacitor soldered across the legs of the one to `G`. Correct `BATTERY_DIVIDER` in [`src/firmware/config.h`](src/firmware/config.h) until the voltage in the serial log matches a multimeter. Left out, set `BATTERY_SENSE_FITTED` to `false`: the LED is then plain green and nothing stops the motors on a low cell.
+- **The two 10 kΩ resistors on `GPIO 35` halve the battery voltage** so the ESP32 can read it. Any two equal ones up to 220 kΩ do; at 10 kΩ they draw 0.2 mA all the time. They lie on the ESP32 itself, each in a short wire, with the 100 nF capacitor soldered across the legs of the one to `G`. Correct `BATTERY_DIVIDER` in [`src/firmware/config.h`](src/firmware/config.h) until the voltage in the serial log matches a multimeter. Left out, set `BATTERY_SENSE_FITTED` to `false`: the LED is then plain green and nothing stops the motors on a low cell.
 - **If a side runs backwards**, swap the two motor leads of that side at the driver.
 - **Mount the IMU component side up.** If the bot drives backwards the right way up, set `IMU_Z_SIGN` to `-1` in [`src/firmware/config.h`](src/firmware/config.h).
 - **Never plug in both USB ports at once.** The LOLIN32 has its own charger; with both connected, two chargers feed one cell.
@@ -189,13 +189,11 @@ Everything that goes into one bot. Prices are rough AliExpress prices.
 
 | Qty | Part | For |
 |---|---|---|
-| 1 | Resistor 150 Ω | LED, red leg |
-| 2 | Resistor 47 Ω | LED, green and blue legs |
+| 1 | Resistor 270 Ω | LED, red leg. 150 to 270 Ω does |
+| 2 | Resistor 100 Ω | LED, green and blue legs. 47 to 100 Ω does |
 | 1 | Electrolytic capacitor, 220–470 µF, 6.3 V or more | Across the driver's `VCC` and `GND` |
-| 2 | Resistor 100 kΩ | Battery voltage divider on `GPIO 35` |
+| 2 | Resistor 10 kΩ | Battery voltage divider on `GPIO 35`. Any two equal ones, 10 to 220 kΩ |
 | 1 | Ceramic capacitor 100 nF | Steadies the divider's reading |
-
-With a common anode LED the three resistors are 220 Ω for red and 100 Ω for green and blue instead.
 
 ### Wire
 

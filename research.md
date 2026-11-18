@@ -191,7 +191,7 @@ USB-C ── TP4056 ── B+/B− ── battery
 ```
 
 - **No power switch.** Nothing is ever disconnected from the cell; the firmware sleeps instead. See [Sleep and wake](#sleep-and-wake).
-- **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A 100 kΩ / 100 kΩ divider on GPIO 35 lets the firmware stop the motors at 3.3 V, or at 3.0 V while they are running, because load pulls the voltage down. The dip has to last three seconds. Half a minute later the ESP32 goes into deep sleep, since Bluetooth alone would keep draining the cell.
+- **Low-voltage cutoff in firmware.** The DW01A only cuts at 2.4 V, well past where a LiPo starts taking damage. A divider of two equal resistors on GPIO 35 lets the firmware stop the motors at 3.3 V, or at 3.0 V while they are running, because load pulls the voltage down. The dip has to last three seconds. Half a minute later the ESP32 goes into deep sleep, since Bluetooth alone would keep draining the cell.
 - **The divider is a setting, not detected.** GPIO 35 has no pull resistors, so without the divider it floats and can read as anything. `BATTERY_SENSE_FITTED` says whether it is there.
 - **Calibrate it.** Many ESP32s of this generation have no ADC calibration burnt in, which leaves the reading up to 10 % off. A 100 nF capacitor on the pin steadies it; `BATTERY_DIVIDER` corrects it against a multimeter.
 - **Decoupling.** 220–470 µF across the driver's supply. The regulator needs about 3.4 V in to hold 3.3 V out, and a stalled motor can pull a tired cell below that.

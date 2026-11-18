@@ -76,7 +76,7 @@
 <text x="654" y="903" font-size="13" text-anchor="start" font-weight="bold" fill="#ffffff">G</text>
 <text x="846" y="903" font-size="13" text-anchor="end" font-weight="bold" fill="#ffffff">13</text>
 <text x="746" y="690" font-size="11" text-anchor="start" font-weight="normal" fill="#9aa3ad">battery sense:</text>
-<text x="746" y="704" font-size="11" text-anchor="start" font-weight="normal" fill="#9aa3ad">2 × 100 kΩ,</text>
+<text x="746" y="704" font-size="11" text-anchor="start" font-weight="normal" fill="#9aa3ad">2 × 10 kΩ,</text>
 <text x="746" y="718" font-size="11" text-anchor="start" font-weight="normal" fill="#9aa3ad">100 nF, 35 to G</text>
 <text x="800" y="419" font-size="11" text-anchor="end" font-weight="normal" fill="#9aa3ad">onboard LED</text>
 <text x="804" y="916" font-size="11" text-anchor="middle" font-weight="normal" fill="#9aa3ad">micro-USB</text>

@@ -86,7 +86,7 @@ for i, (a, b) in enumerate(zip(left, right)):
     pad(640, y, a, "right", a in used)
     pad(860, y, b, "left", b in used)
 text(746, 690, "battery sense:", 11, fill="#9aa3ad")
-text(746, 704, "2 × 100 kΩ,", 11, fill="#9aa3ad")
+text(746, 704, "2 × 10 kΩ,", 11, fill="#9aa3ad")
 text(746, 718, "100 nF, 35 to G", 11, fill="#9aa3ad")
 text(800, 419, "onboard LED", 11, "end", fill="#9aa3ad")
 text(804, 916, "micro-USB", 11, "middle", fill="#9aa3ad")
