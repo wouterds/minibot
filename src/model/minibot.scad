@@ -47,9 +47,9 @@ esp_usb_off = 7;            // micro-USB centre from the board centreline, towar
 esp_usb_h = 2.6;            // micro-USB socket height above the board
 bat = [52.56, 33.99, 10.35]; // 103450 LiPo, 2000 mAh
 bat_pad = 1;                // foam tape that sticks the battery to the floor
-tp = [17.4, 27.78, 0.99];   // TP4056 USB-C charger, USB-C on the +Y end
+tp = [17.4, 27.16, 0.99];   // TP4056 USB-C charger, USB-C on the +Y end
 usbc_h = 3.2;               // USB-C socket height above the board
-usbc_over = 0.35;           // how far that socket sticks out past the board
+usbc_over = 1.71;           // how far that socket sticks out past the board
 drv = [15.95, 18.4, 1.6];   // DRV8833, its pads run along both short edges
 imu = [15.5, 20, 1.6];      // GY-521 (MPU-6050)
 led_d = 9.92;               // 10 mm RGB LED, across the dome
@@ -116,7 +116,7 @@ esp_y0 = -in_y + 0.2;
 esp_y1 = esp_y0 + esp[1];
 esp_z1 = -esp_usb_h / 2;                      // board top, puts the micro-USB socket on the seam
 esp_z0 = esp_z1 - esp[2];
-tp_y1 = min(in_y - 0.2, in_y + wall - usbc_over - 0.3);   // board against the wall, socket mouth inside the hull's face
+tp_y1 = min(in_y - fit, in_y + wall - usbc_over - 0.3);   // the socket reaches through the wall, its mouth just inside the hull's face
 tp_y0 = tp_y1 - tp[1];
 tp_half = tp[0] / 2 + fit;
 tp_stop = 2.4;                                // takes the push of a plug going in
@@ -148,8 +148,9 @@ buzzer_x1 = mid_x - 0.3;
 buzzer_x0 = buzzer_x1 - buzzer_h;
 buzzer_y = -(wall_y + in_y) / 2;
 
-// Both sockets sit behind the wall, so the grip of a plug has to pass through it.
-usbc_open = [13, 7];
+// The USB-C socket reaches the outer face, so its opening only has to pass the socket. The
+// micro-USB socket sits behind the wall, so the grip of its plug has to pass through.
+usbc_open = [9.8, 4];
 usb_open = [12.5, 7.5];
 
 assert(protrusion >= 2, "wheels barely clear the hull");
@@ -306,7 +307,7 @@ module openings() {
   // motors, through the well walls
   quadrants() port([axle_x, wall_y + wall / 2, 0], "y", motor_w + 2 * motor_fit + 0.2, motor_h + 0.2, wall + 2 * e, 0.5);
   // USB-C charging, left side
-  port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 2);
+  port([0, hull_w / 2 - wall / 2, 0], "y", usbc_open[0], usbc_open[1], wall + 1, 1.9);
   // micro-USB for flashing, right side
   port([0, -hull_w / 2 + wall / 2, 0], "y", usb_open[0], usb_open[1], wall + 1, 2);
 }
@@ -397,6 +398,8 @@ module charger_seat() {
   }
   // end stop, between the battery pads; it takes the push of a plug going in
   box([-3, 3], [tp_y0 - fit - tp_stop, tp_y0 - fit], [-in_z - e, tp_z1 + 0.6]);
+  // front stops, beside the socket; they take the pull of a plug coming out
+  sym_x() box([usbc_open[0] / 2 + 0.6, tp_half], [tp_y1 + fit, in_y + e], [-in_z - e, tp_z1 + 0.6]);
 }
 
 // Seat for a small board beside the charger, long side along Y. It rests on ledges under the
