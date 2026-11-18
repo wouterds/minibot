@@ -62,16 +62,16 @@ The drawing shows what connects to what, in the wire colours below. It is not wh
 | `GPIO 32` | DRV8833 `IN1` | yellow | Left side |
 | `GPIO 33` | DRV8833 `IN2` | green | Left side |
 | `GPIO 25` | DRV8833 `IN3` | blue | Right side |
-| `GPIO 26` | DRV8833 `IN4` | white | Right side |
+| `GPIO 26` | DRV8833 `IN4` | green | Right side |
 | `GPIO 27` | DRV8833 `EEP` | yellow | Wakes the driver. Low while the bot sleeps |
 | `GPIO 19` | MPU-6050 `SCL` | yellow | |
 | `GPIO 23` | MPU-6050 `SDA` | blue | |
-| `GPIO 34` | MPU-6050 `INT` | white | Wakes the ESP32 when the bot is moved |
+| `GPIO 34` | MPU-6050 `INT` | green | Wakes the ESP32 when the bot is moved |
 | `GPIO 4` | LED red leg, through 150 Ω | yellow | |
 | `GPIO 16` | LED green leg, through 47 Ω | green | |
 | `GPIO 17` | LED blue leg, through 47 Ω | blue | |
 | LED long leg | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
-| `GPIO 13` | Buzzer `+` | white | |
+| `GPIO 13` | Buzzer `+` | red | |
 | Buzzer `−` | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
 | `GPIO 35` | middle of a 100 kΩ / 100 kΩ divider from battery `+` to `GND` | | Battery voltage, optional |
 | DRV8833 `OUT1` / `OUT2` | both left motors, in parallel | red / black | |
@@ -199,17 +199,16 @@ With a common anode LED the three resistors are 220 Ω for red and 100 Ω for gr
 
 ### Wire
 
-Flexible stranded wire, 26–28 AWG, 28 pieces in six colours. The battery brings its own two leads.
+Flexible stranded wire, 26–28 AWG, 28 pieces in five colours. The battery brings its own two leads.
 
 | Colour | Pieces | Length in the model | Cut from | Carries |
 |---|---:|---:|---:|---|
-| Red | 7 | 63 cm | 90 cm | Plus to the driver, the ESP32 and the IMU; one lead of each motor |
+| Red | 8 | 64 cm | 90 cm | Plus to the driver, the ESP32, the IMU and the buzzer; one lead of each motor |
 | Black | 9 | 70 cm | 100 cm | Minus to the driver, the ESP32, the IMU, the LED and the buzzer; the other lead of each motor |
 | Yellow | 4 | 42 cm | 60 cm | `IN1`, `EEP`, `SCL`, LED red |
-| Green | 2 | 18 cm | 30 cm | `IN2`, LED green |
+| Green | 4 | 42 cm | 60 cm | `IN2`, `IN4`, `INT`, LED green |
 | Blue | 3 | 31 cm | 45 cm | `IN3`, `SDA`, LED blue |
-| White | 3 | 25 cm | 40 cm | `IN4`, `INT`, buzzer |
-| **Total** | **28** | **2.5 m** | **3.7 m** | |
+| **Total** | **28** | **2.5 m** | **3.6 m** | |
 
 The lengths are measured along the wires as they are laid in the model, the longest single piece being 15 cm. "Cut from" adds about 40 % for slack and stripped ends. Both are estimates: nothing has been wired yet.
 

@@ -141,7 +141,7 @@
 <path d="M640 678 L554 678 L554 660 L490 660" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M640 678 L554 678 L554 660 L490 660" fill="none" stroke="#2a6fe0" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M640 722 L536 722 L536 700 L490 700" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M640 722 L536 722 L536 700 L490 700" fill="none" stroke="#fbfbf8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M640 722 L536 722 L536 700 L490 700" fill="none" stroke="#22a045" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M640 766 L622 766 L622 800 L372 800 L372 484 L300 484 L300 500" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M640 766 L622 766 L622 800 L372 800 L372 484 L300 484 L300 500" fill="none" stroke="#f2c400" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M300 540 L270 540 L270 465 L200 465" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
@@ -169,7 +169,7 @@
 <path d="M500 215 L536 215 L536 300 L940 300 L940 414 L1080 414" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M500 215 L536 215 L536 300 L940 300 L940 414 L1080 414" fill="none" stroke="#17181a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M1080 678 L1060 678 L1060 726 L1270 726 L1270 284 L614 284 L614 502 L640 502" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M1080 678 L1060 678 L1060 726 L1270 726 L1270 284 L614 284 L614 502 L640 502" fill="none" stroke="#fbfbf8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M1080 678 L1060 678 L1060 726 L1270 726 L1270 284 L614 284 L614 502 L640 502" fill="none" stroke="#22a045" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M860 634 L1000 634 L1000 790 L1120 790" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M860 634 L1000 634 L1000 790 L1120 790" fill="none" stroke="#2a6fe0" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M860 678 L980 678 L980 820 L1120 820" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
@@ -179,7 +179,7 @@
 <path d="M1120 850 L1090 850 L1090 987 L724 987 L724 950" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M1120 850 L1090 850 L1090 987 L724 987 L724 950" fill="none" stroke="#17181a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M860 898 L930 898 L930 925 L965 925" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
-<path d="M860 898 L930 898 L930 925 L965 925" fill="none" stroke="#fbfbf8" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M860 898 L930 898 L930 925 L965 925" fill="none" stroke="#e02a22" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M965 955 L930 955 L930 975 L736 975 L736 950" fill="none" stroke="#14161a" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>
 <path d="M965 955 L930 955 L930 975 L736 975 L736 950" fill="none" stroke="#17181a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
 <rect x="1032" y="782" width="36" height="16" rx="3" fill="#d9c7a1" stroke="#14161a" stroke-width="1.5"/>
@@ -255,17 +255,15 @@
 <circle cx="965" cy="925" r="8" fill="#e8c35a" stroke="#14161a" stroke-width="2"/>
 <circle cx="965" cy="955" r="8" fill="#e8c35a" stroke="#14161a" stroke-width="2"/>
 <rect x="930" y="49" width="34" height="14" rx="3" fill="#e02a22" stroke="#14161a" stroke-width="1.5"/>
-<text x="974" y="61" font-size="14" fill="#1b1d21">plus: battery, 3.3 V, one lead of each motor</text>
+<text x="974" y="61" font-size="14" fill="#1b1d21">plus: battery, 3.3 V, buzzer, one lead of each motor</text>
 <rect x="930" y="75" width="34" height="14" rx="3" fill="#17181a" stroke="#14161a" stroke-width="1.5"/>
 <text x="974" y="87" font-size="14" fill="#1b1d21">minus: ground, the other lead of each motor</text>
 <rect x="930" y="101" width="34" height="14" rx="3" fill="#f2c400" stroke="#14161a" stroke-width="1.5"/>
 <text x="974" y="113" font-size="14" fill="#1b1d21">IN1, EEP, SCL, LED red</text>
 <rect x="930" y="127" width="34" height="14" rx="3" fill="#22a045" stroke="#14161a" stroke-width="1.5"/>
-<text x="974" y="139" font-size="14" fill="#1b1d21">IN2, LED green</text>
+<text x="974" y="139" font-size="14" fill="#1b1d21">IN2, IN4, INT, LED green</text>
 <rect x="930" y="153" width="34" height="14" rx="3" fill="#2a6fe0" stroke="#14161a" stroke-width="1.5"/>
 <text x="974" y="165" font-size="14" fill="#1b1d21">IN3, SDA, LED blue</text>
-<rect x="930" y="179" width="34" height="14" rx="3" fill="#fbfbf8" stroke="#14161a" stroke-width="1.5"/>
-<text x="974" y="191" font-size="14" fill="#1b1d21">IN4, INT, buzzer</text>
 <text x="930" y="226" font-size="12" fill="#4a5059">Not to scale. Follow the names printed on your boards:</text>
 <text x="930" y="242" font-size="12" fill="#4a5059">the order of the pads can differ from this drawing.</text>
 </svg>
