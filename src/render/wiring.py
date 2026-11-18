@@ -8,6 +8,7 @@ from pathlib import Path
 
 W, H = 1400, 1070
 RED, BLACK, YELLOW, GREEN, BLUE = "#e02a22", "#17181a", "#f2c400", "#22a045", "#2a6fe0"
+WHITE, ORANGE = "#fbfbf8", "#f47a12"
 out = []
 
 
@@ -144,8 +145,8 @@ wire(BLACK, (500, 215), (520, 215), (520, 250), (52, 250), (52, 998), (606, 998)
 wire(YELLOW, (640, esp_y["32"]), (590, esp_y["32"]), (590, 500), (490, 500))
 wire(GREEN, (640, esp_y["33"]), (572, esp_y["33"]), (572, 540), (490, 540))
 wire(BLUE, (640, esp_y["25"]), (554, esp_y["25"]), (554, 660), (490, 660))
-wire(GREEN, (640, esp_y["26"]), (536, esp_y["26"]), (536, 700), (490, 700))
-wire(YELLOW, (640, esp_y["27"]), (622, esp_y["27"]), (622, 800), (372, 800), (372, 484), (300, 484), (300, 500))
+wire(WHITE, (640, esp_y["26"]), (536, esp_y["26"]), (536, 700), (490, 700))
+wire(ORANGE, (640, esp_y["27"]), (622, esp_y["27"]), (622, 800), (372, 800), (372, 484), (300, 484), (300, 500))
 
 # driver to the motors, two motors on each pair of outputs
 wire(RED, (300, 540), (270, 540), (270, 465), (200, 465))
@@ -162,19 +163,19 @@ wire(RED, (860, esp_y["3V"]), (1080, 370))
 wire(YELLOW, (860, esp_y["19"]), (1080, 458))
 wire(BLUE, (860, esp_y["23"]), (1080, 502))
 wire(BLACK, (500, 215), (536, 215), (536, 300), (940, 300), (940, 414), (1080, 414))
-wire(GREEN, (1080, 678), (1060, 678), (1060, 726), (1270, 726), (1270, 284), (614, 284), (614, esp_y["34"]), (640, esp_y["34"]))
+wire(WHITE, (1080, 678), (1060, 678), (1060, 726), (1270, 726), (1270, 284), (614, 284), (614, esp_y["34"]), (640, esp_y["34"]))
 
 # ESP32 to the status LED, a resistor in each colour
 wire(BLUE, (860, esp_y["17"]), (1000, esp_y["17"]), (1000, 790), (1120, 790))
 wire(GREEN, (860, esp_y["16"]), (980, esp_y["16"]), (980, 820), (1120, 820))
-wire(YELLOW, (860, esp_y["4"]), (960, esp_y["4"]), (960, 880), (1120, 880))
+wire(ORANGE, (860, esp_y["4"]), (960, esp_y["4"]), (960, 880), (1120, 880))
 wire(BLACK, (1120, 850), (1090, 850), (1090, 987), (724, 987), (724, 950))
 for y in (790, 820, 880):
     resistor(1050, y, "")
 text(1050, 772, "3 resistors", 12, "middle")
 
 # ESP32 to the buzzer
-wire(RED, (860, esp_y["13"]), (930, esp_y["13"]), (930, 925), (965, 925))
+wire(WHITE, (860, esp_y["13"]), (930, esp_y["13"]), (930, 925), (965, 925))
 wire(BLACK, (965, 955), (930, 955), (930, 975), (736, 975), (736, 950))
 
 # battery sense: the socket's + leg and G to 35, a resistor in each
@@ -200,14 +201,16 @@ for x, y, used_pad in pads:
     svg.append(f'<circle cx="{x}" cy="{y}" r="8" fill="{fill}" stroke="#14161a" stroke-width="2"/>')
 
 legend = [
-    (RED, "plus: battery, 3.3 V, buzzer, one lead of each motor"),
+    (RED, "plus: battery, 3.3 V, one lead of each motor"),
     (BLACK, "minus: ground, the other lead of each motor"),
-    (YELLOW, "IN1, EEP, SCL, LED red"),
-    (GREEN, "IN2, IN4, INT, LED green"),
+    (YELLOW, "IN1, SCL"),
+    (GREEN, "IN2, LED green"),
     (BLUE, "IN3, SDA, LED blue"),
+    (WHITE, "IN4, INT, buzzer"),
+    (ORANGE, "EEP, LED red"),
 ]
 for i, (colour, meaning) in enumerate(legend):
-    y = 60 + 26 * i
+    y = 56 + 22 * i
     svg.append(f'<rect x="930" y="{y - 11}" width="34" height="14" rx="3" fill="{colour}" stroke="#14161a" stroke-width="1.5"/>')
     svg.append(f'<text x="974" y="{y + 1}" font-size="14" fill="#1b1d21">{meaning}</text>')
 svg.append(f'<text x="930" y="226" font-size="12" fill="#4a5059">Not to scale. Follow the names printed on your boards:</text>')

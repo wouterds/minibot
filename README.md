@@ -62,16 +62,16 @@ The drawing shows what connects to what, in the wire colours below. It is not wh
 | `GPIO 32` | DRV8833 `IN1` | yellow | Left side |
 | `GPIO 33` | DRV8833 `IN2` | green | Left side |
 | `GPIO 25` | DRV8833 `IN3` | blue | Right side |
-| `GPIO 26` | DRV8833 `IN4` | green | Right side |
-| `GPIO 27` | DRV8833 `EEP` | yellow | Wakes the driver. Low while the bot sleeps |
+| `GPIO 26` | DRV8833 `IN4` | white | Right side |
+| `GPIO 27` | DRV8833 `EEP` | orange | Wakes the driver. Low while the bot sleeps |
 | `GPIO 19` | MPU-6050 `SCL` | yellow | |
 | `GPIO 23` | MPU-6050 `SDA` | blue | |
-| `GPIO 34` | MPU-6050 `INT` | green | Wakes the ESP32 when the bot is moved |
-| `GPIO 4` | LED red leg, through 150 Ω | yellow | |
+| `GPIO 34` | MPU-6050 `INT` | white | Wakes the ESP32 when the bot is moved |
+| `GPIO 4` | LED red leg, through 150 Ω | orange | |
 | `GPIO 16` | LED green leg, through 47 Ω | green | |
 | `GPIO 17` | LED blue leg, through 47 Ω | blue | |
 | LED long leg | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
-| `GPIO 13` | Buzzer `+` | red | |
+| `GPIO 13` | Buzzer `+` | white | |
 | Buzzer `−` | LOLIN32 battery `−` | black | The `−` leg of the JST socket |
 | `GPIO 35` | LOLIN32 battery `+`, through 100 kΩ | red | Battery voltage. The `+` leg of the JST socket |
 | `GPIO 35` | LOLIN32 `G`, through 100 kΩ | black | With 100 nF across this resistor |
@@ -199,16 +199,18 @@ With a common anode LED the three resistors are 220 Ω for red and 100 Ω for gr
 
 ### Wire
 
-Flexible stranded wire, 26–28 AWG, 30 pieces in five colours. The battery brings its own two leads.
+Flexible stranded wire, 26–28 AWG, 30 pieces in seven colours. The battery brings its own two leads.
 
 | Colour | Pieces | Length in the model | Cut from | Carries |
 |---|---:|---:|---:|---|
-| Red | 9 | 67 cm | 95 cm | Plus to the driver, the ESP32, the IMU, the buzzer and the battery divider; one lead of each motor |
+| Red | 8 | 66 cm | 95 cm | Plus to the driver, the ESP32, the IMU and the battery divider; one lead of each motor |
 | Black | 10 | 72 cm | 100 cm | Minus to the driver, the ESP32, the IMU, the LED, the buzzer and the battery divider; the other lead of each motor |
-| Yellow | 4 | 42 cm | 60 cm | `IN1`, `EEP`, `SCL`, LED red |
-| Green | 4 | 42 cm | 60 cm | `IN2`, `IN4`, `INT`, LED green |
+| Yellow | 2 | 22 cm | 35 cm | `IN1`, `SCL` |
+| Green | 2 | 18 cm | 30 cm | `IN2`, LED green |
 | Blue | 3 | 31 cm | 45 cm | `IN3`, `SDA`, LED blue |
-| **Total** | **30** | **2.5 m** | **3.6 m** | |
+| White | 3 | 25 cm | 40 cm | `IN4`, `INT`, buzzer |
+| Orange | 2 | 20 cm | 30 cm | `EEP`, LED red |
+| **Total** | **30** | **2.5 m** | **3.8 m** | |
 
 The lengths are measured along the wires as they are laid in the model, the longest single piece being 15 cm. "Cut from" adds about 40 % for slack and stripped ends. Both are estimates: nothing has been wired yet.
 
