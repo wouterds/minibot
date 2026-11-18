@@ -731,6 +731,7 @@ module electronics() {
   col(c_dark) buzzer_body();
   col(c_metal) buzzer_pins();
   col("#d9c7a1") led_resistors();
+  col("#d9c7a1") sense_resistors();
   col(c_pcb) esp_pcb();
   col(c_metal) esp_metal();
   col("#e9e6dc") esp_white();
@@ -772,6 +773,7 @@ function tp_pad(x) = [x, tp_y0 + 1.5, tp_z1];                                   
 function tab(sx, sy, t) = [sx * axle_x + t * 3.45, sy * (gear_y - motor_l - motor_tab / 2), 0];
 function led_leg(i) = [led_x0 - 6, -3.81 + i * 2.54, 0];                                  // red, common, green, blue
 function buzzer_pin(s) = [buzzer_x0 - 4, buzzer_y + s * 3.25, 0];
+function sense_x(i) = esp_cx - 8.8 + i * 2.6;                                             // the divider's two wires, over the ESP32
 
 wf = -in_z + 1;                               // lying on the floor
 function layer(n) = wf + 1.4 * n;             // stacked in a channel
@@ -835,6 +837,9 @@ wires = [
   // ESP32 to the buzzer
   ["red", [buzzer_pin(1), [12, -44, -1], [8, -47.5, -1.5], esp_pad(1, 0)]],
   ["black", [buzzer_pin(-1), [11, -50.5, 0.5], [6.5, -50.3, 1.5], [-3, -51.5, 2.6], [-10, -51.5, 2.4], [-13.6, -52.3, 0.5], esp_bat(1)]],
+  // battery sense: the socket's + leg and G to 35, through a resistor each
+  ["red", [esp_bat(0), [sense_x(1), -49, 0.2], [sense_x(1), -32, 0.2], [-15, -29.6, 0.2], esp_pad(-1, 8)]],
+  ["black", [esp_pad(-1, 0), [sense_x(0), -45.5, 0.2], [sense_x(0), -31, 0.2], esp_pad(-1, 8)]],
 ];
 
 function bend(a, b, c, d, t) = 0.5 * (2 * b + (c - a) * t + (2 * a - 5 * b + 4 * c - d) * t * t + (3 * b - a - 3 * c + d) * t * t * t);
@@ -858,6 +863,10 @@ module wiring(only = undef) {
 
 module led_resistors() {
   for (i = [0, 2, 3]) translate(led_leg(i) - [4.5, 0, 0]) rotate([0, 90, 0]) cylinder(d = 2.2, h = 6, center = true);
+}
+
+module sense_resistors() {
+  for (i = [0, 1]) translate([sense_x(i), -39, 0.2]) rotate([90, 0, 0]) cylinder(d = 2.2, h = 6, center = true);
 }
 
 module motors() {
