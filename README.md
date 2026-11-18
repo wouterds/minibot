@@ -160,7 +160,7 @@ src/pairing/pair-ps3.py 24:6f:28:b1:f8:b6
 
 ![Seen through the closed hull: every part, wire and screw](images/assembly.png)
 
-Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the shells together, one beside each wheel. Two go in through the lid and two through the base, so both faces look the same.
+Two shells split on the axle line. The wheels run in wells inside the hull and stand 4.9 mm proud of both faces, so the bot drives the same on its back. Each motor reaches through the wall of its well into the hollow hub of its wheel. USB-C sits in the middle of the left side and micro-USB in the middle of the right side, both on the seam. There is no power switch: the bot sleeps when left alone and wakes when moved. Four M2 screws into brass inserts hold the shells together, one beside each wheel. All four go in through the lid, and all four inserts sit in the base.
 
 ![Lid off](images/product-open.jpg)
 
@@ -218,8 +218,8 @@ The lengths are measured along the wires as they are laid in the model, the long
 | Qty | Part | Notes | ~Cost |
 |---|---|---|---:|
 | ~80 g | Translucent PETG | Both shells | €2 |
-| 4 | M2 × 10 screw, button head | Two through the lid, two through the base | €0.20 |
-| 4 | M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long | Two in the base, two in the lid | €0.30 |
+| 4 | M2 × 10 screw, button head | All four through the lid | €0.20 |
+| 4 | M2 brass heat-set insert, 3.5 mm wide, up to 4 mm long | All four in the base | €0.30 |
 | 1 strip | Double-sided foam tape, 1 mm | Under the battery | |
 | | Heat shrink, solder | Over the motor tabs and the LED's resistors | |
 
