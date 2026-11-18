@@ -277,7 +277,7 @@ Both shells end at the axle, so the motors with their wheels drop in from above 
 
 - USB-C (charger) in the middle of the left side, micro-USB (ESP32) in the middle of the right side. Each board lies with its socket against the wall.
 - The sockets sit at different heights on their boards, so each board rests on ledges of its own height that put its socket on the seam.
-- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.1 mm. A foil pouch that close can cost range.
+- The battery lies lengthwise in the middle, on foam tape, as far from the ESP32's antenna as the charger allows: 5.6 mm. A foil pouch that close can cost range.
 - Boards rest on ledges under the edges that carry no pads. The lid has a rib over each board that stops just above it.
 
 ### Material

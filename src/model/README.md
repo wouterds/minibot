@@ -87,7 +87,7 @@ The parameters most likely to need a change after a first print:
 - `led_d`, `led_l`, `buzzer_d`, `buzzer_h`: the LED and the buzzer. Their cradles follow.
 - `fit`: room around every board, per side. Raise it if a board does not drop into its seat.
 - `esp_usb_off`, `esp_usb_h`, `usbc_h`: where the sockets sit on their boards. They decide whether the plugs line up with the openings.
-- `usbc_open`, `usb_open`: the openings for the plugs, 13 × 7 mm and 12.5 × 7.5 mm. Both sockets sit behind the wall, so the grip of the plug has to pass through it, not just its metal tip. Widen one if a cable with a fat grip does not go in.
+- `usbc_open`, `usb_open`: the openings for the sockets, 9.8 × 4 mm and 12.5 × 7.5 mm. The USB-C socket reaches through the wall to just inside the outer face, so its opening only has to pass the socket. The micro-USB socket sits behind the wall, so the grip of its plug has to pass through: widen that one if a cable with a fat grip does not go in.
 
 ## Commands
 
@@ -115,10 +115,11 @@ Checked in the model:
 Seen on a first print of the base, without the lid:
 
 - The boards and the motors drop into their seats. With 0.25 mm of room per side they rattled, so the room around them is now 0.1 mm per side. With the lid off they still lift straight out: the base only locates the parts sideways, the lid holds them down.
+- On a second print the charger still slid in its seat. Its board is 27.16 mm long, not the 27.78 first measured, and its socket sticks out 1.71 mm, not 0.35. The seat now fits that board, with a stop in front of it and one behind.
 
 Not checked yet:
 
 - **The inserts.** Their hole is sized for inserts 3.5 mm wide, a size read off a photo, not measured.
 - **Drops.** A wheel that lands hard levers its motor against the lid with about twice the force on the wheel. The screws sit right beside the motors for that, but nothing has been dropped yet.
 - **A few dimensions.** Nearly everything is measured, see [`measurements.md`](measurements.md). Still estimated: where the micro-USB sits across the ESP32 (taken from a video frame, good to about half a mm), the inside of the wheel hubs, and the thickness of the driver and IMU boards.
-- **Radio range.** The ESP32's antenna ends 5.1 mm from the battery, which is close for a foil pouch.
+- **Radio range.** The ESP32's antenna ends 5.6 mm from the battery, which is close for a foil pouch.
